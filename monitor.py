@@ -27,30 +27,30 @@ class Monitor(object):
         timer = self.statsd_client.get_client(class_=statsd.Timer)
         # start the measurement
         timer.start()
-        # do something
+        
+        output = subprocess.check_output(["./Adafruit_DHT", "2302", "4"]);
+        print output
+        matches = re.search("Temp =\s+([0-9.]+)", output)
+        if (not matches):
+          time.sleep(3)
+        continue
+        temp = float(matches.group(1))
+  
+        # search for humidity printout
+        matches = re.search("Hum =\s+([0-9.]+)", output)
+        if (not matches):
+          time.sleep(3)
+        continue
+        humidity = float(matches.group(1))
+
+        print "Temperature: %.1f C" % temp
+        print "Humidity:    %.1f %%" % humidity
+
+        values = [datetime.datetime.now(), temp, humidity]
+
         timer.interval('intermediate_value')
         # do something else
         timer.stop('total')
 
-# Continuously append data
-while(True):
-  # Run the DHT program to get the humidity and temperature readings!
-  output = subprocess.check_output(["./Adafruit_DHT", "2302", "4"]);
-  print output
-  matches = re.search("Temp =\s+([0-9.]+)", output)
-  if (not matches):
-	time.sleep(3)
-	continue
-  temp = float(matches.group(1))
   
-  # search for humidity printout
-  matches = re.search("Hum =\s+([0-9.]+)", output)
-  if (not matches):
-	time.sleep(3)
-	continue
-  humidity = float(matches.group(1))
-
-  print "Temperature: %.1f C" % temp
-  print "Humidity:    %.1f %%" % humidity
-
-  values = [datetime.datetime.now(), temp, humidity]
+  
