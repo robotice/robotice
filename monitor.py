@@ -12,45 +12,57 @@ statsd_connection = statsd.Connection(
     host='server',
     port=8125 ,
     sample_rate=0.5,
+    disabled = False
 )
  # Create a client for this application
 statsd_client = statsd.Client("temp&humidity", statsd_connection)
 
-class Monitor(object):
-     def __init__(self):
+class SensorsData():
+     #TODO rozdelit v implementaci C
+     def getDataFromTemp():
+       #prepsat na parametry
+       output = subprocess.check_output(["./Adafruit_DHT", "2302", "4"]);
+       matches = re.search("Temp =\s+([0-9.]+)", output)
+       if (not matches):
+        time.sleep(3)
+       continue
+       temp = float(matches.group(1))
+  
+       # search for humidity printout
+       matches = re.search("Hum =\s+([0-9.]+)", output)
+       if (not matches):
+        time.sleep(3)
+       continue
+       humidity = float(matches.group(1))
+
+       print "Temperature: %.1f C" % temp
+       print "Humidity:    %.1f %%" % humidity
+
+       return values = [temp, humidity]
+
+
+# Continuously append data
+while(True):
+  # Run the DHT program to get the humidity and temperature readings!
+       def __init__(self):
         # Create a client specific for this class
         self.statsd_client = statsd_client.get_client(
         self.__class__.__name__)
 
-     def do_something(self):
         # Create a `timer` client
         timer = self.statsd_client.get_client(class_=statsd.Timer)
         # start the measurement
         timer.start()
-        
-        output = subprocess.check_output(["./Adafruit_DHT", "2302", "4"]);
-        print output
-        matches = re.search("Temp =\s+([0-9.]+)", output)
-        if (not matches):
-          time.sleep(3)
-        continue
-        temp = float(matches.group(1))
-  
-        # search for humidity printout
-        matches = re.search("Hum =\s+([0-9.]+)", output)
-        if (not matches):
-          time.sleep(3)
-        continue
-        humidity = float(matches.group(1))
+        gauge = statsd.Gauge('MyApplication')
+        # zase rozdelit
+        value = SensorsData.getDataFromTemp()
+        gauge.send('temperature', value)
+        #output = subprocess.check_output(["./Adafruit_DHT", "2302", "4"]);
+        #asi timestamp
+        raw.send('temperature', value, datetime.datetime.now())
 
-        print "Temperature: %.1f C" % temp
-        print "Humidity:    %.1f %%" % humidity
-
-        values = [datetime.datetime.now(), temp, humidity]
-
-        timer.interval('intermediate_value')
+        timer.interval('10')
         # do something else
         timer.stop('total')
-
   
   
