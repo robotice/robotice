@@ -18,7 +18,7 @@ statsd_connection = statsd.Connection(
 statsd_client = statsd.Client("temp&humidity", statsd_connection)
 
 class SensorsData():
-     #TODO rozdelit v implementaci C
+     #TODO rozdelit v implementaci C nebo predelat na pole vice hodnot
      def getDataFromTemp():
        #prepsat na parametry
        output = subprocess.check_output(["./Adafruit_DHT", "2302", "4"]);
@@ -27,18 +27,24 @@ class SensorsData():
         time.sleep(3)
        continue
        temp = float(matches.group(1))
-  
+       #log
+       print "Temperature: %.1f C" % temp
+
+       return temp
+
+     def getDataFromHumidity():
+       #prepsat na parametry
+       output = subprocess.check_output(["./Adafruit_DHT", "2302", "4"]);
        # search for humidity printout
        matches = re.search("Hum =\s+([0-9.]+)", output)
        if (not matches):
         time.sleep(3)
        continue
        humidity = float(matches.group(1))
-
-       print "Temperature: %.1f C" % temp
+       #log.info
        print "Humidity:    %.1f %%" % humidity
 
-       return values = [temp, humidity]
+       return humidity      
 
 while(True):
   # Run the DHT program to get the humidity and temperature readings!
@@ -48,11 +54,22 @@ while(True):
         # start the measurement
         timer.start()
         gauge = statsd.Gauge('MyApplication')
-        # zase rozdelit
-        value = SensorsData.getDataFromTemp()
-        gauge.send('temperature', value)
+        raw = statsd.Raw('MyApplication', statsd_connection)
+        # get
+        temperature = SensorsData.getDataFromTemp()
+        humidity = SensorsData.getDataFromHumidity()
+        try:
+          gauge.send('humidity', humidity)
+          gauge.send('temperature', temperature)
+          raw.send('temperature', temperature, datetime.datetime.now())
+          raw.send('humidity', humidity, timestamp)
+        except Exception, e:
+          
+          raise e
+        finally:
+          
+          pass
         #asi timestamp
-        raw.send('temperature', value, datetime.datetime.now())
 
         timer.interval('10')
         # do something else
