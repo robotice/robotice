@@ -40,15 +40,9 @@ class SensorsData():
 
        return values = [temp, humidity]
 
-
-# Continuously append data
 while(True):
   # Run the DHT program to get the humidity and temperature readings!
        def __init__(self):
-        # Create a client specific for this class
-        self.statsd_client = statsd_client.get_client(
-        self.__class__.__name__)
-
         # Create a `timer` client
         timer = self.statsd_client.get_client(class_=statsd.Timer)
         # start the measurement
@@ -57,7 +51,6 @@ while(True):
         # zase rozdelit
         value = SensorsData.getDataFromTemp()
         gauge.send('temperature', value)
-        #output = subprocess.check_output(["./Adafruit_DHT", "2302", "4"]);
         #asi timestamp
         raw.send('temperature', value, datetime.datetime.now())
 
