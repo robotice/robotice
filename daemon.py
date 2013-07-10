@@ -3,7 +3,7 @@
 import sys, os, time, atexit
 
 from signal import SIGTERM
- 
+
 class Daemon:
     """
     A generic daemon class.
@@ -12,8 +12,10 @@ class Daemon:
     """
     def __init__(self, pidfile, stdin='/dev/null', stdout='/dev/null', stderr='/dev/null'):
         self.stdin = stdin
-        self.stdout = stdout
-        self.stderr = stderr
+#        self.stdout = stdout
+#        self.stderr = stderr
+        self.stdout = '/srv/robotice/daemon-normal.log'
+        self.stderr = '/srv/robotice/daemon-error.log'
         self.pidfile = pidfile
    
     def daemonize(self):
@@ -84,7 +86,7 @@ class Daemon:
         # Start the daemon
         self.daemonize()
         self.run()
- 
+
     def stop(self):
         """
         Stop the daemon
