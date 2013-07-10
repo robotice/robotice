@@ -5,68 +5,74 @@ import re
 import sys
 import time
 import datetime
-import gspread
+import python-statsd
 
-# ===========================================================================
-# Google Account Details
-# ===========================================================================
+# Open a connection to `server` on port `8125` with a `50%` sample rate
+statsd_connection = statsd.Connection(
+    host='server',
+    port=8125 ,
+    sample_rate=0.5,
+    disabled = False
+)
+ # Create a client for this application
+statsd_client = statsd.Client("temp&humidity", statsd_connection)
 
-# Account details for google docs
-email       = 'you@somewhere.com'
-password    = '$hhh!'
-spreadsheet = 'SpreadsheetName'
+class SensorsData():
+     #TODO rozdelit v implementaci C nebo predelat na pole vice hodnot
+     def getDataFromTemp():
+       #prepsat na parametry
+       output = subprocess.check_output(["./Adafruit_DHT", "2302", "4"]);
+       matches = re.search("Temp =\s+([0-9.]+)", output)
+       if (not matches):
+        time.sleep(3)
+       continue
+       temp = float(matches.group(1))
+       #log
+       print "Temperature: %.1f C" % temp
 
-# ===========================================================================
-# Example Code
-# ===========================================================================
+       return temp
 
+     def getDataFromHumidity():
+       #prepsat na parametry
+       output = subprocess.check_output(["./Adafruit_DHT", "2302", "4"]);
+       # search for humidity printout
+       matches = re.search("Hum =\s+([0-9.]+)", output)
+       if (not matches):
+        time.sleep(3)
+       continue
+       humidity = float(matches.group(1))
+       #log.info
+       print "Humidity:    %.1f %%" % humidity
 
-# Login with your Google account
-try:
-  gc = gspread.login(email, password)
-except:
-  print "Unable to log in.  Check your email address/password"
-  sys.exit()
+       return humidity      
 
-# Open a worksheet from your spreadsheet using the filename
-try:
-  worksheet = gc.open(spreadsheet).sheet1
-  # Alternatively, open a spreadsheet using the spreadsheet's key
-  # worksheet = gc.open_by_key('0BmgG6nO_6dprdS1MN3d3MkdPa142WFRrdnRRUWl1UFE')
-except:
-  print "Unable to open the spreadsheet.  Check your filename: %s" % spreadsheet
-  sys.exit()
-
-# Continuously append data
 while(True):
   # Run the DHT program to get the humidity and temperature readings!
+       def __init__(self):
+        # Create a `timer` client
+        timer = self.statsd_client.get_client(class_=statsd.Timer)
+        # start the measurement
+        timer.start()
+        gauge = statsd.Gauge('MyApplication')
+        raw = statsd.Raw('MyApplication', statsd_connection)
+        # get
+        temperature = SensorsData.getDataFromTemp()
+        humidity = SensorsData.getDataFromHumidity()
+        try:
+          gauge.send('humidity', humidity)
+          gauge.send('temperature', temperature)
+          raw.send('temperature', temperature, datetime.datetime.now())
+          raw.send('humidity', humidity, timestamp)
+        except Exception, e:
+          
+          raise e
+        finally:
+          
+          pass
+        #asi timestamp
 
-  output = subprocess.check_output(["./Adafruit_DHT", "2302", "4"]);
-  print output
-  matches = re.search("Temp =\s+([0-9.]+)", output)
-  if (not matches):
-	time.sleep(3)
-	continue
-  temp = float(matches.group(1))
+        timer.interval('10')
+        # do something else
+        timer.stop('total')
   
-  # search for humidity printout
-  matches = re.search("Hum =\s+([0-9.]+)", output)
-  if (not matches):
-	time.sleep(3)
-	continue
-  humidity = float(matches.group(1))
-
-  print "Temperature: %.1f C" % temp
-  print "Humidity:    %.1f %%" % humidity
- 
-  # Append the data in the spreadsheet, including a timestamp
-  try:
-    values = [datetime.datetime.now(), temp, humidity]
-    worksheet.append_row(values)
-  except:
-    print "Unable to append data.  Check your connection?"
-    sys.exit()
-
-  # Wait 30 seconds before continuing
-  print "Wrote a row to %s" % spreadsheet
-  time.sleep(30)
+  
