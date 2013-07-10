@@ -27,8 +27,8 @@ data = get_dht_data(DUMMY_SENSOR)
 print data
  # Create a client for this application
 statsd_client = statsd.Client("temp&humidity", statsd_connection)
-gauge = statsd.Gauge('MyApplication', connection)
-raw = statsd.Raw('MyApplication', connection)
+gauge = statsd.Gauge('MyApplication', statsd_connection)
+raw = statsd.Raw('MyApplication', statsd_connection)
 
 print statsd_client
 
