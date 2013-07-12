@@ -4,7 +4,6 @@ import subprocess
 import re
 import sys
 import time
-import datetime
 
 def get_dht_data(sensor):
   """
@@ -29,9 +28,9 @@ def get_dht_data(sensor):
 
   print "Temperature: %.1f C" % temp
   print "Humidity:    %.1f %%" % humidity
- 
+  timestamp = int(time.time())
   values = [
-    [datetime.datetime.now(), 'dht.0.temperature', temp],
-    [datetime.datetime.now(), 'dht.0.humidity', humidity]
+    [timestamp, 'dht.0.temperature', temp],
+    [timestamp, 'dht.0.humidity', humidity]
   ]
   return values

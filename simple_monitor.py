@@ -35,3 +35,4 @@ while True:
 	for datum in data:
   		gauge.send(datum[1], datum[2])
   		#raw.send('SomeName', value, datetime.datetime.now())
+	time.sleep(2)
