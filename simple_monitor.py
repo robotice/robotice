@@ -6,17 +6,15 @@ import sys
 import time
 import datetime
 import statsd
+import yaml
 
 from sensors.dht import get_dht_data
 
-DUMMY_SENSOR = {
-    'version': 2302,
-    'port': 4
-}
-DUMMY_SENSOR1 = {
-    'version': 11,
-    'port': 18
-}
+config_file = open("/srv/robotice/config.yml", "r")
+
+config = yaml.load(config_file)
+
+print config
 
 # Open a connection to `server` on port `8125` with a `50%` sample rate
 statsd_connection = statsd.Connection(
@@ -34,14 +32,13 @@ raw = statsd.Raw('MyApplication', statsd_connection)
 print ("statsd client: ",statsd_client)
 
 while True:
-	data = get_dht_data(DUMMY_SENSOR)
-	data1 = get_dht_data(DUMMY_SENSOR1)
-	if (data == null and data1 == null)
+	for sensor in config.get("sensors"):
+		if sensor.get("type") == "dht":
+			data = get_dht_data(sensor)
+	if (data == null)
 		break
 	print ("data is ",data)
-	for datum in data:
-  		gauge.send(datum[1], datum[2])
-  	for datum1 in data1
-  		gauge.send(datum1[1], datum1[2])
+  	gauge.send(data[1], data[2])
+  	gauge.send(data1[1], data1[2])
   		#raw.send('SomeName', value, datetime.datetime.now())
 	time.sleep(2)
