@@ -36,6 +36,8 @@ print ("statsd client: ",statsd_client)
 while True:
 	data = get_dht_data(DUMMY_SENSOR)
 	data1 = get_dht_data(DUMMY_SENSOR1)
+	if (data == null and data1 == null)
+		break
 	print ("data is ",data)
 	for datum in data:
   		gauge.send(datum[1], datum[2])
