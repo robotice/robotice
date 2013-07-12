@@ -7,6 +7,7 @@ import time
 import datetime
 import statsd
 import yaml
+import RPi.GPIO as GPIO
 
 from sensors.dht import get_dht_data
 from sensors.sis_pm import get_sispm_data
@@ -40,5 +41,8 @@ while True:
 	get_sispm_data()
 	if data == None:
 		break
+	GPIO.setup(24, GPIO.OUT)
+	GPIO.output(24, False)
   	gauge.send(data[1], data[2])
 	time.sleep(2)
+	GPIO.output(24, True)
