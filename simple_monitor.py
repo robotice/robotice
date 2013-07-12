@@ -22,16 +22,16 @@ statsd_connection = statsd.Connection(
     disabled = False
 )
 
-data = get_dht_data(DUMMY_SENSOR)
-
-print data
- # Create a client for this application
+# Create a client for this application
 statsd_client = statsd.Client("temp&humidity", statsd_connection)
 gauge = statsd.Gauge('MyApplication', statsd_connection)
 raw = statsd.Raw('MyApplication', statsd_connection)
 
 print statsd_client
 
-for datum in data:
-  gauge.send(datum[1], datum[2])
-  #raw.send('SomeName', value, datetime.datetime.now())
+while True
+	data = get_dht_data(DUMMY_SENSOR)
+	print data
+	for datum in data:
+  		gauge.send(datum[1], datum[2])
+  		#raw.send('SomeName', value, datetime.datetime.now())
