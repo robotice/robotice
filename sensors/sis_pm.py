@@ -9,7 +9,7 @@ config_file = open("/srv/robotice/config.yml", "r")
 
 config = yaml.load(config_file)
 
-def get_sispm_data(device):
+def get_sispm_data():
   """
   sispcml
   """
