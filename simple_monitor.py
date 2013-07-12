@@ -14,7 +14,8 @@ config_file = open("/srv/robotice/config.yml", "r")
 
 config = yaml.load(config_file)
 
-print config
+if config.get("debug") == "true"
+	print config
 
 # Open a connection to `server` on port `8125` with a `50%` sample rate
 statsd_connection = statsd.Connection(
@@ -35,10 +36,7 @@ while True:
 	for sensor in config.get("sensors"):
 		if sensor.get("type") == "dht":
 			data = get_dht_data(sensor)
-	if (data == null)
+	if data == null
 		break
-	print ("data is ",data)
   	gauge.send(data[1], data[2])
-  	gauge.send(data1[1], data1[2])
-  		#raw.send('SomeName', value, datetime.datetime.now())
 	time.sleep(2)
