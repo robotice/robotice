@@ -9,6 +9,7 @@ import statsd
 import yaml
 
 from sensors.dht import get_dht_data
+from sensors.sis_pm import get_sispm_data
 
 config_file = open("/srv/robotice/config.yml", "r")
 
@@ -36,6 +37,7 @@ while True:
 	for sensor in config.get("sensors"):
 		if sensor.get("type") == "dht":
 			data = get_dht_data(sensor)
+	get_sispm_data()
 	if data == None:
 		break
   	gauge.send(data[1], data[2])

@@ -32,7 +32,7 @@ def get_dht_data(sensor):
     humidity = float(matches.group(1))
 
   if config.get("debug"):
-    if temp != None or humidity != None  
+    if temp != None or humidity != None:  
       print "Temperature: %.1f C" % temp
       print "Humidity:    %.1f %%" % humidity
 
