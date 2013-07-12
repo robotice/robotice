@@ -14,6 +14,10 @@ from sensors.sis_pm import get_sispm_data
 
 config_file = open("/srv/robotice/config.yml", "r")
 
+#setup GPIO
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(18, GPIO.OUT)
+
 config = yaml.load(config_file)
 
 # Open a connection to `server` on port `8125` with a `50%` sample rate
@@ -37,9 +41,8 @@ while True:
 			data = get_dht_data(sensor)
 			if data == None:
 				break
-  			gauge.send(data[1], data[2])
+  			gauge.send(data[0], data[1])
 	get_sispm_data()
-	GPIO.setup(24, GPIO.OUT)
-	GPIO.output(24, False)
+	GPIO.output(18, False)
 	time.sleep(2)
-	GPIO.output(24, True)
+	GPIO.output(18, True)
