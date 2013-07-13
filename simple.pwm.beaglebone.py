@@ -1,17 +1,17 @@
 import yaml
+import Adafruit_BBIO.PWM as PWM; 
 import time
-import Adafruit_BBIO.GPIO as GPIO; 
 
 config_file = open("/srv/robotice/config.yml", "r")
 
 config = yaml.load(config_file)
 
 if config.get("debug"):
-	print GPIO
-GPIO.setup("P8_16", GPIO.OUT)
-GPIO.cleanup()
+	print PWM
+
+PWM.cleanup()
 
 while True:
-	GPIO.output("P8_16", GPIO.HIGH)
+	PWM.start("P8_45", 100)
 	time.sleep(5)
-	GPIO.output("P8_16", GPIO.HIGH)
+	PWM.stop("P8_45")

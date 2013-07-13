@@ -1,3 +1,4 @@
+import yaml
 import RPi.GPIO as GPIO
 import time
 
