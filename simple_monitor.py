@@ -16,7 +16,9 @@ config_file = open("/srv/robotice/config.yml", "r")
 
 #setup GPIO
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(18, GPIO.OUT)
+#inicialize diods for analog output
+for diod in config.get("diods"):
+	GPIO.output(diod.get("port"), GPIO.OUT)
 
 config = yaml.load(config_file)
 
@@ -43,6 +45,11 @@ while True:
 				break
   			gauge.send(data[0], data[1])
 	get_sispm_data()
-	GPIO.output(18, False)
+	#on analog diod
+  	for diod in config.get("diods"):
+  		GPIO.output(diod.get("port"), False)
+
 	time.sleep(2)
-	GPIO.output(18, True)
+	#off analog diod
+	for diod in config.get("diods"):
+  		GPIO.output(diod.get("port"), True)
