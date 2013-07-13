@@ -36,7 +36,7 @@ while True:
 			data = get_dht_data(sensor)
   			send_data(data)
   		elif sensor.get("type") == "sispm":
-			data = get_sispm_data(sensor)
+			data = get_sispm_data()
 			send_data(data)
   			
 	time.sleep(2)
