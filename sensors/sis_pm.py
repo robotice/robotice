@@ -14,7 +14,17 @@ def get_sispm_data():
   """
   sispm
   """
-  return subprocess.check_output([executable, "-m", "all"]);
+  output = subprocess.check_output([executable,"-d", "0" ,"-n" ,"-m", "all"]);
+  lines = output.split("\n")
+  timestamp = int(time.time())
+  data = []
+  i = 0
+  for line in lines:
+    if i != 0:
+      data.append( [timestamp, "sismp.0.socket.%s" %i,line] )
+    i += 1
+      
+  return data
 
 def get_sispm_data_from_sensor(socket):
   """

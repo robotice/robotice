@@ -7,7 +7,6 @@ import time
 import datetime
 import statsd
 import yaml
-import RPi.GPIO as GPIO
 
 from sensors.dht import get_dht_data
 from sensors.sis_pm import get_sispm_data
@@ -15,12 +14,6 @@ from sensors.sis_pm import get_sispm_data
 config_file = open("/srv/robotice/config.yml", "r")
 
 config = yaml.load(config_file)
-#setup GPIO
-GPIO.setmode(GPIO.BCM)
-#inicialize diods for analog output
-for diod in config.get("diods"):
-	GPIO.output(diod.get("port"), GPIO.OUT)
-
 
 # Open a connection to `server` on port `8125` with a `50%` sample rate
 statsd_connection = statsd.Connection(
@@ -41,15 +34,15 @@ while True:
 	for sensor in config.get("sensors"):
 		if sensor.get("type") == "dht":
 			data = get_dht_data(sensor)
-			if data == None:
-				break
-  			gauge.send(data[0], data[1])
-	get_sispm_data()
-	#on analog diod
-  	for diod in config.get("diods"):
-  		GPIO.output(diod.get("port"), False)
-
+  			send_data(data)
+  		if sensor.get("type") == "sispm":
+			data = get_sispm_data(sensor)
+			send_data(data)
+  			
 	time.sleep(2)
-	#off analog diod
-	for diod in config.get("diods"):
-  		GPIO.output(diod.get("port"), True)
+
+def send_data(data):
+	if data == None:
+		break
+	for datum in data:
+		gauge.send(datum[0], datum[1])
