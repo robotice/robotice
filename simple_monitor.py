@@ -14,13 +14,13 @@ from sensors.sis_pm import get_sispm_data
 
 config_file = open("/srv/robotice/config.yml", "r")
 
+config = yaml.load(config_file)
 #setup GPIO
 GPIO.setmode(GPIO.BCM)
 #inicialize diods for analog output
 for diod in config.get("diods"):
 	GPIO.output(diod.get("port"), GPIO.OUT)
 
-config = yaml.load(config_file)
 
 # Open a connection to `server` on port `8125` with a `50%` sample rate
 statsd_connection = statsd.Connection(
