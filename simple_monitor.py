@@ -30,6 +30,11 @@ raw = statsd.Raw('MyApplication', statsd_connection)
 
 print ("statsd client: ",statsd_client)
 
+def send_data(data):
+	if data != None:
+		for datum in data:
+			gauge.send(datum[0], datum[1])
+
 while True:
 	for sensor in config.get("sensors"):
 		if sensor.get("type") == "dht":
@@ -40,8 +45,3 @@ while True:
 			send_data(data)
   			
 	time.sleep(2)
-
-def send_data(data):
-	if data != None:
-		for datum in data:
-			gauge.send(datum[0], datum[1])
