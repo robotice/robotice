@@ -22,7 +22,7 @@ def get_sispm_data():
   for line in lines:
     if i != 0:
       status = line.split(": ")
-      data.append( [timestamp, "sismp.0.socket.%s" %i,int(status[1])] )
+      data.append( [timestamp, "sismp.0.socket.%s" % i, int(status[1])] )
     i += 1
       
   return data
