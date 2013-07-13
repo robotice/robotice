@@ -1,7 +1,7 @@
 import Adafruit_BBIO.ADC as ADC
 import time
  
-sensor_pin = 'P8_46'
+sensor_pin = 'P9_38'
  
 ADC.setup()
  

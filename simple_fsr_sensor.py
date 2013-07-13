@@ -7,8 +7,11 @@ ADC.setup()
  
 print('Reading\t\tVolts')
  
+MAX = 0 
 while True:
     reading = ADC.read(sensor_pin)
+    if reading > MAX:
+    	MAX = reading
     volts = reading * 1.800
-    print('%f\t%f' % (reading, volts))
+    print('%f\tmax is: %f' % (reading, MAX))
     time.sleep(1)
