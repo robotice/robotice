@@ -8,17 +8,16 @@ import yaml
 config_file = open("/srv/robotice/config.yml", "r")
 
 config = yaml.load(config_file)
+executable = "/usr/local/bin/sispmctl"
 
 def get_sispm_data():
   """
-  sispcml
+  sispm
   """
-  executable = "/usr/local/bin/sispmctl"
-  values = []
-  for socket in xrange(1,4):
-    output = subprocess.check_output([executable, "-m", socket]);
-    values[socket] = [timestamp = int(time.time()),"sispm.0.{socket}", output]
-    if config.get("debug"):
-      print values[socket]
+  return subprocess.check_output([executable, "-m", "all"]);
 
-  return values
+def get_sispm_data_from_sensor(socket):
+  """
+  get data from one sensor
+  """
+  return subprocess.check_output([executable, "-m", socket]);
