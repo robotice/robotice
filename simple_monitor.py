@@ -35,14 +35,13 @@ while True:
 		if sensor.get("type") == "dht":
 			data = get_dht_data(sensor)
   			send_data(data)
-  		if sensor.get("type") == "sispm":
+  		elif sensor.get("type") == "sispm":
 			data = get_sispm_data(sensor)
 			send_data(data)
   			
 	time.sleep(2)
 
 def send_data(data):
-	if data == None:
-		break
-	for datum in data:
-		gauge.send(datum[0], datum[1])
+	if data != None:
+		for datum in data:
+			gauge.send(datum[0], datum[1])
