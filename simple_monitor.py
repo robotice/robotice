@@ -33,6 +33,7 @@ print ("statsd client: ",statsd_client)
 def send_data(data):
 	if data != None:
 		for datum in data:
+			print datum
 			gauge.send(datum[1], datum[2])
 
 while True:
