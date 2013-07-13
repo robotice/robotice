@@ -9,9 +9,9 @@ config = yaml.load(config_file)
 if config.get("debug"):
 	print PWM
 
-PWM.cleanup()
-
 while True:
 	PWM.start("P8_45", 100)
 	time.sleep(5)
 	PWM.stop("P8_45")
+
+PWM.cleanup()	

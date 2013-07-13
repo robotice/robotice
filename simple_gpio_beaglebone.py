@@ -8,10 +8,12 @@ config = yaml.load(config_file)
 
 if config.get("debug"):
 	print GPIO
+	
 GPIO.setup("P8_16", GPIO.OUT)
-GPIO.cleanup()
 
 while True:
 	GPIO.output("P8_16", GPIO.HIGH)
 	time.sleep(5)
 	GPIO.output("P8_16", GPIO.HIGH)
+
+GPIO.cleanup()
