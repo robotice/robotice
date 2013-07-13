@@ -33,7 +33,7 @@ print ("statsd client: ",statsd_client)
 def send_data(data):
 	if data != None:
 		for datum in data:
-			gauge.send(datum[0], datum[1])
+			gauge.send(datum[1], datum[2])
 
 while True:
 	for sensor in config.get("sensors"):
