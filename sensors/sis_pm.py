@@ -14,7 +14,11 @@ def get_sispm_data():
   """
   sispm
   """
-  output = subprocess.check_output([executable,"-d", "0" ,"-n" ,"-m", "all"]);
+  try:
+    output = subprocess.check_output([executable,"-d", "0" ,"-n" ,"-m", "all"]);
+  except Except, e:
+    return None
+    
   lines = output.split("\n")
   timestamp = int(time.time())
   data = []
