@@ -1,6 +1,6 @@
 import yaml
-import time
 import Adafruit_BBIO.GPIO as GPIO
+from time import sleep
 
 config_file = open("/srv/robotice/config.yml", "r")
 
@@ -9,20 +9,22 @@ config = yaml.load(config_file)
 if config.get("debug"):
 	print GPIO
 
-RELE_PORT = "P8_10"
-
+rele_port = "P8_10"
+timeout = 2
 #GPIO.setup("P8_41", GPIO.OUT)
-GPIO.setup(RELE_PORT, GPIO.OUT)
+GPIO.setup(rele_port, GPIO.OUT)
 while True:
-	GPIO.output(RELE_PORT, GPIO.HIGH)
+	GPIO.output(rele_port, GPIO.HIGH)
 	#PIO.output("P8_41", GPIO.HIGH)
-	time.sleep(2)
+	print "on after %s s timeout" %timeout
+	sleep(timeout)
 	GPIO.cleanup()
-	GPIO.setup(RELE_PORT, GPIO.OUT)
-	GPIO.output(RELE_PORT, GPIO.LOW)
+	GPIO.setup(rele_port, GPIO.OUT)
+	GPIO.output(rele_port, GPIO.LOW)
+	print "off after %s s timeout" %timeout
 	#GPIO.output("P8_41", GPIO.LOW)
-	time.sleep(2)
+	sleep(timeout)	
 	GPIO.cleanup()
-	GPIO.setup(RELE_PORT, GPIO.OUT)
+	GPIO.setup(rele_port, GPIO.OUT)
 
 

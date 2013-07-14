@@ -1,8 +1,8 @@
 import Adafruit_BBIO.ADC as ADC
 import time
  
-sensor_pin = 'P9_40'
- 
+sensor_pin = 'P8.10'
+ADC.cleanup()
 ADC.setup()
  
 print('Reading\t\tVolts')
