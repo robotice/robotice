@@ -1,6 +1,7 @@
 import logging
 import yaml
-from daemonize import Daemonize
+import statsd
+
 from time import sleep
 
 from simple_monitor import send_data_all
@@ -9,7 +10,8 @@ config_file = open("/srv/robotice/config.yml", "r")
 
 config = yaml.load(config_file)
 
-name = config.get("name")
+print config
+
 
 pid = "/tmp/robotice.pid"
 
@@ -30,15 +32,6 @@ statsd_connection = statsd.Connection(
     disabled = False
 )
 
-sender = statsd.Gauge('MyApplication', statsd_connection)
+sender = statsd.Raw('robotice_prod.%s' % config.get('name').replace('.', '_'), statsd_connection)
 
-def main():
-    while True:
-        print "ahoj"
-        logger.debug("test")
-        send_data_all(conf, sender)
-        sleep(2)
-        print "ahoj2"
-
-daemon = Daemonize(app="robotice", pid=pid, action=main, keep_fds=keep_fds) 
-daemon.start()
+send_data_all(config, sender)

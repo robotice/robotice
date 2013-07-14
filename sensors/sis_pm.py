@@ -10,7 +10,7 @@ config_file = open("/srv/robotice/config.yml", "r")
 config = yaml.load(config_file)
 executable = "/usr/local/bin/sispmctl"
 
-def get_sispm_data():
+def get_sispm_data(sensor):
   """
   sispm
   """
@@ -27,7 +27,7 @@ def get_sispm_data():
     if i != 0:
       status = line.split("\t")
       if len(status) > 1:
-        data.append( [timestamp, "sismp.0.socket.%s" % i, int(status[1])] )
+        data.append( [timestamp, "sismp.0.socket_%s" % i, int(status[1])] )
     i += 1
       
   return data
