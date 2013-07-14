@@ -1,4 +1,5 @@
 import logging
+import yaml
 from daemonize import Daemonize
 from time import sleep
 from simple_monitor import send_data_all
@@ -18,11 +19,20 @@ fh.setLevel(logging.DEBUG)
 logger.addHandler(fh)
 keep_fds = [fh.stream.fileno()]
 
+statsd_connection = statsd.Connection(
+    host='master2.htfs.info',
+    port=8125 ,
+    sample_rate=0.5,
+    disabled = False
+)
+
+sender = statsd.Gauge('MyApplication', statsd_connection)
+
 def main():
     while True:
         print "ahoj"
         logger.debug("test")
-        #send_data_all(logger,conf,sender)
+        send_data_all(logger,conf,sender)
         sleep(2)
         print "ahoj2"
 
