@@ -31,7 +31,7 @@ def main():
         sample_rate=1,
         disabled = False
     )
-    sender = statsd.Raw('robotice_prod.%s' % config.get('name').replace('.', '_'), statsd_connection)
+    sender = statsd.Gauge('robotice_prod.%s' % config.get('name').replace('.', '_'), statsd_connection)
 
     logger.debug(sender)
 
