@@ -6,5 +6,7 @@ Resides in /srv/robotice/daemon
 Usage:
 ------
 
-./robotice.py start|stop|restart
+./robotice.py
+
+log in /tmp/rotice.log
 
