@@ -12,9 +12,9 @@ def send_data(config, data, sender):
 	if data != None:
 		for datum in data:
 			#log.info(datum)
-			sender.send(datum[1], datum[2])
+			sender.send(datum[1], datum[2], datum[0])
 
-def send_data_all(config, sender):
+def collect_data(config, sender):
 	for sensor in config.get("sensors"):
 		if sensor.get("type") == "dht":
 			data = get_dht_data(sensor)

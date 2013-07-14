@@ -4,7 +4,7 @@ import statsd
 from daemonize import Daemonize
 from time import sleep
 
-from simple_monitor import send_data_all
+from utils import collect_data
 
 pid = "/tmp/robotice.pid"
 
@@ -31,12 +31,12 @@ def main():
         sample_rate=1,
         disabled = False
     )
-    sender = statsd.Gauge('robotice_prod.%s' % config.get('name').replace('.', '_'), statsd_connection)
+    sender = statsd.Raw('robotice_prod.%s' % config.get('name').replace('.', '_'), statsd_connection)
 
     logger.debug(sender)
 
     while True:
-        send_data_all(config, sender)
+        collect_data(config, sender)
         sleep(2)
 
 daemon = Daemonize(app="robotice", pid=pid, action=main, keep_fds=keep_fds) 
