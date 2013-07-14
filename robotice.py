@@ -25,19 +25,17 @@ def main():
 
     logger.debug(config)
 
-
     statsd_connection = statsd.Connection(
         host='master2.htfs.info',
         port=8125,
         sample_rate=1,
         disabled = False
     )
-    sender = statsd.Raw('robotice_prod.%s' % config.get('name').replace('.', '_'), statsd_connection)
+    sender = statsd.Gauge('robotice_prod.%s' % config.get('name').replace('.', '_'), statsd_connection)
 
     logger.debug(sender)
 
     while True:
-        logger.debug("test")
         send_data_all(config, sender)
         sleep(2)
 

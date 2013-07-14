@@ -11,22 +11,22 @@ log = logging.getLogger("robotice.monitor")
 def send_data(config, data, sender):
 	if data != None:
 		for datum in data:
-			print datum
-			sender.send(datum[1], datum[2], datum[0])
+			#log.info(datum)
+			sender.send(datum[1], datum[2])
 
 def send_data_all(config, sender):
 	for sensor in config.get("sensors"):
 		if sensor.get("type") == "dht":
 			data = get_dht_data(sensor)
 			send_data(config, data, sender)
-			log.info("dht:%s:%s" % (sensor.get("port"), data))
+			#log.info("dht:%s:%s" % (sensor.get("port"), data))
 		elif sensor.get("type") == "sispm":
 			data = get_sispm_data(sensor)
 			send_data(config, data, sender)  			
-			log.info("sispm:%s:%s" % (sensor.get("device"), data))
+			#log.info("sispm:%s:%s" % (sensor.get("device"), data))
 		elif sensor.get("type") == "dummy":
 			data = get_dummy_data(sensor)
 			send_data(config, data, sender)  			
-			log.info("dummy:%s:%s" % (sensor.get("device"), data))
+			#log.info("dummy:%s:%s" % (sensor.get("device"), data))
 		else:
 			log.info("unhandled device")
