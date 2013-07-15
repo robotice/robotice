@@ -8,5 +8,10 @@ Usage:
 
 ./robotice.py
 
+requirements
+------
+ - daemonize
+ - PyYAML 
+
 log in /tmp/rotice.log
 
