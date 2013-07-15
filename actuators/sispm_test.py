@@ -2,6 +2,10 @@
 import subprocess
 import re
 import sys
+import logging
+
+logger = logging.getLogger("robotice")
+logger.setLevel(logging.DEBUG)
 
 executable = "/usr/local/bin/sispmctl"
 

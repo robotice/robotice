@@ -2,12 +2,7 @@
 import subprocess
 import re
 import sys
-import time
-import yaml
 
-config_file = open("/srv/robotice/config.yml", "r")
-
-config = yaml.load(config_file)
 executable = "/usr/local/bin/sispmctl"
 
 def get_sispm_data(sensor):
@@ -34,6 +29,29 @@ def get_sispm_data(sensor):
 
 def get_sispm_data_from_sensor(socket):
   """
-  get data from one sensor
+  get data from one sensor of socket
   """
   return subprocess.check_output([executable, "-m", socket]);
+
+def scan_device(additional_information=None):
+  """
+  return array connected device
+  if you want additional_information specify param 
+  """ 
+  try:
+    output = subprocess.check_output([executable,"-s"]).split("\n");
+  except Exception, e:
+    return None
+
+  if additional_information != None:
+    return output
+
+  device = output[1].split("#")
+  devices = []
+
+  for blok in device:
+    if blok.isdigit():
+      devices.append(blok)
+
+  return devices    
+

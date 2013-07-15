@@ -2,7 +2,7 @@
 import RPi.GPIO as GPIO
 from time import sleep
 
-logger = logging.getLogger("simple_gpio_rpi")
+logger = logging.getLogger("robotice")
 logger.setLevel(logging.DEBUG)
 
 PORT = 18
