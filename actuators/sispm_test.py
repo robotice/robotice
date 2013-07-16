@@ -9,7 +9,7 @@ logger.setLevel(logging.DEBUG)
 
 executable = "/usr/local/bin/sispmctl"
 
-def set_socket(device=None, value, socket):
+def set_socket(value, socket, device=None):
   """
   @device 0,1 if none default 0
   @value = o/f
