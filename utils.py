@@ -3,8 +3,8 @@
 import logging
 
 from sensors.dht import get_dht_data
-from sensors.sis_pm import get_sispm_data
 from sensors.dummy import get_dummy_data
+from sensors.sispm import get_sispm_data
 
 log = logging.getLogger("robotice.monitor")
 
