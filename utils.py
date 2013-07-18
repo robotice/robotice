@@ -12,7 +12,7 @@ def send_data(config, data, sender):
 	if data != None:
 		for datum in data:
 			#log.info(datum)
-			sender.send(datum[1], datum[2])
+			sender.send(datum[0], datum[1])
 
 def collect_data(config, sender):
 	for sensor in config.get("sensors"):

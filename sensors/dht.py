@@ -3,7 +3,6 @@
 import subprocess
 import re
 import sys
-import time
 import yaml
 
 config_file = open("/srv/robotice/config.yml", "r")
@@ -38,11 +37,9 @@ def get_dht_data(sensor):
     print "Temperature: %.1f C" % temp
     print "Humidity:    %.1f %%" % humidity
 
-
-  timestamp = int(time.time())
   values = [
-    [timestamp, 'dht.%s.temperature' % port, temp],
-    [timestamp, 'dht.%s.humidity' % port, humidity]
+    ['dht.%s.temperature' % port, temp],
+    ['dht.%s.humidity' % port, humidity]
   ]
   return values
 
