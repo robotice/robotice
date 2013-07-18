@@ -1,17 +1,10 @@
 import logging
 import yaml
 import statsd
-
+from daemonize import Daemonize
 from time import sleep
 
-from simple_monitor import send_data_all
-
-config_file = open("/srv/robotice/config.yml", "r")
-
-config = yaml.load(config_file)
-
-print config
-
+from utils import collect_data
 
 pid = "/tmp/robotice.pid"
 
@@ -25,13 +18,21 @@ fh.setLevel(logging.DEBUG)
 logger.addHandler(fh)
 keep_fds = [fh.stream.fileno()]
 
+config_file = open("/srv/robotice/config.yml", "r")
+config = yaml.load(config_file)
+
+logger.debug(config)
+
 statsd_connection = statsd.Connection(
     host='master2.htfs.info',
-    port=8125 ,
+    port=8125,
     sample_rate=1,
     disabled = False
 )
+sender = statsd.Gauge('robotice_prod.%s' % config.get('name').replace('.', '_'), statsd_connection)
 
-sender = statsd.Raw('robotice_prod.%s' % config.get('name').replace('.', '_'), statsd_connection)
+logger.debug(sender)
 
-send_data_all(config, sender)
+while True:
+    collect_data(config, sender)
+    sleep(2)
