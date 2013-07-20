@@ -14,4 +14,4 @@ actuator = {
 
 print actuator
 
-run_action(actuator, 10)
+run_action(actuator, 3)
