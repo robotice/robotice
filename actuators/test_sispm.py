@@ -2,7 +2,7 @@ import yaml
 
 import statsd
 
-from time import sleep
+import time
 
 from sispm import run_action
 
@@ -13,5 +13,9 @@ actuator = {
 }
 
 print actuator
+
+run_action(actuator, 1)
+
+time.sleep(2)
 
 run_action(actuator, 1)
