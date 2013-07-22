@@ -1,6 +1,10 @@
 from celery import Celery
+from yaml import load
 
-BROKER_URL = "amqp://celery:celery@master2.htfs.info:5672//celery"
+config_file = open("/srv/robotice/config.yml", "r")
+config = load(config_file)
+
+BROKER_URL = config.get('broker')
 CELERY_RESULT_BACKEND = "amqp"
 CELERY_IMPORTS = ("tasks.monitor",)
 

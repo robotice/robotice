@@ -1,4 +1,11 @@
+from celery import Celery
+from yaml import load
 
-from celery.task import task
+config_file = open("/srv/robotice/config.yml", "r")
+config = load(config_file)
 
-from tasks.planner import get_model, get_model_values
+BROKER_URL = config.get('broker')
+CELERY_RESULT_BACKEND = "amqp"
+CELERY_IMPORTS = ("tasks.planner",)
+
+celery = Celery(broker=BROKER_URL)
