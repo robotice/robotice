@@ -1,0 +1,25 @@
+config:
+- device: sispm.0.socket_1
+  plan:
+  - time: 0
+    high: 0
+    low: 0
+    recurrent: true
+    errors: 5
+  - time: 43200
+    high: 0
+    low: 0
+    recurrent: true
+    errors: 5
+- device: cds.0.luminosity
+  plan:
+  - time: 0
+    high: 1000
+    low: 0
+    recurrent: true
+    errors: 5
+  - time: 43200
+    high: 10000
+    low: 60000
+    recurrent: true
+    errors: 5
