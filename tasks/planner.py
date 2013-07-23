@@ -8,6 +8,6 @@ def get_model():
     return load(config_file)
 
 @task
-def get_model_values(timestamp):
+def get_model_data(model, timestamp):
 
     return 0
