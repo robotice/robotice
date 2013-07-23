@@ -16,6 +16,11 @@ CELERYBEAT_SCHEDULE = {
         'schedule': crontab(),
         'args': (config, ),
     },
+    'data-reader': {
+        'task': 'monitor.get_real_data',
+        'schedule': crontab(),
+        'args': (config.get('sensors'), ),
+    },
 }
 
 

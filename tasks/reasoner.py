@@ -34,33 +34,33 @@ def maintain_system(config):
     now = time()
 
     # Ask planner for system shape - all sensors, actuators
-    model = get_model.delay().get()
+#    model = get_model.delay().get()
 
     # Ask planner for system model values for sensors at given time
-    model_data = get_model_data.delay(model, now).get()
+#    model_data = get_model_data.delay(model, now).get()
 
     # send model data ranges upstream
-    log_data(model_data)
+#    log_data(model_data)
 
     # Depending on model get real data from all sensors
-    real_data, metering_log = get_real_data.delay(model).get()
+#    real_data, metering_log = get_real_data.delay(model).get()
 
     # send real collected metrics upstream
-    log_data(real_data)
+#    log_data(real_data)
 
     # send data collection statistics (reading retries)
-    log_data(metering_log)
+#    log_data(metering_log)
 
     # Compare real data with model data and get list of actions to do
-    actions = compare_data.delay(model, real_data, model_data).get()
+ #   actions = compare_data.delay(model, real_data, model_data).get()
 
-    action_results = []
+ #   action_results = []
 
-    for action in model.get('sensors'):
+ #   for action in model.get('sensors'):
         # Commit each action and return status code
-        action_results.append(commit_action.delay(action).get())
+ #       action_results.append(commit_action.delay(action).get())
 
     # send action performance statistics
-    log_data(action_results)
+ #   log_data(action_results)
 
     return 0
