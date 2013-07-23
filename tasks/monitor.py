@@ -11,11 +11,11 @@ from sensors.sispm import get_sispm_data
 logger = get_task_logger(__name__)
 
 @task(name='monitor.get_real_data')
-def get_real_data(sensors):
+def get_real_data(config):
 
     tasks = []
 
-    for sensor in sensors:
+    for sensor in config.sensors:
         if sensor.get("type") == "dht":
             tasks.append(dht_get_data.subtask((sensor,)))
         elif sensor.get("type") == "sispm":
@@ -27,13 +27,15 @@ def get_real_data(sensors):
 
     job = group(tasks)
 
-    result = job.apply_async(link=return_real_data.subtask((), ))
+    result = job.apply_async(link=return_real_data.subtask((config, ), ))
 
     return 'Started reading at %s' % time()
 
 @task(name='monitor.return_real_data')
-def return_real_data(results):
+def return_real_data(results, config):
     logger.info(results.join())
+    logger.info(config)
+
     return results.join()
 
 @task(name='monitor.dht.get_data')

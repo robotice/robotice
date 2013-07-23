@@ -1,32 +1,37 @@
 #!/usr/bin/python
 
 import logging
+from yaml import load
+import statsd
+import redis
 
-from sensors.dht import get_dht_data
-from sensors.dummy import get_dummy_data
-from sensors.sispm import get_sispm_data
+log = logging.getLogger("robotice.utils")
 
-log = logging.getLogger("robotice.monitor")
+class Settings(object):
+    broker = None
+    database = None
+    metering = None
+    sensors = None
+    actuators = None
 
-def send_data(config, data, sender):
-	if data != None:
-		for datum in data:
-			#log.info(datum)
-			sender.send(datum[0], datum[1])
+    def __init__(self):
 
-def collect_data(config, sender):
-	for sensor in config.get("sensors"):
-		if sensor.get("type") == "dht":
-			data = get_dht_data(sensor)
-			send_data(config, data, sender)
-			#log.info("dht:%s:%s" % (sensor.get("port"), data))
-		elif sensor.get("type") == "sispm":
-			data = get_sispm_data(sensor)
-			send_data(config, data, sender)  			
-			#log.info("sispm:%s:%s" % (sensor.get("device"), data))
-		elif sensor.get("type") == "dummy":
-			data = get_dummy_data(sensor)
-			send_data(config, data, sender)  			
-			#log.info("dummy:%s:%s" % (sensor.get("device"), data))
-		else:
-			log.info("unhandled device")
+        config_file = open("/srv/robotice/config.yml", "r")
+        config = load(config_file)
+
+        statsd_connection = statsd.Connection(
+            host=config.get('metering').get('host'),
+            port=config.get('metering').get('port'),
+            sample_rate=config.get('metering').get('sample_rate'),
+            disabled = False
+        )
+        self.metering = statsd.Gauge('%s.%s' % (config.get('system'), config.get('name').replace('.', '_')), statsd_connection)
+        self.database = redis.Redis(host=config.get('database').get('host'), port=config.get('database').get('port'), db=0)
+        self.broker = config.get('broker')
+        self.sensors = config.get('sensors')
+        self.actuators = config.get('actuators')
+
+def setup_app():
+    app = Settings()
+    return app
+

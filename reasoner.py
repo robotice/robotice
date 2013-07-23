@@ -1,11 +1,12 @@
 from datetime import timedelta
-from yaml import load
+
 from celery import Celery
 from celery.execute import send_task
 from celery.schedules import crontab
 
-config_file = open("/srv/robotice/config.yml", "r")
-config = load(config_file)
+from utils import setup_app
+
+config = setup_app()
 
 BROKER_URL = config.get('broker')
 CELERY_RESULT_BACKEND = "amqp"
@@ -20,7 +21,7 @@ CELERYBEAT_SCHEDULE = {
     'data-reader': {
         'task': 'monitor.get_real_data',
         'schedule': timedelta(seconds=10),
-        'args': (config.get('sensors'), ),
+        'args': (config, ),
     },
 }
 
