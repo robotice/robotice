@@ -8,6 +8,6 @@ def get_dummy_data(sensor):
   """
 
   data = []
-  data.append( ["dummy.0.data",  random.randint(0, 100)] )
+  data.append( ["dummy.%s.data" % sensor.get('device'),  random.randint(0, 100)] )
       
   return data
