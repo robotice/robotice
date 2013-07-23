@@ -1,22 +1,22 @@
+from celery import Celery
 from yaml import load
-from time import sleep
 
 from celery.execute import send_task
-
-from tasks.planner import get_model
-from tasks.monitor import get_data
+from celery.schedules import crontab
 
 config_file = open("/srv/robotice/config.yml", "r")
 config = load(config_file)
 
-sensor = {}
+BROKER_URL = config.get('broker')
+CELERY_RESULT_BACKEND = "amqp"
+CELERY_IMPORTS = ("tasks.reasoner", "tasks.monitor", "tasks.reactor", "tasks.planner")
+CELERYBEAT_SCHEDULE = {
+    'system-maintainer': {
+        'task': 'reasoner.maintain_system',
+        'schedule': crontab(),
+        'args': (config, ),
+    },
+}
 
-result = get_model.apply_async(sensor)
-print result.get()
-#		result = send_task('task.add', [3, 3])
-#		print result.get()
-#		result = add.delay(4, 4)
 
-
-#daemon = Daemonize(app="robotice", pid=pid, action=main, keep_fds=keep_fds) 
-#daemon.start()
+celery = Celery(broker=BROKER_URL)

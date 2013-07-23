@@ -26,7 +26,7 @@ def log_data(model, data):
 
 
 @task(name='reasoner.maintain_system')
-def maintain_system():
+def maintain_system(config):
     """
     Core task that runs every 1-60 seconds
     """
