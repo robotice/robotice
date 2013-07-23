@@ -8,7 +8,7 @@ from utils import setup_app
 
 config = setup_app()
 
-BROKER_URL = config.get('broker')
+BROKER_URL = config.broker
 CELERY_RESULT_BACKEND = "amqp"
 CELERY_IMPORTS = ("tasks.reasoner", "tasks.monitor", "tasks.reactor", "tasks.planner")
 CELERY_TIMEZONE = 'UTC'
