@@ -16,13 +16,13 @@ def compare_data(model, real_data, model_data):
 
     return []
 
-@task(name='reasoner.compare_data')
-def compare_data(model, real_data, model_data):
+@task(name='reasoner.log_data')
+def log_data(model, data):
     """
-    Compares model and real data and returns list of actions to do
+    Ships data to some metrics collectors (StatsD)
     """
 
-    return []
+    pass
 
 
 @task(name='reasoner.maintain_system')
