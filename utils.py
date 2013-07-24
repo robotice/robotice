@@ -8,40 +8,39 @@ import redis
 log = logging.getLogger("robotice.utils")
 
 class Settings(object):
-    name = None
-    system = None
-    broker = None
-    database = None
-    metering = None
-    sensors = None
-    actuators = None
 
+    config = None
+    
     def __init__(self):
 
         config_file = open("/srv/robotice/config.yml", "r")
-        config = load(config_file)
-
-        self.name = config.get('name').replace('.', '_')
-        self.system = config.get('system')
-        self.metering = config.get('metering')
-        self.database = config.get('database')
-        self.broker = config.get('broker')
-        self.sensors = config.get('sensors')
-        self.actuators = config.get('actuators')
+        self.config = load(config_file)
 
     @property
-    def get_database(self):
-        return redis.Redis(host=self.database.get('host'), port=self.database.get('port'), db=0)
+    def sensors(self):
+        return self.config.get('sensors')
 
     @property
-    def get_metering(self):
+    def broker(self):
+        return self.config.get('broker')
+
+    @property
+    def database(self):
+        return redis.Redis(host=self.config.get('database').get('host'), port=self.config.get('database').get('port'), db=0)
+
+    @property
+    def metering_prefix(self):
+        return '%s.%s' % (self.config.get('system'), self.config.get('name').replace('.', '_'))
+
+    @property
+    def metering(self):
         statsd_connection = statsd.Connection(
-            host=self.metering.get('host'),
-            port=self.metering.get('port'),
-            sample_rate=self.metering.get('sample_rate'),
+            host=self.config.get('metering').get('host'),
+            port=self.config.get('metering').get('port'),
+            sample_rate=self.config.get('metering').get('sample_rate'),
             disabled = False
         )
-        return statsd.Gauge('%s.%s' % (self.system, self.name), statsd_connection)
+        return statsd.Gauge(self.metering_prefix, statsd_connection)
 
 def setup_app():
     app = Settings()

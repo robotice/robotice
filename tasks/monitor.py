@@ -22,21 +22,25 @@ def get_real_data(config):
             tasks.append(sispm_get_data.subtask((sensor,)))
         elif sensor.get("type") == "dummy":
             tasks.append(dummy_get_data.subtask((sensor,)))
-   
-    logger.info('Doing %s tasks' % tasks)
 
     job = group(tasks)
 
     result = job.apply_async(link=return_real_data.subtask((config, ), ))
 
-    return 'Started reading at %s' % time()
+    return 'Started reading real data at %s' % time()
 
 @task(name='monitor.return_real_data')
 def return_real_data(results, config):
-    logger.info(results.join())
-    logger.info(config)
 
-    return results.join()
+    metering = config.metering
+    database = config.database
+
+    for result in results:
+        for datum in result:
+            metering.send(datum[0], datum[1])
+            database.set('%s.%s' % (config.metering_prefix, datum[0]), datum[1])
+
+    return 'Finished reading real data at %s' % time()
 
 @task(name='monitor.dht.get_data')
 def dht_get_data(sensor):
