@@ -53,6 +53,6 @@ def dummy_get_data(sensor):
     return get_dummy_data(sensor)
 
 @task(name='monitor.sispm.get_data')
-def get_sispm_data(sensor):
+def sispm_get_data(sensor):
     logger.info('Reading sensor: %s' % sensor)
     return get_sispm_data(sensor)
