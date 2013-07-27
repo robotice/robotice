@@ -15,10 +15,10 @@ CELERY_IMPORTS = (
 	"monitor.tasks",
 )
 
-default_exchange = Exchange('default', type='direct')
-monitor_exchange = Exchange('monitor', type='direct')
-reactor_exchange = Exchange('reactor', type='direct')
-planner_exchange = Exchange('planner', type='direct')
+default_exchange = Exchange('default', type='fanout')
+monitor_exchange = Exchange('monitor', type='fanout')
+reactor_exchange = Exchange('reactor', type='fanout')
+planner_exchange = Exchange('planner', type='fanout')
 
 CELERY_QUEUES = (
     Queue('default', default_exchange, routing_key='default'),
@@ -54,14 +54,6 @@ CELERY_ROUTES = {
     },
     'reasoner.compare_data': {
         'queue': 'reasoner',
-    },
-}
-
-CELERYBEAT_SCHEDULE = {
-    'real-data-reader': {
-        'task': 'monitor.get_real_data',
-        'schedule': timedelta(seconds=10),
-        'args': (config, ),
     },
 }
 
