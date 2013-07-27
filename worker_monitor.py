@@ -21,12 +21,14 @@ CELERY_IMPORTS = (
 
 default_exchange = Exchange('default', type='fanout')
 monitor_exchange = Exchange('monitor', type='fanout')
+monitor_local_exchange = Exchange('monitor_%s' % config.hostname, type='fanout')
 reactor_exchange = Exchange('reactor', type='fanout')
 planner_exchange = Exchange('planner', type='fanout')
 
 CELERY_QUEUES = (
     Queue('default', default_exchange, routing_key='default'),
     Queue('monitor', monitor_exchange, routing_key='monitor.#'),
+    Queue('monitor_%s' % config.hostname, monitor_local_exchange, routing_key='monitor_%s.#' % config.hostname),
     Queue('planner', planner_exchange, routing_key='planner.#'),
 )
 
@@ -44,20 +46,17 @@ CELERY_ROUTES = {
     'monitor.return_real_data': {
         'queue': 'monitor',
     },
+    'monitor.get_sensor_data.cds': {
+        'queue': 'monitor_%s' % config.hostname,
+    },
     'monitor.get_sensor_data.dht': {
-        'queue': 'monitor',
+        'queue': 'monitor_%s' % config.hostname,
     },
     'monitor.get_sensor_data.dummy': {
-        'queue': 'monitor',
+        'queue': 'monitor_%s' % config.hostname,
     },
     'monitor.get_sensor_data.sispm': {
-        'queue': 'monitor',
-    },
-    'planner.get_model_data': {
-        'queue': 'planner',
-    },
-    'reasoner.compare_data': {
-        'queue': 'reasoner',
+        'queue': 'monitor_%s' % config.hostname,
     },
 }
 
