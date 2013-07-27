@@ -23,8 +23,8 @@ class Settings(object):
         for host in self.config.get('system'):
             if host.get('name') == self.hostname:
                 for sensor in host.get('sensors'):
-                    sensor['os_family'] = self.config.get('os_family')
-                    sensor['cpu_arch'] = self.config.get('cpu_arch')
+                    sensor['os_family'] = host.get('os_family')
+                    sensor['cpu_arch'] = host.get('cpu_arch')
                     sensor['hostname'] = self.hostname
                     sensors.append(sensor)
         return sensors
