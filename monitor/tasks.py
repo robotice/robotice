@@ -10,7 +10,7 @@ from monitor.sensors.sispm import get_sispm_data
 
 logger = get_task_logger(__name__)
 
-@task(name='monitor.get_real_data')
+@task(name='monitor.get_real_data', routing_key='monitor.get_real_data')
 def get_real_data(config):
 
     tasks = []
@@ -47,12 +47,12 @@ def dht_get_data(sensor):
     logger.info('Reading sensor: %s' % sensor)
     return get_dht_data(sensor)
 
-@task(name='monitor.get_sensor_data.dummy')
+@task(name='monitor.get_sensor_data.dummy', track_started=True)
 def dummy_get_data(sensor):
     logger.info('Reading sensor: %s' % sensor)
     return get_dummy_data(sensor)
 
-@task(name='monitor.get_sensor_data.sispm')
+@task(name='monitor.get_sensor_data.sispm', track_started=True)
 def sispm_get_data(sensor):
     logger.info('Reading sensor: %s' % sensor)
     return get_sispm_data(sensor)
