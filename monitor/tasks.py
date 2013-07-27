@@ -10,7 +10,7 @@ from monitor.sensors.sispm import get_sispm_data
 
 logger = get_task_logger(__name__)
 
-@task(name='monitor.get_real_data', routing_key='monitor.get_real_data')
+@task(name='monitor.get_real_data')
 def get_real_data(config):
 
     tasks = []
