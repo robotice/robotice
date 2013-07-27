@@ -7,6 +7,10 @@ config = setup_app()
 
 BROKER_URL = config.broker
 CELERY_RESULT_BACKEND = "amqp"
+CELERY_RESULT_EXCHANGE = 'results'
+CELERY_RESULT_EXCHANGE_TYPE = 'fanout'
+CELERY_AMQP_TASK_RESULT_EXPIRES = 1800
+
 CELERY_IMPORTS = (
     "planner.tasks",
 )
