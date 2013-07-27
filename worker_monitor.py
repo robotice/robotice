@@ -1,15 +1,15 @@
 from datetime import timedelta
 from kombu import Queue, Exchange
 from celery import Celery
-from yaml import load
 import logging
 
-config_file = open("/srv/robotice/config.yml", "r")
-config = load(config_file)
+from utils import setup_app
+
+config = setup_app()
 
 logger = logging.getLogger("robotice.monitor")
 
-BROKER_URL = config.get('broker')
+BROKER_URL = config.broker
 CELERY_RESULT_BACKEND = "amqp"
 CELERY_IMPORTS = (
 	"monitor.tasks",

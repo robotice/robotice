@@ -1,11 +1,10 @@
 from kombu import Queue, Exchange
 from celery import Celery
-from yaml import load
+from utils import setup_app
 
-config_file = open("/srv/robotice/config.yml", "r")
-config = load(config_file)
+config = setup_app()
 
-BROKER_URL = config.get('broker')
+BROKER_URL = config.broker
 CELERY_RESULT_BACKEND = "amqp"
 CELERY_IMPORTS = (
     "planner.tasks",

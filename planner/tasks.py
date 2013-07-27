@@ -9,6 +9,6 @@ def get_model():
     return load(config_file)
 
 @task(name='planner.get_model_data')
-def get_model_data(model, timestamp):
+def get_model_data(model):
 
     return 0
