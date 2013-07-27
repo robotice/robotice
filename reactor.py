@@ -6,6 +6,6 @@ config = load(config_file)
 
 BROKER_URL = config.get('broker')
 CELERY_RESULT_BACKEND = "amqp"
-CELERY_IMPORTS = ("tasks.reactor",)
+CELERY_IMPORTS = ("reactor.tasks",)
 
 celery = Celery(broker=BROKER_URL)

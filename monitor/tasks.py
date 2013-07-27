@@ -4,9 +4,9 @@ from celery import group, chord
 from celery.task import task
 from celery.utils.log import get_task_logger
 
-from sensors.dht import get_dht_data
-from sensors.dummy import get_dummy_data
-from sensors.sispm import get_sispm_data
+#from monitor.sensors.dht import get_dht_data
+#from monitor.sensors.dummy import get_dummy_data
+#from monitor.sensors.sispm import get_sispm_data
 
 logger = get_task_logger(__name__)
 
