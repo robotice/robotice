@@ -1,4 +1,5 @@
 from time import time
+import decimal
 
 from celery import group, chord
 from celery.task import task
@@ -41,7 +42,7 @@ def return_real_data(results, config):
 
     for result in results.join():
         for datum in result:
-            if datum[1] != None:
+            if isinstance(datum[1], (int, long, float, decimal.Decimal):
                 task_results.append(datum)
                 metering.send(datum[0], datum[1])
                 database.set('%s.%s' % (config.metering_prefix, datum[0]), datum[1])
