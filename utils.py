@@ -19,7 +19,7 @@ class Settings(object):
     @property
     def sensors(self):
         sensors = []
-        for sensor in self.config.get('sensors')
+        for sensor in self.config.get('sensors'):
             sensor['os_family'] = self.config.get('os_family')
             sensor['cpu_arch'] = self.config.get('cpu_arch')
             sensors.append(sensor)
