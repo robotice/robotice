@@ -18,17 +18,17 @@ def get_real_data(config):
 
     for sensor in config.sensors:
         if sensor.get("type") == "dht":
-            tasks.append(dht_get_data.subtask((sensor,)))
+            tasks.append(dht_get_data.subtask((sensor,), exchange='monitor_%s' % config.hostname))
         elif sensor.get("type") == "sispm":
-            tasks.append(sispm_get_data.subtask((sensor,)))
+            tasks.append(sispm_get_data.subtask((sensor,), exchange='monitor_%s' % config.hostname))
         elif sensor.get("type") == "dummy":
-            tasks.append(dummy_get_data.subtask((sensor,)))
+            tasks.append(dummy_get_data.subtask((sensor,), exchange='monitor_%s' % config.hostname))
         elif sensor.get("type") == "cds":
-            tasks.append(cds_get_data.subtask((sensor,)))
+            tasks.append(cds_get_data.subtask((sensor,), exchange='monitor_%s' % config.hostname))
 
     job = group(tasks)
 
-    result = job.apply_async(link=return_real_data.subtask((config, )))
+    result = job.apply_async(link=return_real_data.subtask((config, ), exchange='monitor_%s' % config.hostname))
 
     return 'Started reading real data from sensors %s on device %s at %s' % (config.sensors, config.hostname, time())
 
