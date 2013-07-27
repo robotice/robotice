@@ -19,7 +19,7 @@ def get_sispm_data(sensor):
 
   executable = 'sispmctl'
 
-  output = subprocess.check_output([executable, "-d", sensor.get('device'), "-n", "-m", "all"]);
+  output = subprocess.check_output([executable, "-d", str(sensor.get('device')), "-n", "-m", "all"]);
 
   lines = output.split("\n")
 
