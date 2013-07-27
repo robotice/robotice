@@ -13,7 +13,38 @@ config = setup_app()
 BROKER_URL = config.broker
 CELERY_RESULT_BACKEND = "amqp"
 CELERY_IMPORTS = ("reasoner.tasks", "monitor.tasks", "reactor.tasks", "planner.tasks")
+
+CELERY_DEFAULT_QUEUE = 'default'
+
+CELERY_QUEUES = (
+    Queue('default', routing_key='default.#'),
+    Queue('monitor', routing_key='monitor.#'),
+    Queue('planner', routing_key='planner.#'),
+)
+CELERY_DEFAULT_EXCHANGE = 'tasks'
+CELERY_DEFAULT_EXCHANGE_TYPE = 'topic'
+CELERY_DEFAULT_ROUTING_KEY = 'default.task'
+
 CELERY_TIMEZONE = 'UTC'
+
+CELERY_ROUTES = {
+    'monitor.get_real_data': {
+        'queue': 'monitor',
+#        'routing_key': 'monitor.get_real_data',
+    },
+    'monitor.return_real_data': {
+        'queue': 'monitor',
+#        'routing_key': 'monitor.get_real_data',
+    },
+    'monitor.get_sensor_data.dummy': {
+        'queue': 'monitor',
+    },
+    'planner.get_model_data': {
+        'queue': 'planner',
+        'routing_key': 'planner.get_model_data',
+    },
+}
+
 CELERYBEAT_SCHEDULE = {
     'system-maintainer': {
         'task': 'reasoner.maintain_system',
@@ -22,35 +53,10 @@ CELERYBEAT_SCHEDULE = {
     },
     'data-reader': {
         'task': 'monitor.get_real_data',
-        'schedule': timedelta(seconds=10),
+        'schedule': timedelta(seconds=1),
         'args': (config, ),
     },
 }
-"""
 
-        'queue': 'monitor',
-        'routing_key': 'monitor.get_real_data'
-
-CELERY_DEFAULT_QUEUE = 'default'
-
-CELERY_QUEUES = (
-    Queue('default',    routing_key='default.#'),
-    Queue('monitor', routing_key='monitor.#'),
-    Queue('planner', routing_key='planner.#'),
-)
-CELERY_DEFAULT_EXCHANGE = 'tasks'
-CELERY_DEFAULT_EXCHANGE_TYPE = 'topic'
-CELERY_DEFAULT_ROUTING_KEY = 'default.task'
-CELERY_ROUTES = {
-    'monitor.get_real_data': {
-        'queue': 'monitor',
-        'routing_key': 'monitor.get_real_data',
-    },
-    'planner.get_model_data': {
-        'queue': 'planner',
-        'routing_key': 'planner.get_model_data',
-    },
-}
-""" 
 celery = Celery(broker=BROKER_URL)
 

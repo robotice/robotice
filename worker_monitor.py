@@ -1,3 +1,4 @@
+from datetime import timedelta
 from celery import Celery
 from yaml import load
 import logging
