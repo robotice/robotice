@@ -60,7 +60,7 @@ CELERY_ROUTES = {
 CELERYBEAT_SCHEDULE = {
     'real-data-reader': {
         'task': 'monitor.get_real_data',
-        'schedule': timedelta(seconds=5),
+        'schedule': timedelta(seconds=10),
         'args': (config, ),
     },
 }
