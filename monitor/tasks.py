@@ -4,9 +4,9 @@ from celery import group, chord
 from celery.task import task
 from celery.utils.log import get_task_logger
 
-#from monitor.sensors.dht import get_dht_data
-#from monitor.sensors.dummy import get_dummy_data
-#from monitor.sensors.sispm import get_sispm_data
+from monitor.sensors.dht import get_dht_data
+from monitor.sensors.dummy import get_dummy_data
+from monitor.sensors.sispm import get_sispm_data
 
 logger = get_task_logger(__name__)
 
@@ -42,17 +42,17 @@ def return_real_data(results, config):
 
     return 'Finished reading real data at %s' % time()
 
-@task(name='monitor.dht.get_data')
+@task(name='monitor.get_sensor_data.dht')
 def dht_get_data(sensor):
     logger.info('Reading sensor: %s' % sensor)
     return get_dht_data(sensor)
 
-@task(name='monitor.dummy.get_data')
+@task(name='monitor.get_sensor_data.dummy')
 def dummy_get_data(sensor):
     logger.info('Reading sensor: %s' % sensor)
     return get_dummy_data(sensor)
 
-@task(name='monitor.sispm.get_data')
+@task(name='monitor.get_sensor_data.sispm')
 def sispm_get_data(sensor):
     logger.info('Reading sensor: %s' % sensor)
     return get_sispm_data(sensor)

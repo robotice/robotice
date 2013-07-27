@@ -24,11 +24,13 @@ CELERYBEAT_SCHEDULE = {
         'task': 'monitor.get_real_data',
         'schedule': timedelta(seconds=10),
         'args': (config, ),
-        'queue': 'monitor',
-        'routing_key': 'monitor.get_real_data'
     },
 }
 """
+
+        'queue': 'monitor',
+        'routing_key': 'monitor.get_real_data'
+
 CELERY_DEFAULT_QUEUE = 'default'
 
 CELERY_QUEUES = (

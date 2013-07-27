@@ -2,12 +2,13 @@
 from celery.task import task
 from yaml import load
 
-@task
+@task(name='planner.get_model')
 def get_model():
     config_file = open("/srv/robotice/config.yml", "r")
+
     return load(config_file)
 
-@task
+@task(name='planner.get_model_data')
 def get_model_data(model, timestamp):
 
     return 0
