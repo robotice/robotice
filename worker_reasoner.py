@@ -69,4 +69,3 @@ CELERYBEAT_SCHEDULE = {
 }
 
 celery = Celery(broker=BROKER_URL)
-

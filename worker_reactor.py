@@ -4,7 +4,7 @@ from utils import setup_app
 
 config = setup_app()
 
-BROKER_URL = config.broker)
+BROKER_URL = config.broker
 CELERY_RESULT_BACKEND = "amqp"
 CELERY_IMPORTS = (
     "reactor.tasks",
