@@ -39,7 +39,7 @@ def return_real_data(results, config):
     database = config.database
     task_results = []
 
-    for result in results:
+    for result in results.join():
         for datum in result:
             task_results.append(datum)
             metering.send(datum[0], datum[1])
