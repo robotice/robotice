@@ -8,7 +8,7 @@ BROKER_URL = config.broker
 CELERY_RESULT_BACKEND = "amqp"
 CELERY_RESULT_EXCHANGE = 'results'
 CELERY_RESULT_EXCHANGE_TYPE = 'fanout'
-CELERY_AMQP_TASK_RESULT_EXPIRES = 1800
+CELERY_AMQP_TASK_RESULT_EXPIRES = 300
 
 CELERY_IMPORTS = (
     "reactor.tasks",
@@ -37,15 +37,6 @@ CELERY_ROUTES = {
         'queue': 'monitor',
     },
     'monitor.return_real_data': {
-        'queue': 'monitor',
-    },
-    'monitor.get_sensor_data.dht': {
-        'queue': 'monitor',
-    },
-    'monitor.get_sensor_data.dummy': {
-        'queue': 'monitor',
-    },
-    'monitor.get_sensor_data.sispm': {
         'queue': 'monitor',
     },
     'planner.get_model_data': {
