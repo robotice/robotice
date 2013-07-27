@@ -7,7 +7,8 @@ from celery.utils.log import get_task_logger
 from monitor.sensors.dht import get_dht_data
 from monitor.sensors.dummy import get_dummy_data
 from monitor.sensors.sispm import get_sispm_data
-
+from monitor.sensors.cds import get_cds_data
+                                                
 logger = get_task_logger(__name__)
 
 @task(name='monitor.get_real_data')
@@ -22,6 +23,8 @@ def get_real_data(config):
             tasks.append(sispm_get_data.subtask((sensor,), queue='monitor'))
         elif sensor.get("type") == "dummy":
             tasks.append(dummy_get_data.subtask((sensor,), queue='monitor'))
+        elif sensor.get("type") == "cds":
+            tasks.append(cds_get_data.subtask((sensor,), queue='monitor'))
 
     job = group(tasks)
 
@@ -56,3 +59,8 @@ def dummy_get_data(sensor):
 def sispm_get_data(sensor):
     logger.info('Reading sensor: %s' % sensor)
     return get_sispm_data(sensor)
+
+@task(name='monitor.get_sensor_data.cds', track_started=True)
+def cds_get_data(sensor):
+    logger.info('Reading sensor: %s' % sensor)
+    return get_cds_data(sensor)
