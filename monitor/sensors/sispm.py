@@ -5,14 +5,18 @@ import re
 import sys
 import logging
 
-executable = "/usr/local/bin/sispmctl"
-
 logger = logging.getLogger("robotice.sensor.sispm")
 
 def get_sispm_data(sensor):
   """
   sispm reading
   """
+
+  if sensor.get('os_family') == 'Debian':
+    executable = "/usr/bin/sispmctl"
+  else:
+    executable = "/usr/local/bin/sispmctl"
+
   output = subprocess.check_output([executable,"-d", "0" ,"-n" ,"-m", "all"]);
 
   lines = output.split("\n")
