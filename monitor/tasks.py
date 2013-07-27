@@ -43,7 +43,7 @@ def return_real_data(results, config):
             metering.send(datum[0], datum[1])
             database.set('%s.%s' % (config.metering_prefix, datum[0]), datum[1])
 
-    return 'Finished reading real data from sensors %s on device %s at %s' % (config.sensors, config.hostname, time())
+    return 'Finished reading real data %s on device %s at %s' % (results, config.hostname, time())
 
 @task(name='monitor.get_sensor_data.dht')
 def dht_get_data(sensor):
