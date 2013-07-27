@@ -40,7 +40,7 @@ class Settings(object):
         else:
             env = 'dev'
 
-        return '%s_%.%s' % (self.config.get('system'), env, self.config.get('name').replace('.', '_'))
+        return '%s_%s.%s' % (self.config.get('system'), env, self.config.get('name').replace('.', '_'))
 
     @property
     def metering(self):
