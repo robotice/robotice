@@ -43,7 +43,7 @@ class Settings(object):
 
     @property
     def metering_prefix(self):
-        return '%s_%s.%s' % (self.config.get('system'), self.config.get('environment'), self.config.get('name').replace('.', '_'))
+        return '%s_%s.%s' % (self.config.get('system'), self.config.get('environment'), self.hostname.replace('.', '_'))
 
     @property
     def metering(self):
