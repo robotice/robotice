@@ -4,6 +4,7 @@ import logging
 from yaml import load
 import statsd
 import redis
+import socket
 
 log = logging.getLogger("robotice.utils")
 
@@ -19,11 +20,18 @@ class Settings(object):
     @property
     def sensors(self):
         sensors = []
-        for sensor in self.config.get('sensors'):
-            sensor['os_family'] = self.config.get('os_family')
-            sensor['cpu_arch'] = self.config.get('cpu_arch')
-            sensors.append(sensor)
+        for host in self.config.get('system'):
+            if host.name = self.hostname:
+                for sensor in host.get('sensors'):
+                    sensor['os_family'] = self.config.get('os_family')
+                    sensor['cpu_arch'] = self.config.get('cpu_arch')
+                    sensor['hostname'] = self.hostname
+                    sensors.append(sensor)
         return sensors
+
+    @property
+    def hostname(self):
+        return socket.getfqdn()
 
     @property
     def broker(self):

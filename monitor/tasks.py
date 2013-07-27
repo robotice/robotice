@@ -27,7 +27,7 @@ def get_real_data(config):
 
     result = job.apply_async(link=return_real_data.subtask((config, ), queue='monitor'))
 
-    return 'Started reading real data from sensors %s at %s' % (config.sensors, time())
+    return 'Started reading real data from sensors %s on device %s at %s' % (config.sensors, config.hostname, time())
 
 @task(name='monitor.return_real_data')
 def return_real_data(results, config):
@@ -40,7 +40,7 @@ def return_real_data(results, config):
             metering.send(datum[0], datum[1])
             database.set('%s.%s' % (config.metering_prefix, datum[0]), datum[1])
 
-    return 'Finished reading real data from sensors %s at %s' % (config.sensors, time())
+    return 'Finished reading real data from sensors %s on device %s at %s' % (config.sensors, config.hostname, time())
 
 @task(name='monitor.get_sensor_data.dht')
 def dht_get_data(sensor):
