@@ -43,12 +43,7 @@ class Settings(object):
 
     @property
     def metering_prefix(self):
-        if self.config.get('environment') == 'production':
-            env = 'prod'
-        else:
-            env = 'dev'
-
-        return '%s_%s.%s' % (self.config.get('system'), env, self.config.get('name').replace('.', '_'))
+        return '%s_%s.%s' % (self.config.get('system'), self.config.get('environment'), self.config.get('name').replace('.', '_'))
 
     @property
     def metering(self):
