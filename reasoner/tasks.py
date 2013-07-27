@@ -52,7 +52,8 @@ def maintain_system(config):
 #    log_data(metering_log)
 
     # Compare real data with model data and get list of actions to do
- #   actions = compare_data.delay(model, real_data, model_data).get()
+
+    compare_data.apply_async(args=[None, None], queue='reasoner', routing_key='reasoner.compare_data')
 
  #   action_results = []
 

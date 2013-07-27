@@ -34,27 +34,24 @@ CELERY_TIMEZONE = 'UTC'
 CELERY_ROUTES = {
     'monitor.get_real_data': {
         'queue': 'monitor',
-#        'routing_key': 'monitor.get_real_data',
     },
     'monitor.return_real_data': {
         'queue': 'monitor',
-#        'routing_key': 'monitor.return_real_data',
     },
     'monitor.get_sensor_data.dht': {
         'queue': 'monitor',
-#        'routing_key': 'monitor.get_sensor_data.dummy',
     },
     'monitor.get_sensor_data.dummy': {
         'queue': 'monitor',
-#        'routing_key': 'monitor.get_sensor_data.dummy',
     },
     'monitor.get_sensor_data.sispm': {
         'queue': 'monitor',
-#        'routing_key': 'monitor.get_sensor_data.dummy',
     },
     'planner.get_model_data': {
         'queue': 'planner',
-#        'routing_key': 'planner.get_model_data',
+    },
+    'reasoner.compare_data': {
+        'queue': 'reasoner',
     },
 }
 
