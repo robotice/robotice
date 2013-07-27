@@ -1,7 +1,6 @@
-#!/usr/bin/python
 import subprocess
 
-executable = "/srv/robotice/sensors/cds/cds_driver.py"
+executable = "/srv/robotice/sensors/cds/driver.py"
 
 def get_cds_data(sensor):
 

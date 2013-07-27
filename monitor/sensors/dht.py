@@ -14,7 +14,7 @@ def get_dht_data(sensor):
     version = sensor.get('version')
     port = sensor.get('port')
 
-    output = subprocess.check_output([executable, str(version), str(port)]);
+    output = subprocess.check_output([executable, str(version), str(port)])
 
     matches = re.search("Temp =\s+([0-9.]+)", output)
     if (not matches):
