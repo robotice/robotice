@@ -39,18 +39,6 @@ CELERY_ROUTES = {
     'monitor.get_real_data': {
         'queue': 'monitor',
     },
-    'monitor.return_real_data': {
-        'queue': 'monitor',
-    },
-    'monitor.get_sensor_data.dht': {
-        'queue': 'monitor',
-    },
-    'monitor.get_sensor_data.dummy': {
-        'queue': 'monitor',
-    },
-    'monitor.get_sensor_data.sispm': {
-        'queue': 'monitor',
-    },
     'planner.get_model_data': {
         'queue': 'planner',
     },
