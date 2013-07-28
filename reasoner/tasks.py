@@ -4,7 +4,7 @@ from time import time
 from datetime import datetime 
 from celery.task import task
 
-from planner.tasks import get_model, get_model_data
+from planner.tasks import get_model_data
 from monitor.tasks import get_real_data 
 from reactor.tasks import commit_action
 
@@ -35,9 +35,6 @@ def maintain_system(config):
 
     # Ask planner for system shape - all sensors, actuators
 #    model = get_model.delay().get()
-
-    # Ask planner for system model values for sensors at given time
-#    model_data = get_model_data.delay(model, now).get()
 
     # send model data ranges upstream
 #    log_data(model_data)
