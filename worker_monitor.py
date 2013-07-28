@@ -61,3 +61,8 @@ CELERY_ROUTES = {
 }
 
 celery = Celery(broker=BROKER_URL)
+celery.control.time_limit('monitor.get_sensor_data.cds', soft=60, hard=120, reply=True)
+celery.control.time_limit('monitor.get_sensor_data.sispm', soft=60, hard=120, reply=True)
+celery.control.time_limit('monitor.get_sensor_data.dht', soft=60, hard=120, reply=True)
+celery.control.time_limit('monitor.return_real_data', soft=60, hard=120, reply=True)
+celery.control.time_limit('monitor.get_real_data', soft=60, hard=120, reply=True)
