@@ -13,7 +13,7 @@ BROKER_URL = config.broker
 CELERY_RESULT_BACKEND = "amqp"
 CELERY_RESULT_EXCHANGE = 'results'
 CELERY_RESULT_EXCHANGE_TYPE = 'fanout'
-CELERY_AMQP_TASK_RESULT_EXPIRES = 300
+CELERY_TASK_RESULT_EXPIRES = 300
 
 CELERY_IMPORTS = ("reasoner.tasks", "monitor.tasks", "reactor.tasks", "planner.tasks")
 
