@@ -18,6 +18,17 @@ class Settings(object):
         self.config = load(config_file)
 
     @property
+    def plans(self):
+        plans = []
+        for plan in self.config.get('system').get('plans'):
+            plans.append({
+                "start": plan.get('start'),
+                "plan": load(open("/srv/robotice/service/plans/%s" % plan.get('type'))),
+                "name": plan.get('name')
+            })
+        return plans
+
+    @property
     def sensors(self):
         sensors = []
         for host in self.config.get('system'):
