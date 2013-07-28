@@ -20,12 +20,14 @@ class Settings(object):
     @property
     def plans(self):
         plans = []
-        for plan in self.config.get('system').get('plans'):
-            plans.append({
-                "start": plan.get('start'),
-                "plan": load(open("/srv/robotice/service/plans/%s" % plan.get('type'))),
-                "name": plan.get('name')
-            })
+        for host in self.config.get('system'):
+            if host.get('name') == self.hostname:
+                for plan in host.get('plans'):
+                    plans.append({
+                        "start": plan.get('start'),
+                        "plan": load(open("/srv/robotice/service/plans/%s" % plan.get('type'))),
+                        "name": plan.get('name')
+                    })
         return plans
 
     @property
