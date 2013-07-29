@@ -9,6 +9,7 @@ def get_cds_data(sensor):
     value = subprocess.check_output([executable, '-p', port, '-a', arch, '-m', mode])
 
     data = []
-    data.append(["cds.%s.luminosity" % sensor.get('device'), int(value)])
+
+    data.append(("cds.%s.luminosity" % sensor.get('device'), int(value),))
 
     return data
