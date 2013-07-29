@@ -8,7 +8,8 @@ def get_dummy_data(sensor):
     """
 
     data = []
-    data.append( ["dummy.%s.data_1" % sensor.get('device'),  random.randint(0, 100)] )
-    data.append( ["dummy.%s.data_2" % sensor.get('device'),  random.randint(0, 100)] )
+
+    data.append(("dummy.%s.random_1" % sensor.get('device'), random.randint(10, 20),))
+    data.append(("dummy.%s.random_2" % sensor.get('device'), random.randint(10, 20),))
 
     return data
