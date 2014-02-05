@@ -7,7 +7,7 @@ from celery.schedules import crontab
 
 from utils import setup_app
 
-config = setup_app()
+config = setup_app('reasoner')
 
 BROKER_URL = config.broker
 CELERY_RESULT_BACKEND = "amqp"

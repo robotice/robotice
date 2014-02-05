@@ -5,7 +5,7 @@ import logging
 
 from utils import setup_app
 
-config = setup_app()
+config = setup_app('monitor')
 
 logger = logging.getLogger("robotice.monitor")
 

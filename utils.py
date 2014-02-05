@@ -12,9 +12,9 @@ class Settings(object):
 
     config = None
     
-    def __init__(self):
+    def __init__(self, worker):
 
-        config_file = open("/srv/robotice/config.yml", "r")
+        config_file = open("/srv/robotice/config_%s.yml" % worker, "r")
         self.config = load(config_file)
 
     @property
@@ -68,6 +68,6 @@ class Settings(object):
         )
         return statsd.Gauge(self.metering_prefix, statsd_connection)
 
-def setup_app():
-    app = Settings()
+def setup_app(worker):
+    app = Settings(worker)
     return app
