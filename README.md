@@ -1,17 +1,18 @@
-Robotice monitoring daemon
-==========================
 
-Resides in /srv/robotice/daemon
+# Robotice monitoring daemon
 
-Usage:
-------
+Resides in /srv/robotice/service
 
-./robotice.py
+## Usage
 
-requirements
-------
- - daemonize
- - PyYAML 
+Runs using supervisor daemon
 
-log in /tmp/rotice.log
+## Requirements
 
+* PyYAML 
+
+Logs in /srv/robotice/logs/service_xxx.log
+
+## Read more
+
+* http://learn.adafruit.com/setting-up-io-python-library-on-beaglebone-black/overview
