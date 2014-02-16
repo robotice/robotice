@@ -20,6 +20,8 @@ monitor_exchange = Exchange('monitor', type='fanout')
 reactor_exchange = Exchange('reactor', type='fanout')
 planner_exchange = Exchange('planner', type='fanout')
 
+CELERY_ACCEPT_CONTENT = ['json', 'msgpack', 'yaml']
+
 CELERY_QUEUES = (
     Queue('default', default_exchange, routing_key='default'),
     Queue('monitor', monitor_exchange, routing_key='monitor.#'),
