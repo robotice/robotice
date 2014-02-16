@@ -17,6 +17,15 @@ class Settings(object):
         config_file = open("/srv/robotice/config_%s.yml" % worker, "r")
         self.config = load(config_file)
 
+        device_config_file = open("/srv/robotice/plan/devices.yml" % worker, "r")
+        self.devices = load(device_config_file)
+
+        plan_config_file = open("/srv/robotice/plan/plans.yml" % worker, "r")
+        self.plans = load(plan_config_file)
+
+        system_config_file = open("/srv/robotice/plan/systems.yml" % worker, "r")
+        self.systems = load(system_config_file)
+
     @property
     def plans(self):
         plans = []

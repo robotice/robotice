@@ -55,12 +55,12 @@ CELERYBEAT_SCHEDULE = {
     },
     'real-data-reader': {
         'task': 'monitor.get_real_data',
-        'schedule': timedelta(seconds=10),
+        'schedule': timedelta(seconds=30),
         'args': (config, ),
     },
     'planned-data-reader': {
         'task': 'planner.get_model_data',
-        'schedule': timedelta(seconds=10),
+        'schedule': timedelta(seconds=30),
         'args': (config, ),
     },
 }
