@@ -23,7 +23,7 @@ class Settings(object):
             self.devices = load(device_config_file)
 
 #            plan_config_file = open("/srv/robotice/plan/plans.yml", "r")
-#            self.plans = load(plan_config_file)
+#               self.plans = load(plan_config_file)
 
             system_config_file = open("/srv/robotice/plan/systems.yml", "r")
             self.systems = load(system_config_file)
@@ -44,7 +44,7 @@ class Settings(object):
     @property
     def sensors(self):
         sensors = []
-        for host in self.config.get('system'):
+        for host in self.devices:
             if host.get('name') == self.hostname:
                 for sensor in host.get('sensors'):
                     sensor['os_family'] = host.get('os_family')
