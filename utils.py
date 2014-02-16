@@ -22,8 +22,8 @@ class Settings(object):
             device_config_file = open("/srv/robotice/plan/devices.yml", "r")
             self.devices = load(device_config_file)
 
-            plan_config_file = open("/srv/robotice/plan/plans.yml", "r")
-            self.plans = load(plan_config_file)
+#            plan_config_file = open("/srv/robotice/plan/plans.yml", "r")
+#            self.plans = load(plan_config_file)
 
             system_config_file = open("/srv/robotice/plan/systems.yml", "r")
             self.systems = load(system_config_file)
