@@ -44,4 +44,4 @@ CELERY_ROUTES = {
     },
 }
 
-celery = Celery(broker=BROKER_URL)
+celery = Celery('robotice', broker=BROKER_URL)
