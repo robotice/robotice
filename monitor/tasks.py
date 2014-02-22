@@ -19,19 +19,22 @@ def get_real_data(config):
 
     for sensor in config.sensors:
         if sensor.get("type") == "dht":
-            tasks.append(dht_get_data.subtask((sensor,), exchange='monitor_%s' % config.hostname))
-        elif sensor.get("type") == "sispm":
-            tasks.append(sispm_get_data.subtask((sensor,), exchange='monitor_%s' % config.hostname))
+            pass
+            #tasks.append(dht_get_data.subtask((sensor,), exchange='monitor_%s' % config.hostname))
         elif sensor.get("type") == "dummy":
             tasks.append(dummy_get_data.subtask((sensor,), exchange='monitor_%s' % config.hostname))
+        """
+        elif sensor.get("type") == "sispm":
+            tasks.append(sispm_get_data.subtask((sensor,), exchange='monitor_%s' % config.hostname))
         elif sensor.get("type") == "cds":
             tasks.append(cds_get_data.subtask((sensor,), exchange='monitor_%s' % config.hostname))
+        """
 
     job = group(tasks)
 
     result = job.apply_async(link=return_real_data.subtask((config, ), exchange='monitor_%s' % config.hostname))
 
-    return 'Started reading real data from sensors %s on device %s at %s' % (config.sensors, config.hostname, time())
+    return 0 #'Started reading real data from sensors %s on device %s at %s' % (config.sensors, config.hostname, time())
 
 @task(name='monitor.return_real_data')
 def return_real_data(results, config):
@@ -47,7 +50,7 @@ def return_real_data(results, config):
                 metering.send(datum[0], datum[1])
                 database.set('%s.%s' % (config.metering_prefix, datum[0]), datum[1])
 
-    return 'Finished reading real data %s on device %s at %s, raw results: %s' % (task_results, config.hostname, time(), results.join())
+    return 0 #'Finished reading real data %s on device %s at %s, raw results: %s' % (task_results, config.hostname, time(), results.join())
 
 @task(name='monitor.get_sensor_data.dht')
 def dht_get_data(sensor):

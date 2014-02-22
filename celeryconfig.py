@@ -13,6 +13,8 @@ CELERY_IMPORTS = (
     "reactor.tasks"
 )
 
+CELERYD_POOL_RESTARTS = True
+
 default_exchange = Exchange('default', type='direct')
 monitor_exchange = Exchange('monitor', type='direct')
 reactor_exchange = Exchange('reactor', type='direct')
