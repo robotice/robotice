@@ -11,23 +11,24 @@ log = logging.getLogger("robotice.utils")
 class Settings(object):
 
     config = None
+    devices = None
+    systems = None
     
     def __init__(self, worker):
 
         config_file = open("/srv/robotice/config_%s.yml" % worker, "r")
         self.config = load(config_file)
 
-        if worker == 'reasoner':
+        device_config_file = open("/srv/robotice/config/devices.yml", "r")
+        self.devices = load(device_config_file)['devices']
 
-            device_config_file = open("/srv/robotice/plan/devices.yml", "r")
-            self.devices = load(device_config_file)
+#        plan_config_file = open("/srv/robotice/config/plans.yml", "r")
+#        self.plans = load(plan_config_file)
 
-#            plan_config_file = open("/srv/robotice/plan/plans.yml", "r")
-#               self.plans = load(plan_config_file)
+        system_config_file = open("/srv/robotice/config/systems.yml", "r")
+        self.systems = load(system_config_file)['systems']
 
-            system_config_file = open("/srv/robotice/plan/systems.yml", "r")
-            self.systems = load(system_config_file)
-
+    """
     @property
     def plans(self):
         plans = []
@@ -40,6 +41,7 @@ class Settings(object):
                         "name": plan.get('name')
                     })
         return plans
+    """
 
     @property
     def sensors(self):
@@ -80,5 +82,23 @@ class Settings(object):
         return statsd.Gauge(self.metering_prefix, statsd_connection)
 
 def setup_app(worker):
-    app = Settings(worker)
-    return app
+    return Settings(worker)
+
+class Grains(object):
+
+    hostname = None
+    os_family = None
+    cpu_arch = None
+    
+    def __init__(self):
+
+        grains_file = open("/srv/robotice/grains.yml", "r")
+        grains = load(grains_file)['grains']
+
+        self.hostname = grains['hostname']
+        self.os_family = grains['os_family']
+        self.cpu_arch = grains['cpu_arch']
+
+def get_grains():
+    grains = Grains()
+    return grains
