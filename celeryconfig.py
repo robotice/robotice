@@ -15,6 +15,8 @@ CELERY_IMPORTS = (
 
 CELERYD_POOL_RESTARTS = True
 
+CELERY_REDIRECT_STDOUTS_LEVEL = "INFO"
+
 default_exchange = Exchange('default', type='direct')
 monitor_exchange = Exchange('monitor', type='direct')
 reactor_exchange = Exchange('reactor', type='direct')
