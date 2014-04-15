@@ -3,9 +3,12 @@ import decimal
 
 from celery import group, chord
 from celery.task import task
+from celery.execute import send_task
 from celery.utils.log import get_task_logger
 
-from reasoner.tasks import process_real_data
+import reasoner
+
+#.tasks import process_real_data
 
 from utils import get_grains
 
@@ -22,9 +25,7 @@ def get_real_data(config):
         tasks.append(get_sensor_data.subtask((sensor,), exchange='monitor_%s' % config.hostname))
 
     job = group(tasks)
-
-    result = job.apply_async(link=process_real_data.subtask((config, ), exchange='reasoner'))
-
+    result = job.apply_async(link=reasoner.tasks.process_real_data.subtask((config, ), exchange='reasoner'))
     return 0 #'Started reading real data from sensors %s on device %s at %s' % (config.sensors, config.hostname, time())
 
 @task(name='monitor.get_sensor_data', track_started=True)
@@ -32,4 +33,6 @@ def get_sensor_data(sensor):
 
     sensor_module = __import__(".".join(["sensors", sensor.device],))
     logger.info('Reading sensor: %s' % sensor)
+
+    #send_task(name[, args[, kwargs[, ]]])
     return sensor_module.get_data(sensor)

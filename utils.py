@@ -83,7 +83,7 @@ class Settings(object):
 
 def setup_app(worker):
     return Settings(worker)
-
+    
 class Grains(object):
 
     hostname = None

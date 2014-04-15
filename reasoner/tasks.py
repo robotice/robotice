@@ -4,9 +4,8 @@ from time import time
 from datetime import datetime 
 from celery.task import task
 
-from planner.tasks import get_model_data
-from monitor.tasks import get_real_data 
-from reactor.tasks import commit_action
+#from planner.tasks import get_model_data
+#from reactor.tasks import commit_action
 
 @task(name='reasoner.compare_data')
 def compare_data(model, real_data, model_data):
