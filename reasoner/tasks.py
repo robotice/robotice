@@ -49,7 +49,7 @@ def process_real_data(results, grains):
             task_results.append(datum)
             metering.send('%s.%s' % (grains.hostname, datum[0]), datum[1])
 
-    return 'Finished reading real data %s on device %s at %s' % (task_results, config.hostname, time())
+    return 'Finished reading real data %s on device %s at %s' % (task_results, grains.hostname, time())
 
 
 @task(name='reasoner.maintain_system')
