@@ -8,6 +8,15 @@ import socket
 
 log = logging.getLogger("robotice.utils")
 
+def import_module(name):
+    mod = __import__(name)
+    components = name.split('.')
+
+    for comp in components[1:]:
+        mod = getattr(mod, comp)
+
+    return mod
+
 class Settings(object):
 
     config = None

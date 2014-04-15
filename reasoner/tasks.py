@@ -5,8 +5,7 @@ import decimal
 from datetime import datetime 
 from celery.task import task
 
-#from planner.tasks import get_model_data
-#from reactor.tasks import commit_action
+from utils import setup_app
 
 @task(name='reasoner.compare_data')
 def compare_data(model, real_data, model_data):
@@ -36,7 +35,9 @@ def log_error(model, data):
 
 
 @task(name='reasoner.process_real_data')
-def process_real_data(results, config):
+def process_real_data(results, grains):
+
+    config = setup_app('reasoner')
 
     metering = config.metering
     database = config.database
@@ -46,7 +47,7 @@ def process_real_data(results, config):
     for datum in results:
         if isinstance(datum[1], (int, long, float, decimal.Decimal)):
             task_results.append(datum)
-            metering.send(datum[0], datum[1])
+            metering.send('%s.%s' % (grains.hostname, datum[0]), datum[1])
 
     return 'Finished reading real data %s on device %s at %s' % (task_results, config.hostname, time())
 

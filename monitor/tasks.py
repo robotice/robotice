@@ -8,7 +8,7 @@ from celery.utils.log import get_task_logger
 
 from reasoner.tasks import process_real_data, log_error
 
-from utils import get_grains
+from utils import get_grains, import_module
 
 logger = get_task_logger(__name__)
 
@@ -17,11 +17,11 @@ def get_real_data(config):
 
     tasks = []
     logger = get_real_data.get_logger()
-    #grains = get_grains()
+    grains = get_grains()
     logger.info('Sensors {0}'.format(config.sensors))
     
     for sensor in config.sensors:
-        tasks.append(get_sensor_data.subtask((sensor, config), exchange='monitor_%s' % config.hostname))
+        tasks.append(get_sensor_data.subtask((sensor, grains), exchange='monitor_%s' % config.hostname))
         logger.info('Registred get_sensor_data {0}'.format(sensor))
 
     job = group(tasks)
@@ -31,17 +31,8 @@ def get_real_data(config):
 
     return 'Started reading real data from sensors %s on device %s at %s' % (config.sensors, config.hostname, time())
 
-def import_module(name):
-    mod = __import__(name)
-    components = name.split('.')
-
-    for comp in components[1:]:
-        mod = getattr(mod, comp)
-
-    return mod
-
 @task(name='monitor.get_sensor_data', track_started=True)
-def get_sensor_data(sensor, config):
+def get_sensor_data(sensor, grains):
 
     module_name = ".".join(["monitor", "sensors", sensor.get("device")])
 
@@ -49,13 +40,13 @@ def get_sensor_data(sensor, config):
 
     results = mod.get_data(sensor)
 
-    send_task("reasoner.process_real_data", [results, config], {})
+    send_task("reasoner.process_real_data", [results, grains]   , {})
 
     return results
 
-@task(name='monitor.return_sensor_data', track_started=True)
-def return_sensor_data(results, config):
+#@task(name='monitor.return_sensor_data', track_started=True)
+#def return_sensor_data(results, config):
 
-    send_task("reasoner.process_real_data",[results, config], {})
+#    send_task("reasoner.process_real_data",[results, config], {})
 
-    return results
+#    return results
