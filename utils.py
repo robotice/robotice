@@ -28,32 +28,22 @@ class Settings(object):
         system_config_file = open("/srv/robotice/config/systems.yml", "r")
         self.systems = load(system_config_file)['systems']
 
-    """
-    @property
-    def plans(self):
-        plans = []
-        for host in self.config.get('system'):
-            if host.get('name') == self.hostname:
-                for plan in host.get('plans'):
-                    plans.append({
-                        "start": plan.get('start'),
-                        "plan": load(open("/srv/robotice/service/plans/%s" % plan.get('type'))),
-                        "name": plan.get('name')
-                    })
-        return plans
-    """
-
     @property
     def sensors(self):
         sensors = []
         for host in self.devices:
             if host.get('host') == self.hostname:
                 for sensor in host.get('sensors'):
-                    sensor['os_family'] = host.get('os_family')
-                    sensor['cpu_arch'] = host.get('cpu_arch')
+                    sensor['os_family'] = self.grains.os_family
+                    sensor['cpu_arch'] = self.grains.cpu_arch
                     sensor['hostname'] = self.hostname
                     sensors.append(sensor)
         return sensors
+
+    @property
+    def grains(self):
+        grains = Grains()
+        return grains
 
     @property
     def hostname(self):

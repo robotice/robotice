@@ -1,5 +1,6 @@
 
 from time import time
+import decimal
 
 from datetime import datetime 
 from celery.task import task
@@ -22,7 +23,6 @@ def process_data(model, data):
     save redis as well
     """
 
-
     pass
 
 @task(name='reasoner.log_error')
@@ -31,7 +31,6 @@ def log_error(model, data):
     Ships data to some metrics collectors (StatsD)
     save redis as well
     """
-
 
     pass
 
@@ -48,9 +47,8 @@ def process_real_data(results, config):
         if isinstance(datum[1], (int, long, float, decimal.Decimal)):
             task_results.append(datum)
             metering.send(datum[0], datum[1])
-#            job.apply_async(link=return_real_data.task((datume, ), exchange='reasoner'))
 
-    return task_results #'Finished reading real data %s on device %s at %s, raw results: %s' % (task_results, config.hostname, time(), results.join())
+    return 'Finished reading real data %s on device %s at %s' % (task_results, config.hostname, time())
 
 
 @task(name='reasoner.maintain_system')
