@@ -43,14 +43,14 @@ def process_real_data(results, config):
     database = config.database
     task_results = []
 
-    for result in results.join():
-        for datum in result:
-            if isinstance(datum[1], (int, long, float, decimal.Decimal)):
-                task_results.append(datum)
-                metering.send(datum[0], datum[1])
-                job.apply_async(link=return_real_data.task((datume, ), exchange='reasoner'))
+#    for result in results.join():
+    for datum in results:
+        if isinstance(datum[1], (int, long, float, decimal.Decimal)):
+            task_results.append(datum)
+            metering.send(datum[0], datum[1])
+#            job.apply_async(link=return_real_data.task((datume, ), exchange='reasoner'))
 
-    return 0 #'Finished reading real data %s on device %s at %s, raw results: %s' % (task_results, config.hostname, time(), results.join())
+    return task_results #'Finished reading real data %s on device %s at %s, raw results: %s' % (task_results, config.hostname, time(), results.join())
 
 
 @task(name='reasoner.maintain_system')

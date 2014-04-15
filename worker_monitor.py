@@ -16,7 +16,8 @@ CELERY_RESULT_EXCHANGE_TYPE = 'fanout'
 CELERY_TASK_RESULT_EXPIRES = 300
 
 CELERY_IMPORTS = (
-	"monitor.tasks",
+    "monitor.tasks",
+	"reasoner.tasks",
 )
 
 default_exchange = Exchange('default', type='fanout')
@@ -24,9 +25,9 @@ monitor_exchange = Exchange('monitor', type='fanout')
 monitor_local_exchange = Exchange('monitor_%s' % config.hostname, type='fanout')
 reactor_exchange = Exchange('reactor', type='fanout')
 planner_exchange = Exchange('planner', type='fanout')
-reasoner_exchange = Exchange('reasoner', type='fanout')
+#reasoner_exchange = Exchange('reasoner', type='fanout')
 
-CELERY_ACCEPT_CONTENT = ['json', 'msgpack', 'yaml','application/x-python-serialize',]
+CELERY_ACCEPT_CONTENT = ['json', 'msgpack', 'yaml', 'application/x-python-serialize',]
 
 CELERY_REDIRECT_STDOUTS_LEVEL = "INFO"
 
@@ -35,7 +36,7 @@ CELERY_QUEUES = (
     Queue('monitor', monitor_exchange, routing_key='monitor.#'),
     Queue('monitor_%s' % config.hostname, monitor_local_exchange, routing_key='monitor_%s.#' % config.hostname),
     Queue('planner', planner_exchange, routing_key='planner.#'),
-    Queue('reasoner', reasoner_exchange, routing_key='reasoner.#'),
+#    Queue('reasoner', reasoner_exchange, routing_key='reasoner.#'),
 )
 
 CELERY_DEFAULT_QUEUE = 'default'
@@ -52,8 +53,11 @@ CELERY_ROUTES = {
     'monitor.get_sensor_data': {
         'queue': 'monitor',
     },
+    'monitor.return_sensor_data': {
+        'queue': 'monitor_%s' % config.hostname,
+    },
 }
 
 celery = Celery('robotice', broker=BROKER_URL)
 celery.control.time_limit('monitor.get_sensor_data', soft=60, hard=120, reply=True)
-#celery.control.time_limit('monitor.get_real_data', soft=60, hard=120, reply=True)
+celery.control.time_limit('monitor.get_sensor_data', soft=60, hard=120, reply=True)
