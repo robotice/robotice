@@ -47,6 +47,9 @@ CELERY_ROUTES = {
     'reasoner.compare_data': {
         'queue': 'reasoner',
     },
+    'reasoner.process_real_data': {
+        'queue': 'reasoner',
+    },
 }
 
 CELERYBEAT_SCHEDULE = {
