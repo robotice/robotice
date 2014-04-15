@@ -16,22 +16,29 @@ logger = get_task_logger(__name__)
 def get_real_data(config):
 
     tasks = []
-
-    grains = get_grains()
-
+    logger = get_real_data.get_logger()
+    #grains = get_grains()
+    logger.info('Sensors {0}'.format(config.sensors))
+    
     for sensor in config.sensors:
         tasks.append(get_sensor_data.subtask((sensor,), exchange='monitor_%s' % config.hostname))
+        logger.info('Registred get_sensor_data {0}'.format(sensor))
 
     job = group(tasks)
-    result = job.apply_async(link=process_real_data.subtask((config, ), exchange='reasoner'), link_error=log_error.subtask((config, ), exchange='reasoner'))
+    result = job.apply_async(link=process_real_data.subtask((config, ), exchange='reasoner'))
     return result #'Started reading real data from sensors %s on device %s at %s' % (config.sensors, config.hostname, time())
+
+def import_module(name):
+    mod = __import__(name)
+    components = name.split('.')
+    for comp in components[1:]:
+        mod = getattr(mod, comp)
+    return mod
 
 @task(name='monitor.get_sensor_data', track_started=True)
 def get_sensor_data(sensor):
 
-    #sensor_module = __import__(".".join(["sensors", sensor.device],))
-    logger.info('Reading sensor: %s' % sensor)
+    module_name = ".".join(["monitor", "sensors", sensor.get("device")])
 
-    #send_task(name[, args[, kwargs[, ]]])
-    return 'xxx'
-    #return sensor_module.get_data(sensor)
+    mod = import_module(module_name)
+    return mod.get_data(sensor)
