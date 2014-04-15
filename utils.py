@@ -22,8 +22,8 @@ class Settings(object):
         device_config_file = open("/srv/robotice/config/devices.yml", "r")
         self.devices = load(device_config_file)['devices']
 
-#        plan_config_file = open("/srv/robotice/config/plans.yml", "r")
-#        self.plans = load(plan_config_file)
+        plan_config_file = open("/srv/robotice/config/plans.yml", "r")
+        self.plans = load(plan_config_file)['plans']
 
         system_config_file = open("/srv/robotice/config/systems.yml", "r")
         self.systems = load(system_config_file)['systems']
@@ -83,7 +83,7 @@ class Settings(object):
 
 def setup_app(worker):
     return Settings(worker)
-    
+
 class Grains(object):
 
     hostname = None

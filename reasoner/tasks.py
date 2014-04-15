@@ -25,6 +25,17 @@ def process_data(model, data):
 
     pass
 
+@task(name='reasoner.log_error')
+def log_error(model, data):
+    """
+    Ships data to some metrics collectors (StatsD)
+    save redis as well
+    """
+
+
+    pass
+
+
 @task(name='reasoner.process_real_data')
 def process_real_data(results, config):
 
