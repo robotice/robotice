@@ -47,7 +47,7 @@ class Settings(object):
     def sensors(self):
         sensors = []
         for host in self.devices:
-            if host.get('name') == self.hostname:
+            if host.get('host') == self.hostname:
                 for sensor in host.get('sensors'):
                     sensor['os_family'] = host.get('os_family')
                     sensor['cpu_arch'] = host.get('cpu_arch')
