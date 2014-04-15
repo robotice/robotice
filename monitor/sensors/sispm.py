@@ -7,7 +7,7 @@ import logging
 
 logger = logging.getLogger("robotice.sensor.sispm")
 
-def get_sispm_data(sensor):
+def get_data(sensor):
   """
   sispm reading
   """

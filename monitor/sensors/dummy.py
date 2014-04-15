@@ -2,7 +2,7 @@
 
 import random
 
-def get_dummy_data(sensor):
+def get_data(sensor):
     """
     Just get some random data
     """

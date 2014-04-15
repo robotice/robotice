@@ -2,7 +2,7 @@ import subprocess
 
 executable = "/srv/robotice/sensors/cds/driver.py"
 
-def get_cds_data(sensor):
+def get_data(sensor):
     port = str(sensor.get('port'))
     arch = sensor.get('cpu_arch')
     mode = sensor.get('mode')

@@ -6,7 +6,7 @@ import sys
 
 executable = "/srv/robotice/sensors/Adafruit_DHT"
 
-def get_dht_data(sensor):
+def get_data(sensor):
     """
     Run the DHT program to get the humidity and temperature readings!
     """

@@ -8,7 +8,7 @@ import logging
 executable = "/usr/local/bin/sispmctl"
 logger = logging.getLogger("robotice.sensor.afm")
 
-def get_afm_data(sensor):
+def get_data(sensor):
   """
   sispm reading
   """
