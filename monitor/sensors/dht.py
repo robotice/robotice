@@ -11,10 +11,10 @@ def get_data(sensor):
     Run the DHT program to get the humidity and temperature readings!
     """
     device = sensor.get('device', 0)
-    version = sensor.get('version')
+    type = sensor.get('type')
     port = sensor.get('port')
 
-    output = subprocess.check_output([executable, str(version), str(port)])
+    output = subprocess.check_output([executable, str(type), str(port)])
 
     matches = re.search("Temp =\s+([0-9.]+)", output)
     if (not matches):
