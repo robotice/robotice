@@ -30,12 +30,12 @@ def get_data(sensor):
 
     if temp == None or humidity == None:
         values = [
-            ('dht.%s.temperature' % device, None,),
-            ('dht.%s.humidity' % device, None,)
+            ('%s.%s.temperature' % (device, sensor.get("name")), None,),
+            ('%s.%s.humidity' % (device, sensor.get("name")), None,)
         ]
     else:
         values = [
-            ('dht.%s.temperature' % device, temp, ),
-            ('dht.%s.humidity' % device, humidity, )
+            ('%s.%s.temperature' % (device, sensor.get("name")), temp, ),
+            ('%s.%s.humidity' % (device, sensor.get("name")), humidity, )
         ]
     return values
