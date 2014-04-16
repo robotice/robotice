@@ -43,13 +43,12 @@ def process_real_data(results, grains):
     database = config.database
     task_results = []
 
-#    for result in results.join():
     for datum in results:
         if isinstance(datum[1], (int, long, float, decimal.Decimal)):
             task_results.append(datum)
-            metering.send('%s.%s' % (grains.hostname.replace('.', '_'), datum[0]), datum[1])
+            metering.send(datum[0], datum[1])
 
-    return 'Finished reading real data %s on device %s at %s' % (task_results, grains.hostname, time())
+    return 'Finished processing real sensor data %s from device %s at %s' % (task_results, grains.hostname, time())
 
 
 @task(name='reasoner.maintain_system')
