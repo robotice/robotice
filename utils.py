@@ -14,6 +14,7 @@ from blitzdb import FileBackend
 
 log = logging.getLogger("robotice.utils")
 
+
 def import_module(name):
     mod = __import__(name)
     components = name.split('.')
@@ -29,7 +30,7 @@ class Settings(object):
     config = None
     devices = None
     systems = None
-    
+
     def __init__(self, worker):
 
         config_file = open("/srv/robotice/config_%s.yml" % worker, "r")
@@ -44,7 +45,7 @@ class Settings(object):
         system_config_file = open("/srv/robotice/config/systems.yml", "r")
         self.systems = load(system_config_file)['systems']
 
-    @property 
+    @property
     def mongo_connection(self):
         return connection(self.config.get('database_mongo').get('host'), self.config.get('database_mongo').get('port'))
 
@@ -56,7 +57,7 @@ class Settings(object):
         """
         db = self.mongo_connection[db_name]
         return MongoBackend(db)
-    
+
     @property
     def file_backend(self, db="/srv/robotice/database"):
         """
@@ -64,12 +65,26 @@ class Settings(object):
         """
         return FileBackend(db)
 
-    def load_model_from_mongo(self, worker):
+    def sync_model_from_mongo(self):
         """
         loadne model z mognodb a ulozi je na disk do souborove db
         pokud bude existovat tak by to mel syncnout v pripade failu vytvorit novou db2
         """
-        return True
+        mongodb_backend = self.mongodb_backend
+        file_backend = self.file_backend
+
+        config_db = None
+        
+        try:
+            config_db = mongodb_backend.get(Config, {"hostname": self.grains.hostname})
+        except Config.DoesNotExist:
+            return ("Configurace neexistuje")
+        except Config.MultipleObjectsReturned:
+            return ("Bylo nalezeno vice configuraci nevi ktera se ma vybrat")
+        finally:
+            file_backend.save(config_db)
+            return True
+        return None
 
     @property
     def sensors(self):
@@ -110,9 +125,14 @@ class Settings(object):
             host=self.config.get('metering').get('host'),
             port=self.config.get('metering').get('port'),
             sample_rate=self.config.get('metering').get('sample_rate'),
-            disabled = False
+            disabled=False
         )
         return statsd.Gauge(self.metering_prefix, statsd_connection)
+
+    @property
+    def grains(self):
+        return get_grains()
+
 
 def setup_app(worker):
     return Settings(worker)
