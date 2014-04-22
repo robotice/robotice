@@ -126,7 +126,6 @@ class Settings(object):
 
     @property
     def sensors(self):
-        return self.filter(Sensor, {"host": self.hostname})
         """
         sensors = []
         for host in self.devices:
@@ -138,6 +137,7 @@ class Settings(object):
                     sensors.append(sensor)
         return sensors
         """
+        return self.filter(Sensor, {"host": self.hostname})
     @property
     def grains(self):
         grains = Grains()
