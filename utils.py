@@ -8,6 +8,10 @@ import socket
 
 from models import Plan, Device, System, Sensor, Config
 
+from pymongo import connection
+from blitzdb.backends.mongo import Backend as MongoBackend
+from blitzdb import FileBackend
+
 log = logging.getLogger("robotice.utils")
 
 def import_module(name):
@@ -18,6 +22,7 @@ def import_module(name):
         mod = getattr(mod, comp)
 
     return mod
+
 
 class Settings(object):
 
@@ -38,6 +43,33 @@ class Settings(object):
 
         system_config_file = open("/srv/robotice/config/systems.yml", "r")
         self.systems = load(system_config_file)['systems']
+
+    @property 
+    def mongo_connection(self):
+        return connection(self.config.get('database_mongo').get('host'), self.config.get('database_mongo').get('port'))
+
+    @property
+    def mongodb_backend(self, db_name=self.get_grains.hostname):
+        """http://api.mongodb.org/python/2.7rc0/tutorial.html
+        return mongodb backend
+        http://blitz-db.readthedocs.org/en/latest/backends/mongo.html
+        """
+        db = self.mongo_connection[db_name]
+        return MongoBackend(db)
+    
+    @property
+    def file_backend(self, db="/srv/robotice/database"):
+        """
+        db with path
+        """
+        return FileBackend(db)
+
+    def load_model_from_mongo(self, worker):
+        """
+        loadne model z mognodb a ulozi je na disk do souborove db
+        pokud bude existovat tak by to mel syncnout v pripade failu vytvorit novou db2
+        """
+        return True
 
     @property
     def sensors(self):
