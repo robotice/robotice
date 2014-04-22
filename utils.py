@@ -104,9 +104,30 @@ class Settings(object):
                 file_backend.save(config_db)
                 return True
         return None
+    
+    def filter(self, object, query, check=False):
+        """poprve hleda v mongu pak v souboru
+        """
+        result = []
+        try:
+            result = self.mongodb_backend.filter(object, query)
+        except Exception, e:
+            try:
+                result = self.file_backend.filter(object, query)
+            except Exception, e:
+                raise e
+        if check:
+            if len(result) > 0:
+                if isinstance(result[0], object):
+                    return result
+                else:
+                    return []
+        return result
 
     @property
     def sensors(self):
+        return self.filter(Sensor, {"host": self.hostname})
+        """
         sensors = []
         for host in self.devices:
             if host.get('host') == self.hostname:
@@ -116,7 +137,7 @@ class Settings(object):
                     sensor['hostname'] = self.hostname
                     sensors.append(sensor)
         return sensors
-
+        """
     @property
     def grains(self):
         grains = Grains()
