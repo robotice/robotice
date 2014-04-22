@@ -65,9 +65,27 @@ class Settings(object):
         """
         return FileBackend(db)
 
+    def save_model(self, object):
+        """ulozi object do dostupnych backendu
+        """
+        mongodb_backend = self.mongodb_backend
+        file_backend = self.file_backend #musi vzdy existovat!
+
+        if mongodb_backend:
+            mongodb_backend.begin()
+            try:
+                mongodb_backend.save(object)
+                file_backend.save(object)
+            except Exception, e:
+                mongodb_backend.rollback()
+            finally:
+                mongodb_backend.commit()
+        else:
+            file_backend.save(object)
+
     def sync_db_with_file(self):
         """
-        loadne model z mognodb a ulozi je na disk do souborove db
+        loadne model z mognodb backendu a ulozi ho do file backendu
         pokud bude existovat tak by to mel syncnout v pripade failu vytvorit novou db2
         """
         mongodb_backend = self.mongodb_backend
@@ -82,8 +100,9 @@ class Settings(object):
         except Config.MultipleObjectsReturned:
             return ("Bylo nalezeno vice configuraci nevi ktera se ma vybrat")
         finally:
-            file_backend.save(config_db)
-            return True
+            if isinstance(config_db, Config):
+                file_backend.save(config_db)
+                return True
         return None
 
     @property
