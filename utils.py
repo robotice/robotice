@@ -65,7 +65,7 @@ class Settings(object):
         """
         return FileBackend(db)
 
-    def sync_model_from_mongo(self):
+    def sync_db_with_file(self):
         """
         loadne model z mognodb a ulozi je na disk do souborove db
         pokud bude existovat tak by to mel syncnout v pripade failu vytvorit novou db2
