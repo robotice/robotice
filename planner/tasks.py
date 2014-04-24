@@ -11,7 +11,7 @@ def get_plan(config):
         for plan in config.config.plans:
             if system.get("name") == plan.get("name"):
                 for _plan in config.plans:
-                    if _plan.get("name") == system.get("plan"):
+                    if _plan.get("type") == system.get("plan"):
                         return _plan
     return None
 
