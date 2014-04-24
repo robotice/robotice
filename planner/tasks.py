@@ -15,4 +15,4 @@ def get_model_data(config):
 @task(name='planner.return_model_data')
 def return_model_data(config):
     values = []
-    return get_plan(config)
+    return get_model_data(config)
