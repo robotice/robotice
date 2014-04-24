@@ -3,9 +3,6 @@ from celery.task import task
 
 @task(name='planner.get_model_data')
 def get_model_data(config):
-    return config.plans
-
-def get_plan(config):
     """pro dany system vrati plan"""
     for system in config.systems:
         for plan in config.config.plans:
