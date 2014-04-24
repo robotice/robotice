@@ -30,6 +30,7 @@ class Settings(object):
     config = None
     devices = None
     systems = None
+    plans = None
 
     def __init__(self, worker):
 
