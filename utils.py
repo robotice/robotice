@@ -8,7 +8,7 @@ import socket
 
 from models import Plan, Device, System, Sensor, Config
 
-from pymongo import connection
+from pymongo import MongoClient
 from blitzdb.backends.mongo import Backend as MongoBackend
 from blitzdb import FileBackend
 
@@ -48,15 +48,17 @@ class Settings(object):
 
     @property
     def mongo_connection(self):
-        return connection(self.config.get('database_mongo').get('host'), self.config.get('database_mongo').get('port'))
+        host = self.config.get('database_mongo', {'host':'localhost'}).get('host')
+        port = self.config.get('database_mongo', {'port': '27017'}).get('port')
+        return MongoClient()
 
     @property
-    def mongodb_backend(self, db_name=self.get_grains.hostname):
+    def mongodb_backend(self, db_name="hostname"):
         """http://api.mongodb.org/python/2.7rc0/tutorial.html
         return mongodb backend
         http://blitz-db.readthedocs.org/en/latest/backends/mongo.html
         """
-        db = self.mongo_connection[db_name]
+        db = MongoClient()["db_name"]
         return MongoBackend(db)
 
     @property
@@ -128,6 +130,8 @@ class Settings(object):
     @property
     def sensors(self):
         """
+        return self.filter(Sensor, {"host": self.hostname})
+        """
         sensors = []
         for host in self.devices:
             if host.get('host') == self.hostname:
@@ -137,8 +141,7 @@ class Settings(object):
                     sensor['hostname'] = self.hostname
                     sensors.append(sensor)
         return sensors
-        """
-        return self.filter(Sensor, {"host": self.hostname})
+
     @property
     def grains(self):
         grains = Grains()
