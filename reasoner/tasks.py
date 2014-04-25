@@ -53,11 +53,18 @@ def get_plan(config, device_name, device_metric):
 def get_db_values(config, system, plan_name, type='sensors'):
     """return tuple(model_value, real_value)
     """
-    db_key_real = '%s.%s.%s.%s' % (system, type, plan_name, 'real')
-    return db_key_real, None
-    db_key_model = '%s.%s.%s.%s' % (system, type, plan_name, 'model')
+    logger = compare_data.get_logger()
+    try:
+        system_name = system.get('name')
+    except Exception, e:
+        return None, None
+    db_key_real = '%s.%s.%s.%s' % (system.get('name'), type, plan_name, 'real')
+    db_key_model = '%s.%s.%s.%s' % (system.get('name'), type, plan_name, 'model')
+    logger.info(db_key_model)
     model_value = config.database.get(db_key_model)
     real_value = config.database.get(db_key_real)
+    logger.info("key: {0} value: {1}"format(db_key_model, model_value))
+    logger.info("key: {0} value: {1}"format(db_key_real, real_value))
     return model_value, real_value
 
 @task(name='reasoner.compare_data')
@@ -75,10 +82,9 @@ def compare_data(config):
     #tasks = []
 
     for sensor in config.sensors:
-        system, metric = config.get_system_for_device(sensor.get("name"))
-        system, plan_name = get_plan(config, sensor.get('name'), metric)
+        system, plan_name = get_plan(config, sensor.get('name'), sensor.get("metric"))
         model_value, real_value = get_db_values(config, system, plan_name)
-        results.append((model_value, real_value),)
+        logger.info((model_value, real_value),)
         if model_value != real_value:
             #tasks.append(.subtask((config, sensor, grains), exchange='reactor_%s' % config.hostname))
             logger.info('Registred commit_action {0}'.format(sensor))
