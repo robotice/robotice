@@ -40,7 +40,7 @@ def get_sensor_data(config, sensor, grains):
 
     for result in results:
         if isinstance(result[1], (int, long, float, decimal.Decimal)):
-            db_key = '%s.%s' % ('system.test', result[0])
+            db_key = '%s.%s' % (grains.hostname, result[0])
             config.metering.send(result[0], result[1])
             config.database.set(db_key, result[1])
 
