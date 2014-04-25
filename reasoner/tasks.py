@@ -64,6 +64,23 @@ def get_actuator(config, plan_name):
                 return actuator
     return None
 
+def get_actuator_device(config, device_name):
+    """pro dany system vrati plan"""
+    for host in config.devices:
+        for device in host.get('devices'):
+            if device_name == device.get('name'):
+                return device
+    return None
+
+def get_actuators(config):
+    """pro dany system vrati plan"""
+    actuators = []
+    for system in config.systems:
+        for actuator in system.get('actuators'):
+            actuator['system'] = system.get('name')
+            actuator['plan'] = system.get('plan')
+            actuators.append(actuator)
+    return actuators
 
 def get_db_values(config, system, plan_name, type='sensors'):
     """return tuple(model_value, real_value)
@@ -100,44 +117,44 @@ def compare_data(config):
 
     results = []
 
-    logger.info(config.sensors)
-    for sensor in config.sensors:
-        system, plan_name = get_plan(
-            config, sensor.get('name'), sensor.get("metric"))
-        if not system:
-            continue
+    actuators = get_actuators(config)
+
+    logger.info(actuators)
+    for actuator in actuators:
+        #system, plan_name = get_plan(
+        #    config, actuator.get('name'), actuator.get("metric"))
+        #if not system:
+        #    continue
+        system = actuator.get('system')
+        plan_name = actuator.get('plan')
         model_value, real_value = get_db_values(config, system, plan_name)
         logger.info("key: {0} model_value: {1} | real_value: {2}".format(
-            ('%s.%s.%s' % (system.get('name'), 'sensors', plan_name)), model_value, real_value))
+            ('%s.%s.%s' % (system, 'actuators', plan_name)), model_value, real_value))
         if real_value == None:
             logger.info('NO REAL DATA to COMPARE')
             continue
-        actuator = sensor
-        actuator_ = get_actuator(config, plan_name)
-        if actuator_:
-            if actuator_.has_key('socket'):
-                actuator_.pop("device")
-                actuator["extra"] = actuator_ 
-        else:
-            logger.info("missing actuator %s"% sensor)
+        actuator_ = get_actuator_device(config, actuator.get('device'))
+        actuator.pop('device')
+        #actuator_.pop("device")
         logger.info(actuator)
         logger.info(actuator_)
+        actuator.update(actuator_) 
         if isinstance(model_value, int):
             logger.info("actuator")
             if model_value != real_value:
-                logger.info('Registred commit_action for {0}'.format(sensor))
+                logger.info('Registred commit_action for {0}'.format(actuator))
                 send_task('reactor.commit_action', [config, actuator, str(model_value), str(real_value)], {})
-                results.append('sensor: {0} hostname: {1}, plan: {2}'.format(
-                    sensor.get("name"), sensor.get("hostname"), plan_name))
+                results.append('actuator: {0} hostname: {1}, plan: {2}'.format(
+                    actuator.get("name"), actuator.get("name"), plan_name))
         else:
             logger.info("parsed real values : %s < %s and %s < %s"% (model_value[0],real_value,real_value, model_value[1]))
             if (model_value[0] < real_value) and (real_value < model_value[1]):
-                results.append('OK - sensor: {0} hostname: {1}, plan: {2}'.format(
-                    sensor.get("name"), sensor.get("hostname"), plan_name))
+                results.append('OK - actuator: {0} hostname: {1}, plan: {2}'.format(
+                    actuator.get("name"), actuator.get("name"), plan_name))
             else:
-                logger.info('Registred commit_action for {0}'.format(sensor))
+                logger.info('Registred commit_action for {0}'.format(actuator))
                 send_task('reactor.commit_action', [config, actuator, str(model_value), str(real_value)], {})
-                results.append('sensor: {0} hostname: {1}, plan: {2}'.format(
-                    sensor.get("name"), sensor.get("hostname"), plan_name))
+                results.append('actuator: {0} hostname: {1}, plan: {2}'.format(
+                    actuator.get("name"), actuator.get("name"), plan_name))
 
     return results
