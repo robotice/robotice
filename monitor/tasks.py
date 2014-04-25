@@ -49,7 +49,6 @@ def get_sensor_data(config, sensor, grains):
     for result in results:
         if isinstance(result[1], (int, long, float, decimal.Decimal)):
             
-            config.metering.send(result[0], result[1])
 
             result_name = result[0].split('.')[0]
             result_metric = result[0].split('.')[1]
@@ -57,6 +56,7 @@ def get_sensor_data(config, sensor, grains):
             system, plan_name = get_plan(config, result_name, result_metric)
             if system != None:
                 db_key = '%s.%s.%s.%s' % (system.get('name'), 'sensor', plan_name, 'real')    
+                config.metering.send(db_key, result[1])
                 config.database.set(db_key, result[1])
             
             #return result[0].split('.')[-1]
