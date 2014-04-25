@@ -52,6 +52,6 @@ def compare_data(config):
     now = time()
 
     for system in config.systems:
-        system, metric config.get_system_for_device(system.get('sensors')[0].get('device'))
-    
+        system, metric = config.get_system_for_device(system.get('sensors')[0].get('device'))
+        
     return 0
