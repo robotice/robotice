@@ -115,7 +115,7 @@ def compare_data(config):
         actuator = sensor.copy()
         actuator_ = get_actuator(config, plan_name)
         if actuator_:
-            actuator.update(actuator_.pop("device"))
+            actuator["system"] = actuator_.pop("device")
         else:
             logger.info("missing actuator %s"% sensor)
         if len(model_value) == 1:
