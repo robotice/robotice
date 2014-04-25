@@ -17,9 +17,12 @@ def run(device, model_data, real_data):
 
   if model_data == 0:
     command = ['python', executable, "-a", device.get('architecture'), '-p', device.get('port'), '-m', 'off']
+    time.sleep(1000)
+    command = ['python', executable, "-a", device.get('architecture'), '-p', device.get('port'), '-m', 'on']
   else:
     command = ['python', executable, "-a", device.get('architecture'), '-p', device.get('port'), '-m', 'on']
-
+    time.sleep(1000)
+    command = ['python', executable, "-a", device.get('architecture'), '-p', device.get('port'), '-m', 'off']
   output = subprocess.check_output(command)
 
   f = open(status_file, 'w')
