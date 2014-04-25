@@ -2,12 +2,13 @@
 from time import time
 import decimal
 
-from datetime import datetime 
+from datetime import datetime
 from celery.task import task
 from celery import group, chord
 from celery.execute import send_task
 from utils import setup_app
 from reactor.tasks import commit_action
+
 
 @task(name='reasoner.process_data')
 def process_data(model, data):
@@ -17,6 +18,7 @@ def process_data(model, data):
     """
 
     pass
+
 
 @task(name='reasoner.log_error')
 def log_error(model, data):
@@ -44,6 +46,7 @@ def process_real_data(results, grains):
 
     return 'Finished processing real sensor data %s from device %s at %s' % (task_results, grains.hostname, time())
 
+
 def get_plan(config, device_name, device_metric):
     """pro dany system vrati plan"""
     for system in config.systems:
@@ -51,6 +54,7 @@ def get_plan(config, device_name, device_metric):
             if device_name == sensor.get('device'):
                 return system, sensor.get('plan')
     return None, None
+
 
 def get_db_values(config, system, plan_name, type='sensors'):
     """return tuple(model_value, real_value)
@@ -60,20 +64,22 @@ def get_db_values(config, system, plan_name, type='sensors'):
     except Exception, e:
         return None, None
     db_key_real = '%s.%s.%s.%s' % (system.get('name'), type, plan_name, 'real')
-    db_key_model = '%s.%s.%s.%s' % (system.get('name'), type, plan_name, 'model')
+    db_key_model = '%s.%s.%s.%s' % (
+        system.get('name'), type, plan_name, 'model')
     model_value = config.database.get(db_key_model)
     real_value = config.database.get(db_key_real)
     return model_value, real_value
+
 
 @task(name='reasoner.compare_data')
 def compare_data(config):
     """
     Core task that runs every 1-60 seconds
-    """ 
+    """
 
     logger = compare_data.get_logger()
-    
-    now = time()    
+
+    now = time()
     logger.info('Compare data started {0}'.format(now))
 
     results = []
@@ -81,17 +87,27 @@ def compare_data(config):
 
     logger.info(config.sensors)
     for sensor in config.sensors:
-        system, plan_name = get_plan(config, sensor.get('name'), sensor.get("metric"))
+        system, plan_name = get_plan(
+            config, sensor.get('name'), sensor.get("metric"))
+        if not system:
+            continue
         model_value, real_value = get_db_values(config, system, plan_name)
-        logger.info("model_value: {0} | real_value: {1}".format(model_value, real_value))
-        if model_value != real_value:
-            logger.info('Registred commit_action for {0}'.format(sensor))
-            tasks.append(commit_action.subtask((config, sensor), exchange='reactor_%s' % config.hostname))
-            results.append('sensor: {0} hostname: {1}, plan: {2}'.format(sensor.get("name"),sensor.get("hostname"), plan_name))
-        else:
-            results.append('OK - sensor: {0} hostname: {1}, plan: {2}'.format(sensor.get("name"),sensor.get("hostname"), plan_name))
-            logger.info('OK - sensor {0} on hostname: {1}, plan {2}'.format(sensor.get("name"),sensor.get("hostname"), plan_name))
+        logger.info("key: {0} model_value: {0} | real_value: {1}".format(
+            ('%s.%s.%s' % (system.get('name'), 'sensors', plan_name)), model_value, real_value))
+        if real_value:
+            if not (model_value[0] < real_value and real_value < model_value[1]):
+                logger.info('Registred commit_action for {0}'.format(sensor))
+                tasks.append(commit_action.subtask(
+                    (config, sensor), exchange='reactor_%s' % config.hostname))
+                send_task('reactor.commit_action', [config, sensor], {})
+                results.append('sensor: {0} hostname: {1}, plan: {2}'.format(
+                    sensor.get("name"), sensor.get("hostname"), plan_name))
+            else:
+                results.append('OK - sensor: {0} hostname: {1}, plan: {2}'.format(
+                    sensor.get("name"), sensor.get("hostname"), plan_name))
+                logger.info('OK - sensor {0} on hostname: {1}, plan {2}'.format(
+                    sensor.get("name"), sensor.get("hostname"), plan_name))
     job = group(tasks)
     result = job.apply_async()
-    
+
     return results
