@@ -105,8 +105,8 @@ def compare_data(config):
             if (real_value < model_value[0]) or (real_value > model_value[1]):
                 logger.info('Registred commit_action for {0}'.format(sensor))
                 tasks.append(commit_action.subtask(
-                    (config, sensor), exchange='reactor_%s' % config.hostname))
-                send_task('reactor.commit_action', [config, sensor, model_value, real_value], {})
+                    (config, sensor, model_value, real_value), exchange='reactor_%s' % config.hostname))
+                #send_task('reactor.commit_action', [config, sensor, model_value, real_value], {})
                 results.append('sensor: {0} hostname: {1}, plan: {2}'.format(
                     sensor.get("name"), sensor.get("hostname"), plan_name))
             else:
