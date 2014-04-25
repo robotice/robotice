@@ -133,9 +133,9 @@ def compare_data(config):
         actuator_ = get_actuator_device(config, actuator.get('device'))
         actuator.pop('device')
         #actuator_.pop("device")
-        logger.info(actuator)
         logger.info(actuator_)
         actuator.update(actuator_) 
+        logger.info(actuator)
         if isinstance(model_value, int):
             logger.info("actuator")
             if model_value != real_value:
