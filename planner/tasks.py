@@ -28,8 +28,11 @@ def get_model_data(config):
             else:
                 values = (cycle.get('value_low'), cycle.get('value_high'))
         if cycle.has_key('value'):
+            config.metering.send(db_key, value)
             config.database.set(db_key, value)
         else:
+            config.metering.send("%s.%s"% (db_key, "low"), values[0])
+            config.metering.send("%s.%s"% (db_key, "high"), values[1])
             config.database.set(db_key, values)
     return time_delta
 
