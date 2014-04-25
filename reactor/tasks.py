@@ -12,9 +12,12 @@ def commit_action(config, actuator, model_data, real_data):
 
     mod = import_module(module_name)
 
-    results = mod.run(actuator, model_data, real_data)
 
     logger.info([actuator, model_data, real_data])
+
+    command, results = mod.run(actuator, model_data, real_data)
+
+    logger.info(command)
     logger.info(results)
 
     return results

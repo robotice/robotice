@@ -26,4 +26,4 @@ def run(device, model_data, real_data):
   f.write(model_data)
   f.close()
 
-  return output
+  return command, output
