@@ -67,8 +67,13 @@ def get_db_values(config, system, plan_name, type='sensors'):
     db_key_model = '%s.%s.%s.%s' % (
         system.get('name'), type, plan_name, 'model')
     model_value = config.database.get(db_key_model)
+    model_value = model_value.replace("(", "").replace(")", "").split(", ")
+    if not len(model_value) == 1:
+        model_value[0], model_value[1] = int(model_value[0]), int(model_value[1])
+    else:
+        model_value = int(model_value)
     real_value = config.database.get(db_key_real)
-    return model_value, real_value
+    return model_value, int(real_value)
 
 
 @task(name='reasoner.compare_data')
@@ -96,17 +101,16 @@ def compare_data(config):
         if not real_value:
             logger.info('NO REAL DATA to COMPARE')
             continue
-        model_value = model_value.replace("(", "").replace(")", "").split(", ")
         if len(model_value) == 1:
             logger.info("actuator")
-            if int(model_value[0]) != int(real_value):
+            if model_value[0] != real_value:
                 logger.info('Registred commit_action for {0}'.format(sensor))
                 send_task('reactor.commit_action', [config, sensor, model_value, real_value], {})
                 results.append('sensor: {0} hostname: {1}, plan: {2}'.format(
                     sensor.get("name"), sensor.get("hostname"), plan_name))
         else:
             logger.info("parsed real values : %s < %s and %s < %s"% (model_value[0],real_value,real_value, model_value[1]))
-            if (int(model_value[0]) < int(real_value)) and (int(real_value) < int(model_value[1])):
+            if (model_value[0] < real_value) and (real_value < model_value[1]):
                 results.append('OK - sensor: {0} hostname: {1}, plan: {2}'.format(
                     sensor.get("name"), sensor.get("hostname"), plan_name))
             else:
