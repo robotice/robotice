@@ -59,7 +59,7 @@ class Settings(object):
         for system in self.systems:
             for sensor in system.get('sensors'):
                 if sensor.get("device") == device_name:
-                    return system, sensor.get['metric']
+                    return system, sensor['metric']
         return
 
     @property
