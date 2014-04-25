@@ -57,10 +57,10 @@ class Settings(object):
     def get_system_for_device(self, device_name):
         """pro dany device vrati system"""
         for system in self.systems:
+            return system, None
             for sensor in system.get('sensors'):
                 if sensor.get("device") == device_name:
                     return system, sensor.get("metric")
-        return
 
     @property
     def get_system_plan(self):
