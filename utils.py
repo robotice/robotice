@@ -69,7 +69,7 @@ class Settings(object):
 
     @property
     def database(self):
-        return redis.Redis(host=self.config.get('database').get('host'), port=self.config.get('database').get('port'), db=0)
+        return redis.Redis(host=self.config.get('database').get('host'), port=self.config.get('database').get('port'), db=self.config.get('database').get('number', 0))
 
     @property
     def metering_prefix(self):

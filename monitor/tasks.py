@@ -21,18 +21,16 @@ def get_real_data(config):
     logger.info('Sensors {0}'.format(config.sensors))
     
     for sensor in config.sensors:
-        tasks.append(get_sensor_data.subtask((sensor, grains), exchange='monitor_%s' % config.hostname))
+        tasks.append(get_sensor_data.subtask((config, sensor, grains), exchange='monitor_%s' % config.hostname))
         logger.info('Registred get_sensor_data {0}'.format(sensor))
 
     job = group(tasks)
-
-    #result = job.apply_async(link=return_sensor_data.subtask((config, ), exchange='monitor_%s' % config.hostname))
     result = job.apply_async()
 
     return 'Started reading real data from sensors %s on device %s at %s' % (config.sensors, config.hostname, time())
 
 @task(name='monitor.get_sensor_data', track_started=True)
-def get_sensor_data(sensor, grains):
+def get_sensor_data(config, sensor, grains):
 
     module_name = ".".join(["monitor", "sensors", sensor.get("device")])
 
@@ -40,7 +38,11 @@ def get_sensor_data(sensor, grains):
 
     results = mod.get_data(sensor)
 
-    send_task("reasoner.process_real_data", [results, grains]   , {})
+    for result in results:
+        if isinstance(result[1], (int, long, float, decimal.Decimal)):
+            db_key = '%s.%s' % ('system.test', result[0])
+            config.metering.send(result[0], result[1])
+            config.database.set(db_key, result[1])
 
     return results
 

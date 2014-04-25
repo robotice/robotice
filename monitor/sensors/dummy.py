@@ -9,7 +9,7 @@ def get_data(sensor):
 
     data = []
 
-    data.append(("%s.%s.random_1" % (sensor.get('device'), sensor.get('name')), random.randint(10, 20),))
-    data.append(("%s.%s.random_2" % (sensor.get('device'), sensor.get('name')), random.randint(10, 20),))
+    data.append(("%s.%s.random1" % (sensor.get('device'), sensor.get('name')), random.randint(10, 20),))
+    data.append(("%s.%s.random2" % (sensor.get('device'), sensor.get('name')), random.randint(10, 20),))
 
     return data
