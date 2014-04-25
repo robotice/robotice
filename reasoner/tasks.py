@@ -73,17 +73,16 @@ def compare_data(config):
     results = []
     #tasks = []
 
-    for system in config.systems:
-        for sensor in config.sensors:
-            system, metric = config.get_system_for_device(sensor.get("name"))
-            system, plan_name = get_plan(config, sensor.get('name'), metric)
-            model_value, real_value = get_db_values(config, system, plan_name)
-            results.append((model_value, real_value),)
-            if model_value != real_value:
-                #tasks.append(.subtask((config, sensor, grains), exchange='reactor_%s' % config.hostname))
-                logger.info('Registred commit_action {0}'.format(sensor))
-                send_task('reactor.commit_action', [config, sensor, grains], {})
-    
+    for sensor in config.sensors:
+        system, metric = config.get_system_for_device(sensor.get("name"))
+        system, plan_name = get_plan(config, sensor.get('name'), metric)
+        model_value, real_value = get_db_values(config, system, plan_name)
+        results.append((model_value, real_value),)
+        if model_value != real_value:
+            #tasks.append(.subtask((config, sensor, grains), exchange='reactor_%s' % config.hostname))
+            logger.info('Registred commit_action {0}'.format(sensor))
+            send_task('reactor.commit_action', [config, sensor, grains], {})
+
     #job = group(tasks)
     #result = job.apply_async()
     
