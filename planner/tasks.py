@@ -14,7 +14,7 @@ def get_plan(config):
 @task(name='planner.get_model_data')
 def get_model_data(config):
     system, plan = get_plan(config)
-    devices = plan.get('actuators') + plan.get('sensors')
+    devices = plan.get('sensors')
     start = datetime.datetime.strptime(str(system.get('start')), "%Y-%m-%d %H:%M:%S")
     now = datetime.datetime.now()
     plan_cycle = int(plan.get('cycle'))
@@ -22,7 +22,7 @@ def get_model_data(config):
         for cycle in device.get('cycles'):
             cycle_start = int(cycle.get('start'))#datetime.datetime.strptime(str(cycle.get('start')), "%H:%M:%S")
             cycle_end = int(cycle.get('end'))#datetime.datetime.strptime(str(cycle.get('end')), "%H:%M:%S")
-        path = "{0}.{1}.{2}.{3}".format(system.get('name'), 'actuator', device.get('name'), 'model')
+        path = "{0}.{1}.{2}.{3}".format(system.get('name'), 'sensors', device.get('name'), 'model')
         time_delta = now - start
         relative = floor(time_delta.seconds / plan_cycle)
         time_delta_ = relative - relative
