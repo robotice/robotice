@@ -77,8 +77,8 @@ def get_actuators(config):
     actuators = []
     for system in config.systems:
         for actuator in system.get('actuators'):
-            actuator['system'] = system.get('name')
-            actuator['plan'] = system.get('plan')
+            actuator['system_name'] = system.get('name')
+            actuator['system_plan'] = system.get('plan')
             actuators.append(actuator)
     return actuators
 
@@ -122,11 +122,11 @@ def compare_data(config):
         #    config, actuator.get('name'), actuator.get("metric"))
         #if not system:
         #    continue
-        system = actuator.get('system')
+        system = actuator.get('system_name')
         plan_name = actuator.get('plan')
         model_value, real_value = get_db_values(config, system, plan_name)
         logger.info("key: {0} model_value: {1} | real_value: {2}".format(
-            ('%s.%s.%s' % (system, 'actuators', plan_name)), model_value, real_value))
+            ('%s.%s.%s' % (system, 'sensors', plan_name)), model_value, real_value))
         if real_value == None or model_value == None:
             logger.info('NO REAL DATA to COMPARE')
             continue
