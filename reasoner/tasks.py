@@ -115,7 +115,9 @@ def compare_data(config):
         actuator = sensor
         actuator_ = get_actuator(config, plan_name)
         if actuator_:
-            actuator["extra"] = actuator_.pop("device")
+            if actuator_.has_key('socket'):
+                actuator_.pop("device")
+                actuator["extra"] = actuator_ 
         else:
             logger.info("missing actuator %s"% sensor)
         logger.info(actuator)
