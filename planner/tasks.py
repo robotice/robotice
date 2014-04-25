@@ -6,11 +6,9 @@ from math import floor
 def get_plan(config):
     """pro dany system vrati plan"""
     for system in config.systems:
-        for plan in config.config.get("plans"):
-            if system.get("name") == plan.get("name"):
-                for _plan in config.plans:
-                    if _plan.get("name") == system.get("plan"):
-                        return system, _plan
+        for plan in config.plans:
+            if plan.get("name") == system.get("plan"):
+                return system, plan
     return None
 
 @task(name='planner.get_model_data')
