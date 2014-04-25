@@ -67,7 +67,7 @@ def get_actuator(config, plan_name):
 def get_actuator_device(config, device_name):
     """pro dany system vrati plan"""
     for host in config.devices:
-        for device in host.get('devices'):
+        for device in host.get('actuators'):
             if device_name == device.get('name'):
                 return device
     return None
