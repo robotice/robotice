@@ -3,9 +3,6 @@ from celery.task import task
  
 @task(name='reactor.commit_action')
 def commit_action(config, actuator, model_data, real_data):
-	pass
-
-def get_sensor_data(config, sensor, grains):
 
     module_name = ".".join(["reactor", "actuators", actuator.get("device")])
 

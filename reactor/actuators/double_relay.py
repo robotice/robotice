@@ -7,7 +7,7 @@ import logging
 logger = logging.getLogger("robotice")
 logger.setLevel(logging.DEBUG)
 
-executable = '/srv/robotice/actuators/relay/driver.py'
+executable = '/srv/robotice/actuators/double_relay/driver.py'
 
 def run(device, model_data, real_data):
 
