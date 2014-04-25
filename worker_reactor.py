@@ -44,6 +44,9 @@ CELERY_ROUTES = {
     'reasoner.compare_data': {
         'queue': 'reasoner',
     },
+    'reactor.commit_action': {
+        'queue': 'reactor',
+    }
 }
 
 celery = Celery('robotice', broker=BROKER_URL)

@@ -4,7 +4,7 @@ import decimal
 
 from datetime import datetime 
 from celery.task import task
-
+from celery.execute import send_task
 from utils import setup_app
 
 @task(name='reasoner.process_data')
@@ -71,19 +71,20 @@ def compare_data(config):
     logger.info('Compare data started {0}'.format(now))
 
     results = []
-    tasks = []
+    #tasks = []
 
     for system in config.systems:
         for sensor in config.sensors:
-            system, metric = config.get_system_for_device(sensor.get("name")) #dht1")
+            system, metric = config.get_system_for_device(sensor.get("name"))
             system, plan_name = get_plan(config, sensor.get('name'), metric)
             model_value, real_value = get_db_values(config, system, plan_name)
             results.append((model_value, real_value),)
-            if model_value == real_value:
-                tasks.append(commit_action.subtask((config, sensor, grains), exchange='reactor_%s' % config.hostname))
+            if model_value != real_value:
+                #tasks.append(.subtask((config, sensor, grains), exchange='reactor_%s' % config.hostname))
                 logger.info('Registred commit_action {0}'.format(sensor))
+                send_task('reactor.commit_action', [config, sensor, grains], {})
     
-    job = group(tasks)
-    result = job.apply_async()
+    #job = group(tasks)
+    #result = job.apply_async()
     
-    return result
+    return results
