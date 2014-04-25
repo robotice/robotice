@@ -69,7 +69,7 @@ class Settings(object):
             for plan in self.plans:
                 if plan.get("name") == system.get("plan"):
                     return system, plan
-        return None
+        return None, None
 
     @property
     def grains(self):
