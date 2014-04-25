@@ -63,8 +63,8 @@ def get_db_values(config, system, plan_name, type='sensors'):
     logger.info(db_key_model)
     model_value = config.database.get(db_key_model)
     real_value = config.database.get(db_key_real)
-    logger.info("key: {0} value: {1}"format(db_key_model, model_value))
-    logger.info("key: {0} value: {1}"format(db_key_real, real_value))
+    logger.info("key: {0} value: {1}".format(db_key_model, model_value))
+    logger.info("key: {0} value: {1}".format(db_key_real, real_value))
     return model_value, real_value
 
 @task(name='reasoner.compare_data')
@@ -84,13 +84,12 @@ def compare_data(config):
     for sensor in config.sensors:
         system, plan_name = get_plan(config, sensor.get('name'), sensor.get("metric"))
         model_value, real_value = get_db_values(config, system, plan_name)
-        logger.info((model_value, real_value),)
         if model_value != real_value:
             #tasks.append(.subtask((config, sensor, grains), exchange='reactor_%s' % config.hostname))
-            logger.info('Registred commit_action {0}'.format(sensor))
+            logger.info('Registred commit_action for {0}'.format(sensor))
             send_task('reactor.commit_action', [config, sensor], {}, exchange='reactor_%s' % config.hostname)
         else:
-            logger.info('State OK - sensor {0}, plan {1}'.format(sensor, plan_name))
+            logger.info('State OK - sensor {0} on hostname: {1}, plan {2}'.format(sensor.get("name"),sensor.get("hostname"), plan_name))
     #job = group(tasks)
     #result = job.apply_async()
     
