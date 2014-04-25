@@ -42,6 +42,22 @@ def process_real_data(results, grains):
 
     return 'Finished processing real sensor data %s from device %s at %s' % (task_results, grains.hostname, time())
 
+def get_plan(config, device_name, device_metric):
+    """pro dany system vrati plan"""
+    for system in config.systems:
+        for sensor in system.get('sensors'):
+            if sensor.get('device') == device_name and sensor.get('metric') == device_metric:
+                return system, sensor.get('plan')
+    return None, None
+
+def get_db_values(config, system, plan_name, type='sensor'):
+    """return tuple(model_value, real_value)
+    """
+    db_key_real = '%s.%s.%s.%s' % (system, type, plan_name, 'real')
+    db_key_model = '%s.%s.%s.%s' % (system, type, plan_name, 'model')
+    model_value = config.database.get(db_key_model)
+    real_value = config.database.get(db_key_real)
+    return (model_value, real_value)
 
 @task(name='reasoner.compare_data')
 def compare_data(config):
@@ -52,6 +68,13 @@ def compare_data(config):
     now = time()
 
     for system in config.systems:
-        system, metric = config.get_system_for_device(system.get('sensors')[0].get('device'))
-        
+        for sensor in config.sensors:
+            system, metric = config.get_system_for_device(sensor.get("name")) #dht1")
+            system, plan_name = get_plan(config, sensor.get('name'), metric)
+            model_value, real_value = get_db_values(config, system, plan_name)
+            return (model_value, real_value)
+    """
+    if model_value == real_value:
+        pass
+    """
     return 0
