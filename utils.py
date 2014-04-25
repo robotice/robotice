@@ -60,7 +60,16 @@ class Settings(object):
             for sensor in system.get('sensors'):
                 if sensor.get("device") == device_name:
                     return system, sensor.get['metric']
-        return 
+        return
+
+    @property
+    def get_system_plan(self):
+        """pro dany system vrati (system, plan)"""
+        for system in self.systems:
+            for plan in self.plans:
+                if plan.get("name") == system.get("plan"):
+                    return system, plan
+        return None
 
     @property
     def grains(self):
