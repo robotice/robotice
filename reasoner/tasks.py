@@ -116,7 +116,8 @@ def compare_data(config):
         actuator_ = get_actuator(config, plan_name)
         if actuator_:
             actuator["extra"] = actuator_.pop("device")
-            logger.info(actuator)
+        logger.info(actuator)
+        logger.info(actuator_)
         else:
             logger.info("missing actuator %s"% sensor)
         if isinstance(model_value, int):
