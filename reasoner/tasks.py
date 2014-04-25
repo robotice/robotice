@@ -57,7 +57,7 @@ def get_db_values(config, system, plan_name, type='sensor'):
     db_key_model = '%s.%s.%s.%s' % (system, type, plan_name, 'model')
     model_value = config.database.get(db_key_model)
     real_value = config.database.get(db_key_real)
-    return (model_value, real_value)
+    return model_value, real_value
 
 @task(name='reasoner.compare_data')
 def compare_data(config):
@@ -81,8 +81,9 @@ def compare_data(config):
         if model_value != real_value:
             #tasks.append(.subtask((config, sensor, grains), exchange='reactor_%s' % config.hostname))
             logger.info('Registred commit_action {0}'.format(sensor))
-            send_task('reactor.commit_action', [config, sensor, grains], {})
-
+            send_task('reactor.commit_action', [config, sensor, grains], {}, exchange='reactor_%s' % config.hostname)
+        else:
+            logger.info('State OK - sensor {0}, plan {1}'.format(sensor, plan_name))
     #job = group(tasks)
     #result = job.apply_async()
     

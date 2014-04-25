@@ -55,7 +55,7 @@ CELERY_ROUTES = {
 CELERYBEAT_SCHEDULE = {
     'compare-data': {
         'task': 'reasoner.compare_data',
-        'schedule': timedelta(seconds=30),
+        'schedule': timedelta(seconds=60),
         'args': (config, ),
     },
     'real-data-reader': {
