@@ -125,7 +125,7 @@ def compare_data(config):
         model_value, real_value = get_db_values(config, system, plan_name)
         logger.info("key: {0} model_value: {1} | real_value: {2}".format(
             ('%s.%s.%s' % (system, 'actuators', plan_name)), model_value, real_value))
-        if real_value == None:
+        if real_value == None or model_value == None:
             logger.info('NO REAL DATA to COMPARE')
             continue
         actuator_ = get_actuator_device(config, actuator.get('device'))
