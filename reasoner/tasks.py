@@ -118,7 +118,7 @@ def compare_data(config):
             actuator["system"] = actuator_.pop("device")
         else:
             logger.info("missing actuator %s"% sensor)
-        if len(model_value) == 1:
+        if isinstance(model_value, int):
             logger.info("actuator")
             if model_value[0] != real_value:
                 logger.info('Registred commit_action for {0}'.format(sensor))
