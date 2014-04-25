@@ -12,6 +12,14 @@ from utils import get_grains, import_module
 
 logger = get_task_logger(__name__)
 
+def get_plan(config, device_name, device_metric):
+    """pro dany system vrati plan"""
+    for system in config.systems:
+        for sensor in system.get('sensors'):
+            if sensor.get('device') == device_name and sensor.get('metric') == device_metric:
+                return system, sensor.get('plan')
+    return None, None
+
 @task(name='monitor.get_real_data')
 def get_real_data(config):
 
@@ -40,8 +48,15 @@ def get_sensor_data(config, sensor, grains):
 
     for result in results:
         if isinstance(result[1], (int, long, float, decimal.Decimal)):
-            db_key = '%s.%s' % (grains.hostname, result[0])
+            
             config.metering.send(result[0], result[1])
+
+            result_name = result[0].split('.')[0]
+            result_metric = result[0].split('.')[1]
+
+            system, plan_name = get_plan(config, result_name, result_metric)
+            if system != None:
+                db_key = '%s.%s.%s.%s' % (system.get('name'), 'sensor', plan_name, 'real')    
                 config.database.set(db_key, result[1])
             
             #return result[0].split('.')[-1]
