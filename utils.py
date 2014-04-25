@@ -18,7 +18,6 @@ def import_module(name):
 
     return mod
 
-
 class Settings(object):
 
     config = None
@@ -88,7 +87,8 @@ class Settings(object):
 
     @property
     def metering_prefix(self):
-        return '%s_%s.%s' % (self.config.get('system_name'), self.config.get('environment'), self.hostname.replace('.', '_'))
+        #return '%s_%s.%s' % (self.config.get('system_name'), self.config.get('environment'), self.hostname.replace('.', '_'))
+        return 'robotice'
 
     @property
     def metering(self):

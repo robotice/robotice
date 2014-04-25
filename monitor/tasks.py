@@ -55,7 +55,7 @@ def get_sensor_data(config, sensor, grains):
 
             system, plan_name = get_plan(config, result_name, result_metric)
             if system != None:
-                db_key = '%s.%s.%s.%s' % (system.get('name'), 'sensor', plan_name, 'real')    
+                db_key = '%s.%s.%s.%s' % (system.get('name'), 'sensors', plan_name, 'real')    
                 config.metering.send(db_key, result[1])
                 config.database.set(db_key, result[1])
             

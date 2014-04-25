@@ -50,10 +50,11 @@ def get_plan(config, device_name, device_metric):
                 return system, sensor.get('plan')
     return None, None
 
-def get_db_values(config, system, plan_name, type='sensor'):
+def get_db_values(config, system, plan_name, type='sensors'):
     """return tuple(model_value, real_value)
     """
     db_key_real = '%s.%s.%s.%s' % (system, type, plan_name, 'real')
+    return db_key_real, None
     db_key_model = '%s.%s.%s.%s' % (system, type, plan_name, 'model')
     model_value = config.database.get(db_key_model)
     real_value = config.database.get(db_key_real)
@@ -81,7 +82,7 @@ def compare_data(config):
         if model_value != real_value:
             #tasks.append(.subtask((config, sensor, grains), exchange='reactor_%s' % config.hostname))
             logger.info('Registred commit_action {0}'.format(sensor))
-            send_task('reactor.commit_action', [config, sensor, grains], {}, exchange='reactor_%s' % config.hostname)
+            send_task('reactor.commit_action', [config, sensor], {}, exchange='reactor_%s' % config.hostname)
         else:
             logger.info('State OK - sensor {0}, plan {1}'.format(sensor, plan_name))
     #job = group(tasks)
