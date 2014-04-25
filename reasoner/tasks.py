@@ -56,6 +56,15 @@ def get_plan(config, device_name, device_metric):
     return None, None
 
 
+def get_actuator(config, plan_name):
+    """pro dany system vrati plan"""
+    for system in config.systems:
+        for actuator in system.get('actuators'):
+            if plan_name == actuator.get('plan'):
+                return actuator
+    return None
+
+
 def get_db_values(config, system, plan_name, type='sensors'):
     """return tuple(model_value, real_value)
     """
@@ -69,11 +78,13 @@ def get_db_values(config, system, plan_name, type='sensors'):
     model_value = config.database.get(db_key_model)
     model_value = model_value.replace("(", "").replace(")", "").split(", ")
     if not len(model_value) == 1:
-        model_value[0], model_value[1] = int(model_value[0]), int(model_value[1])
+        model_value = (int(model_value[0]), int(model_value[1]))
     else:
         model_value = int(model_value)
     real_value = config.database.get(db_key_real)
-    return model_value, int(real_value)
+    if real_value:
+        real_value = int(real_value)
+    return model_value, real_value
 
 
 @task(name='reasoner.compare_data')
@@ -101,11 +112,13 @@ def compare_data(config):
         if not real_value:
             logger.info('NO REAL DATA to COMPARE')
             continue
+        actuator = sensor.copy()
+        actuator.update(get_actuator(plan_name).pop("device"))
         if len(model_value) == 1:
             logger.info("actuator")
             if model_value[0] != real_value:
                 logger.info('Registred commit_action for {0}'.format(sensor))
-                send_task('reactor.commit_action', [config, sensor, model_value, real_value], {})
+                send_task('reactor.commit_action', [config, actuator, model_value, real_value], {})
                 results.append('sensor: {0} hostname: {1}, plan: {2}'.format(
                     sensor.get("name"), sensor.get("hostname"), plan_name))
         else:
@@ -115,7 +128,7 @@ def compare_data(config):
                     sensor.get("name"), sensor.get("hostname"), plan_name))
             else:
                 logger.info('Registred commit_action for {0}'.format(sensor))
-                send_task('reactor.commit_action', [config, sensor, model_value, real_value], {})
+                send_task('reactor.commit_action', [config, actuator, model_value, real_value], {})
                 results.append('sensor: {0} hostname: {1}, plan: {2}'.format(
                     sensor.get("name"), sensor.get("hostname"), plan_name))
 
