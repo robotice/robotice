@@ -6,8 +6,6 @@ import statsd
 import redis
 import socket
 
-from models import Plan, Device, System, Sensor, Config
-
 log = logging.getLogger("robotice.utils")
 
 
