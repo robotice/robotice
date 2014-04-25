@@ -53,9 +53,9 @@ CELERY_ROUTES = {
 }
 
 CELERYBEAT_SCHEDULE = {
-    'system-maintainer': {
-        'task': 'reasoner.maintain_system',
-        'schedule': crontab(),
+    'compare-data': {
+        'task': 'reasoner.compare_data',
+        'schedule': timedelta(seconds=30),
         'args': (config, ),
     },
     'real-data-reader': {
