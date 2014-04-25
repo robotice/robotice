@@ -10,6 +10,6 @@ def get_data(sensor):
 
     data = []
 
-    data.append(("%s.%s.luminosity" % (sensor.get('device'), sensor.get('name')), int(value),))
+    data.append(("%s.luminosity" % sensor.get('name'), int(value),))
 
     return data
