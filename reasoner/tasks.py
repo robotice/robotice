@@ -99,6 +99,11 @@ def compare_data(config):
         model_value = model_value.replace("(", "").replace(")", "").split(", ")
         if len(model_value) == 1:
             logger.info("actuator")
+            if int(model_value) != int(real_value):
+                logger.info('Registred commit_action for {0}'.format(sensor))
+                send_task('reactor.commit_action', [config, sensor, model_value, real_value], {})
+                results.append('sensor: {0} hostname: {1}, plan: {2}'.format(
+                    sensor.get("name"), sensor.get("hostname"), plan_name))
         else:
             logger.info("parsed real values : %s < %s and %s < %s"% (model_value[0],real_value,real_value, model_value[1]))
             if (int(model_value[0]) < int(real_value)) and (int(real_value) < int(model_value[1])):
