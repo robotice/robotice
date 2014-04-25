@@ -9,21 +9,13 @@ logger.setLevel(logging.DEBUG)
 
 executable = "/usr/local/bin/sispmctl"
 
-def run_action(device, delay):
+def run_action(device, model_data, real_data):
 
-  on_command = [executable, "-d", str(device.get('device')), '-o', str(device.get('socket'))]
-  off_command = [executable, "-d", str(device.get('device')), '-f', str(device.get('socket'))]
+  if model_data == 0:
+    command = [executable, "-d", str(device.get('device')), '-f', str(device.get('socket'))]
+  else:
+    command = [executable, "-d", str(device.get('device')), '-o', str(device.get('socket'))]
 
-  try:
-    output = subprocess.check_output(on_command);
-  except Exception, e:
-    print e
-    return None
+  output = subprocess.check_output(command);
 
-  time.sleep(delay)
-
-  try:
-    output = subprocess.check_output(off_command);
-  except Exception, e:
-    print e
-    return None
+  return output
