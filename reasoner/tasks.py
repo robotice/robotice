@@ -140,7 +140,7 @@ def compare_data(config):
             logger.info("actuator")
             if model_value != real_value:
                 logger.info('Registred commit_action for {0}'.format(actuator))
-                send_task('reactor.commit_action', [config, actuator, str(model_value), str(real_value)], {})
+                send_task('reactor.commit_action', [config, actuator, model_value, real_value], {})
                 results.append('actuator: {0} hostname: {1}, plan: {2}'.format(
                     actuator.get("name"), actuator.get("name"), plan_name))
         else:
