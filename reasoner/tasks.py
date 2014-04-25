@@ -88,8 +88,10 @@ def compare_data(config):
             #tasks.append(.subtask((config, sensor, grains), exchange='reactor_%s' % config.hostname))
             logger.info('Registred commit_action for {0}'.format(sensor))
             send_task('reactor.commit_action', [config, sensor], {}, exchange='reactor_%s' % config.hostname)
+            results.append('sensor: {0} hostname: {1}, plan: {2}'.format(sensor.get("name"),sensor.get("hostname"), plan_name))
         else:
-            logger.info('State OK - sensor {0} on hostname: {1}, plan {2}'.format(sensor.get("name"),sensor.get("hostname"), plan_name))
+            results.append('OK - sensor: {0} hostname: {1}, plan: {2}'.format(sensor.get("name"),sensor.get("hostname"), plan_name))
+            logger.info('OK - sensor {0} on hostname: {1}, plan {2}'.format(sensor.get("name"),sensor.get("hostname"), plan_name))
     #job = group(tasks)
     #result = job.apply_async()
     
