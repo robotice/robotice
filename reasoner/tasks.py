@@ -100,7 +100,7 @@ def compare_data(config):
         if len(model_value) == 1:
             logger.info("actuator")
         else:
-            logger.info("parsed real values : %s, %s"% (model_value[0], model_value[1]))
+            logger.info("parsed real values : %s < %s and %s < %s"% (model_value[0],real_value,real_value, model_value[1]))
             if (int(model_value[0]) < real_value) and (real_value < int(model_value[1])):
                 results.append('OK - sensor: {0} hostname: {1}, plan: {2}'.format(
                     sensor.get("name"), sensor.get("hostname"), plan_name))
