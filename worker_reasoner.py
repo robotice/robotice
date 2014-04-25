@@ -50,6 +50,9 @@ CELERY_ROUTES = {
     'reasoner.process_real_data': {
         'queue': 'reasoner',
     },
+    'reactor.commit_action': {
+        'queue': 'reactor',
+    }
 }
 
 CELERYBEAT_SCHEDULE = {

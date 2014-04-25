@@ -94,8 +94,15 @@ def compare_data(config):
         model_value, real_value = get_db_values(config, system, plan_name)
         logger.info("key: {0} model_value: {1} | real_value: {2}".format(
             ('%s.%s.%s' % (system.get('name'), 'sensors', plan_name)), model_value, real_value))
-        if real_value:
-            if not (model_value[0] < real_value and real_value < model_value[1]):
+        if not real_value:
+            logger.info('NO REAL DATA to COMPARE')
+            continue
+        model_value = model_value.split(",")
+        if len(model_value) == 1:
+            logger.info("actuator")
+        else:
+            logger.info("%s%s"% (model_value[0], model_value[1]))
+            if (real_value < model_value[0]) or (real_value > model_value[1]):
                 logger.info('Registred commit_action for {0}'.format(sensor))
                 tasks.append(commit_action.subtask(
                     (config, sensor), exchange='reactor_%s' % config.hostname))
@@ -104,8 +111,6 @@ def compare_data(config):
                     sensor.get("name"), sensor.get("hostname"), plan_name))
             else:
                 results.append('OK - sensor: {0} hostname: {1}, plan: {2}'.format(
-                    sensor.get("name"), sensor.get("hostname"), plan_name))
-                logger.info('OK - sensor {0} on hostname: {1}, plan {2}'.format(
                     sensor.get("name"), sensor.get("hostname"), plan_name))
     job = group(tasks)
     result = job.apply_async()
