@@ -120,7 +120,7 @@ def compare_data(config):
             logger.info("missing actuator %s"% sensor)
         if isinstance(model_value, int):
             logger.info("actuator")
-            if model_value[0] != real_value:
+            if model_value != real_value:
                 logger.info('Registred commit_action for {0}'.format(sensor))
                 send_task('reactor.commit_action', [config, actuator, model_value, real_value], {})
                 results.append('sensor: {0} hostname: {1}, plan: {2}'.format(
