@@ -16,13 +16,13 @@ def run(device, model_data, real_data):
   status_file = '/tmp/robotice_%s' % device.get('name')
 
   if model_data == 0:
-    command = ['python', executable, "-a", device.get('architecture'), '-p', device.get('port'), '-m', 'off']
+    command = ['python', executable, "-a", device.get('architecture'), '-p', device.get('port_1'), '-m', 'off']
     time.sleep(1000)
-    command = ['python', executable, "-a", device.get('architecture'), '-p', device.get('port'), '-m', 'on']
+    command = ['python', executable, "-a", device.get('architecture'), '-p', device.get('port_1'), '-m', 'on']
   else:
-    command = ['python', executable, "-a", device.get('architecture'), '-p', device.get('port'), '-m', 'on']
+    command = ['python', executable, "-a", device.get('architecture'), '-p', device.get('port_2'), '-m', 'on']
     time.sleep(1000)
-    command = ['python', executable, "-a", device.get('architecture'), '-p', device.get('port'), '-m', 'off']
+    command = ['python', executable, "-a", device.get('architecture'), '-p', device.get('port_2'), '-m', 'off']
   output = subprocess.check_output(command)
 
   f = open(status_file, 'w')
