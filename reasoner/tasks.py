@@ -92,7 +92,7 @@ def compare_data(config):
         if not system:
             continue
         model_value, real_value = get_db_values(config, system, plan_name)
-        logger.info("key: {0} model_value: {0} | real_value: {1}".format(
+        logger.info("key: {0} model_value: {1} | real_value: {2}".format(
             ('%s.%s.%s' % (system.get('name'), 'sensors', plan_name)), model_value, real_value))
         if real_value:
             if not (model_value[0] < real_value and real_value < model_value[1]):
