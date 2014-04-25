@@ -77,8 +77,8 @@ def get_db_values(config, system, plan_name, type='sensors'):
         system.get('name'), type, plan_name, 'model')
     model_value = config.database.get(db_key_model)
     model_value = model_value.replace("(", "").replace(")", "").split(", ")
-    if not isinstance(model_value, list):
-        model_value = int(model_value)
+    if len(model_value) == 1:
+        model_value = int(model_value[0])
     else:
         model_value = (int(model_value[0]), int(model_value[1]))
     real_value = config.database.get(db_key_real)
