@@ -65,16 +65,25 @@ def compare_data(config):
     Core task that runs every 1-60 seconds
     """
 
-    now = time()
+    logger = compare_data.get_logger()
+    
+    now = time()    
+    logger.info('Compare data started {0}'.format(now))
+
+    results = []
+    tasks = []
 
     for system in config.systems:
         for sensor in config.sensors:
             system, metric = config.get_system_for_device(sensor.get("name")) #dht1")
             system, plan_name = get_plan(config, sensor.get('name'), metric)
             model_value, real_value = get_db_values(config, system, plan_name)
-            return (model_value, real_value)
-    """
-    if model_value == real_value:
-        pass
-    """
-    return 0
+            results.append((model_value, real_value),)
+            if model_value == real_value:
+                tasks.append(commit_action.subtask((config, sensor, grains), exchange='reactor_%s' % config.hostname))
+                logger.info('Registred commit_action {0}'.format(sensor))
+    
+    job = group(tasks)
+    result = job.apply_async()
+    
+    return result
