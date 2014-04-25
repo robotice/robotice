@@ -8,10 +8,6 @@ import socket
 
 from models import Plan, Device, System, Sensor, Config
 
-from pymongo import MongoClient
-from blitzdb.backends.mongo import Backend as MongoBackend
-from blitzdb import FileBackend
-
 log = logging.getLogger("robotice.utils")
 
 
@@ -47,91 +43,7 @@ class Settings(object):
         self.systems = load(system_config_file)['systems']
 
     @property
-    def mongo_connection(self):
-        host = self.config.get('database_mongo', {'host':'localhost'}).get('host')
-        port = self.config.get('database_mongo', {'port': '27017'}).get('port')
-        return MongoClient()
-
-    @property
-    def mongodb_backend(self, db_name="hostname"):
-        """http://api.mongodb.org/python/2.7rc0/tutorial.html
-        return mongodb backend
-        http://blitz-db.readthedocs.org/en/latest/backends/mongo.html
-        """
-        db = MongoClient()["db_name"]
-        return MongoBackend(db)
-
-    @property
-    def file_backend(self, db="/srv/robotice/database"):
-        """
-        db with path
-        """
-        return FileBackend(db)
-
-    def save_model(self, object):
-        """ulozi object do dostupnych backendu
-        """
-        mongodb_backend = self.mongodb_backend
-        file_backend = self.file_backend #musi vzdy existovat!
-
-        if mongodb_backend:
-            mongodb_backend.begin()
-            try:
-                mongodb_backend.save(object)
-                file_backend.save(object)
-            except Exception, e:
-                mongodb_backend.rollback()
-            finally:
-                mongodb_backend.commit()
-        else:
-            file_backend.save(object)
-
-    def sync_db_with_file(self):
-        """
-        loadne model z mognodb backendu a ulozi ho do file backendu
-        pokud bude existovat tak by to mel syncnout v pripade failu vytvorit novou db2
-        """
-        mongodb_backend = self.mongodb_backend
-        file_backend = self.file_backend
-
-        config_db = None
-        
-        try:
-            config_db = mongodb_backend.get(Config, {"hostname": self.grains.hostname})
-        except Config.DoesNotExist:
-            return ("Configurace neexistuje")
-        except Config.MultipleObjectsReturned:
-            return ("Bylo nalezeno vice configuraci nevi ktera se ma vybrat")
-        finally:
-            if isinstance(config_db, Config):
-                file_backend.save(config_db)
-                return True
-        return None
-    
-    def filter(self, object, query, check=False):
-        """poprve hleda v mongu pak v souboru
-        """
-        result = []
-        try:
-            result = self.mongodb_backend.filter(object, query)
-        except Exception, e:
-            try:
-                result = self.file_backend.filter(object, query)
-            except Exception, e:
-                raise e
-        if check:
-            if len(result) > 0:
-                if isinstance(result[0], object):
-                    return result
-                else:
-                    return []
-        return result
-
-    @property
     def sensors(self):
-        """
-        return self.filter(Sensor, {"host": self.hostname})
-        """
         sensors = []
         for host in self.devices:
             if host.get('host') == self.hostname:
