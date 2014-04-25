@@ -83,7 +83,6 @@ def compare_data(config):
     logger.info('Compare data started {0}'.format(now))
 
     results = []
-    tasks = []
 
     logger.info(config.sensors)
     for sensor in config.sensors:
@@ -107,12 +106,8 @@ def compare_data(config):
                     sensor.get("name"), sensor.get("hostname"), plan_name))
             else:
                 logger.info('Registred commit_action for {0}'.format(sensor))
-                tasks.append(commit_action.subtask(
-                    (config, sensor, model_value, real_value), exchange='reactor_%s' % config.hostname))
-                #send_task('reactor.commit_action', [config, sensor, model_value, real_value], {})
+                send_task('reactor.commit_action', [config, sensor, model_value, real_value], {})
                 results.append('sensor: {0} hostname: {1}, plan: {2}'.format(
                     sensor.get("name"), sensor.get("hostname"), plan_name))
-    job = group(tasks)
-    result = job.apply_async()
 
     return results
