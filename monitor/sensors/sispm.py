@@ -27,7 +27,7 @@ def get_data(sensor):
     if i != 0:
       status = line.split("\t")
       if len(status) > 1:
-        data.append( ["sismp.0.socket_%s" % i, int(status[1])] )
+        data.append( ["%s.socket%s" % (sensor.get('name'), i), int(status[1])] )
     i += 1
       
   return data
