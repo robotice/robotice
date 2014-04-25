@@ -112,10 +112,11 @@ def compare_data(config):
         if not real_value:
             logger.info('NO REAL DATA to COMPARE')
             continue
-        actuator = sensor.copy()
+        actuator = sensor
         actuator_ = get_actuator(config, plan_name)
         if actuator_:
-            actuator["system"] = actuator_.pop("device")
+            actuator["extra"] = actuator_.pop("device")
+            logger.info(actuator)
         else:
             logger.info("missing actuator %s"% sensor)
         if isinstance(model_value, int):
