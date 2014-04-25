@@ -48,7 +48,7 @@ def get_plan(config, device_name, device_metric):
     """pro dany system vrati plan"""
     for system in config.systems:
         for sensor in system.get('sensors'):
-            if sensor.get('device') == device_name and sensor.get('metric') == device_metric:
+            if device_name == sensor.get('device'):
                 return system, sensor.get('plan')
     return None, None
 
@@ -79,12 +79,12 @@ def compare_data(config):
     results = []
     tasks = []
 
+    logger.info(config.sensors)
     for sensor in config.sensors:
         system, plan_name = get_plan(config, sensor.get('name'), sensor.get("metric"))
         model_value, real_value = get_db_values(config, system, plan_name)
         logger.info("model_value: {0} | real_value: {1}".format(model_value, real_value))
         if model_value != real_value:
-            #tasks.append(.subtask((config, sensor, grains), exchange='reactor_%s' % config.hostname))
             logger.info('Registred commit_action for {0}'.format(sensor))
             tasks.append(commit_action.subtask((config, sensor), exchange='reactor_%s' % config.hostname))
             results.append('sensor: {0} hostname: {1}, plan: {2}'.format(sensor.get("name"),sensor.get("hostname"), plan_name))
