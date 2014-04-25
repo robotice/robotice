@@ -82,16 +82,11 @@ def get_actuators(config):
             actuators.append(actuator)
     return actuators
 
-def get_db_values(config, system, plan_name, type='sensors'):
+def get_db_values(config, system_name, plan_name, type='sensors'):
     """return tuple(model_value, real_value)
     """
-    try:
-        system_name = system.get('name')
-    except Exception, e:
-        return None, None
-    db_key_real = '%s.%s.%s.%s' % (system.get('name'), type, plan_name, 'real')
-    db_key_model = '%s.%s.%s.%s' % (
-        system.get('name'), type, plan_name, 'model')
+    db_key_real = '%s.%s.%s.%s' % (system_name, type, plan_name, 'real')
+    db_key_model = '%s.%s.%s.%s' % (system_name, type, plan_name, 'model')
     model_value = config.database.get(db_key_model)
     model_value = model_value.replace("(", "").replace(")", "").split(", ")
     if len(model_value) == 1:
