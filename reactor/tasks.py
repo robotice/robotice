@@ -14,7 +14,7 @@ def commit_action(config, actuator, model_data, real_data):
 
     grains = get_grains()
 
-    actuator['architecture'] = grains.get('cpu_arch')
+    actuator['architecture'] = grains.cpu_arch
 
     logger.info([actuator, model_data, real_data])
 
