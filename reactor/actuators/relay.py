@@ -9,7 +9,7 @@ logger.setLevel(logging.DEBUG)
 
 executable = '/srv/robotice/actuators/relay/driver.py'
 
-def run_action(device, model_data, real_data):
+def run(device, model_data, real_data):
 
   # python driver.py -a armv7l -p P8_10 -m on
 
