@@ -42,8 +42,9 @@ def get_sensor_data(config, sensor, grains):
         if isinstance(result[1], (int, long, float, decimal.Decimal)):
             db_key = '%s.%s' % (grains.hostname, result[0])
             config.metering.send(result[0], result[1])
-            config.database.set(db_key, result[1])
-
+                config.database.set(db_key, result[1])
+            
+            #return result[0].split('.')[-1]
     return results
 
 #@task(name='monitor.return_sensor_data', track_started=True)
