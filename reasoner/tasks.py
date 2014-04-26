@@ -100,21 +100,46 @@ def get_db_values(config, system_name, plan_name, type='sensors'):
         real_value = int(float(real_value))
     return model_value, real_value
 
-
-def get_value_for_actuator(config, actuator, model_values, real_value):
-    """v zavislosti na charakteru actuatoru vrati hodnotu, pokud bude rele zapni vypni 0/1
-    pripadne float pro pwm
-    """
+def get_value_for_realay(config, actuator, model_values, real_value):
     if (model_values[0] < real_value) and (real_value < model_values[1]):
         """je v intervalu vse ok"""
         return 0
-    elif (real_value < model_values[0]):
-        """je mensi jako dolni hranice neni potreba ochlazovat"""
-        return 0
-    elif (real_value > model_values[1]):
-        """je je vetsi jako horni hranice neni potreba ochlazovat"""
-        return 1
+    if "hum" in actuator.get('plan'):
+        if "air" in actuator.get('plan'):
+            """zde je potreba odlisit pudni / vzduch kde sou hodnoty naopak"""
+            if (real_value < model_values[0]):
+                """je mensi jako dolni hranice neni potreba ochlazovat"""
+                return 0
+            elif (real_value > model_values[1]):
+                """je je vetsi jako horni hranice je potreba ochlazovat"""
+                return 1
+        elif "terra" in actuator.get('plan'):
+            """zde je potreba odlisit pudni / vzduch kde sou hodnoty naopak"""
+            if (real_value < model_values[0]):
+                """je mensi jako dolni hranice je potreba zalevat"""
+                return 1
+            elif (real_value > model_values[1]):
+                """je je vetsi jako horni hranice neni potreba zalevat"""
+                return 0
+    elif "temp" in actuator.get('plan'):
+        if (real_value < model_values[0]):
+            """je mensi jako dolni hranice neni potreba ochlazovat"""
+            return 0
+        elif (real_value > model_values[1]):
+            """je je vetsi jako horni hranice je potreba ochlazovat"""
+            return 1    
     return 0
+
+def get_value_for_actuator(config, actuator, model_values, real_value):
+    """v zavislosti na charakteru actuatoru a planu vrati hodnotu, pokud bude rele zapni vypni 0/1
+    pripadne float pro pwm atp
+    """
+    if "relay" in actuator.get("device"):
+        return get_value_for_realay(config,actuator,model_values,real_value)
+    else:
+        """PWM"""
+        return float(0.00)
+    return None
 
 @task(name='reasoner.compare_data')
 def compare_data(config):
