@@ -76,7 +76,7 @@ def get_actuators(config):
     """pro dany system vrati plan"""
     actuators = []
     for system in config.systems:
-        for actuator in system.get('actuators'):
+        for actuator in system.get('actuators') + system.get('sensors'):
             actuator['system_name'] = system.get('name')
             actuator['system_plan'] = system.get('plan')
             actuators.append(actuator)
@@ -97,7 +97,7 @@ def get_db_values(config, system_name, plan_name, type='sensors'):
         model_value = (int(model_value[0]), int(model_value[1]))
     real_value = config.database.get(db_key_real)
     if real_value != None:
-        real_value = int(real_value)
+        real_value = int(float(real_value))
     return model_value, real_value
 
 
