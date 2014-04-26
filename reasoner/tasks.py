@@ -145,13 +145,17 @@ def compare_data(config):
                     actuator.get("name"), actuator.get("name"), plan_name))
         else:
             logger.info("parsed real values : %s < %s and %s < %s"% (model_value[0],real_value,real_value, model_value[1]))
+            model_value_converted = 0
             if (model_value[0] < real_value) and (real_value < model_value[1]):
+                model_value_converted = 0
                 results.append('OK - actuator: {0} hostname: {1}, plan: {2}'.format(
                     actuator.get("name"), actuator.get("name"), plan_name))
             else:
+                model_value_converted = 1
+                logger.info('converted value for actuator {0}'.format(model_value_converted))
                 logger.info('Registred commit_action for {0}'.format(actuator))
-                send_task('reactor.commit_action', [config, actuator, str(model_value), str(real_value)], {})
-                results.append('actuator: {0} hostname: {1}, plan: {2}'.format(
-                    actuator.get("name"), actuator.get("name"), plan_name))
+            send_task('reactor.commit_action', [config, actuator, str(model_value_converted), str(real_value)], {})
+            results.append('actuator: {0} hostname: {1}, plan: {2}'.format(
+                actuator.get("name"), actuator.get("name"), plan_name))
 
     return results
