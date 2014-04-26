@@ -7,7 +7,7 @@ import logging
 logger = logging.getLogger("robotice")
 logger.setLevel(logging.DEBUG)
 
-executable = '/srv/robotice/bin/poython /srv/robotice/actuators/double_relay/driver.py'
+executable = '/srv/robotice/bin/poython /srv/robotice/actuators/relay/driver.py'
 
 def run(device, model_data, real_data):
 
@@ -16,13 +16,13 @@ def run(device, model_data, real_data):
   status_file = '/tmp/robotice_%s' % device.get('name')
 
   if model_data == 0:
-    command = [executable, "-a", device.get('architecture'), '-p', device.get('port_1'), '-m', 'off']
+    command = [executable, "-a", device.get('architecture'), '-p', str(device.get('port_1')), '-m', 'off']
     time.sleep(1000)
-    command = [executable, "-a", device.get('architecture'), '-p', device.get('port_1'), '-m', 'on']
+    command = [executable, "-a", device.get('architecture'), '-p', str(device.get('port_1')), '-m', 'on']
   else:
-    command = [executable, "-a", device.get('architecture'), '-p', device.get('port_2'), '-m', 'on']
+    command = [executable, "-a", device.get('architecture'), '-p', str(device.get('port_2')), '-m', 'on']
     time.sleep(1000)
-    command = [executable, "-a", device.get('architecture'), '-p', device.get('port_2'), '-m', 'off']
+    command = [executable, "-a", device.get('architecture'), '-p', str((device.get('port_2')), '-m', 'off']
   output = subprocess.check_output(command)
 
   f = open(status_file, 'w')
