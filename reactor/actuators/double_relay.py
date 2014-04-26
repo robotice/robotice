@@ -48,4 +48,4 @@ def run(device, model_data, real_data):
   f.write(str(model_data))
   f.close()
 
-  return (command1, command2), output
+  return command, (output1, output2)
