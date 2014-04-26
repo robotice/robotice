@@ -17,21 +17,21 @@ def run(device, model_data, real_data):
 
   if device.get('reverse', False):
     if model_data == 0:
-      command = [executable, "-a", device.get('architecture'), '-p', str(device.get('port_1')), '-m', 'off', '-r','on']
-      time.sleep(1000)
       command = [executable, "-a", device.get('architecture'), '-p', str(device.get('port_1')), '-m', 'on', '-r','on']
+      time.sleep(1)
+      command = [executable, "-a", device.get('architecture'), '-p', str(device.get('port_1')), '-m', 'off', '-r','on']
     else:
       command = [executable, "-a", device.get('architecture'), '-p', str(device.get('port_2')), '-m', 'on', '-r','on']
-      time.sleep(1000)
+      time.sleep(1)
       command = [executable, "-a", device.get('architecture'), '-p', str(device.get('port_2')), '-m', 'off', '-r','on']
   else:
     if model_data == 0:
       command = [executable, "-a", device.get('architecture'), '-p', str(device.get('port_1')), '-m', 'off']
-      time.sleep(1000)
+      time.sleep(1)
       command = [executable, "-a", device.get('architecture'), '-p', str(device.get('port_1')), '-m', 'on']
     else:
       command = [executable, "-a", device.get('architecture'), '-p', str(device.get('port_2')), '-m', 'on']
-      time.sleep(1000)
+      time.sleep(1)
       command = [executable, "-a", device.get('architecture'), '-p', str(device.get('port_2')), '-m', 'off']
 
   output = subprocess.check_output(command)
