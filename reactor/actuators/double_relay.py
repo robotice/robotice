@@ -22,11 +22,12 @@ def run(device, model_data, real_data):
   else:
     command = [executable, "-a", device.get('architecture'), '-p', str(device.get('port_2')), '-m', 'on']
     time.sleep(1000)
-    command = [executable, "-a", device.get('architecture'), '-p', str((device.get('port_2')), '-m', 'off']
+    command = [executable, "-a", device.get('architecture'), '-p', str(device.get('port_2')), '-m', 'off']
+
   output = subprocess.check_output(command)
 
   f = open(status_file, 'w')
-  f.write(model_data)
+  f.write(str(model_data))
   f.close()
 
   return command, output
