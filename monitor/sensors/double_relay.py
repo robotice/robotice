@@ -9,7 +9,7 @@ def get_data(sensor):
   status_file = '/tmp/robotice_%s' % sensor.get('name')
 
   try:
-    f = open(status_file, 'w')
+    f = open(status_file, 'r')
     value = int(f.read())
     f.close()
   except:
