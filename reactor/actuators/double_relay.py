@@ -19,26 +19,33 @@ def run(device, model_data, real_data):
   if device.get('reverse', False):
     if model_data == 0:
       command = [interpret, executable, "-a", device.get('architecture'), '-p', str(device.get('port_1')), '-m', 'on', '-r','on']
+      output1 = subprocess.check_output(command)
       time.sleep(1)
       command = [interpret, executable, "-a", device.get('architecture'), '-p', str(device.get('port_1')), '-m', 'off', '-r','on']
+      output2 = subprocess.check_output(command)
     else:
       command = [interpret, executable, "-a", device.get('architecture'), '-p', str(device.get('port_2')), '-m', 'on', '-r','on']
+      output1 = subprocess.check_output(command)
       time.sleep(1)
       command = [interpret, executable, "-a", device.get('architecture'), '-p', str(device.get('port_2')), '-m', 'off', '-r','on']
+      output2 = subprocess.check_output(command)
   else:
     if model_data == 0:
       command = [interpret, executable, "-a", device.get('architecture'), '-p', str(device.get('port_1')), '-m', 'off']
+      output1 = subprocess.check_output(command)
       time.sleep(1)
       command = [interpret, executable, "-a", device.get('architecture'), '-p', str(device.get('port_1')), '-m', 'on']
+      output2 = subprocess.check_output(command)
     else:
       command = [interpret, executable, "-a", device.get('architecture'), '-p', str(device.get('port_2')), '-m', 'on']
+      output1 = subprocess.check_output(command)
       time.sleep(1)
       command = [interpret, executable, "-a", device.get('architecture'), '-p', str(device.get('port_2')), '-m', 'off']
+      output2 = subprocess.check_output(command)
 
-  output = subprocess.check_output(command)
 
   f = open(status_file, 'w')
   f.write(str(model_data))
   f.close()
 
-  return command, output
+  return (command1, command2), output
