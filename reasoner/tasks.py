@@ -76,7 +76,7 @@ def get_actuators(config):
     """pro dany system vrati plan"""
     actuators = []
     for system in config.systems:
-        for actuator in system.get('actuators') + system.get('sensors'):
+        for actuator in system.get('actuators'):
             actuator['system_name'] = system.get('name')
             actuator['system_plan'] = system.get('plan')
             actuators.append(actuator)
