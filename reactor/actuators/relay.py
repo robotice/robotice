@@ -34,7 +34,7 @@ def run(device, model_data, real_data):
   output = subprocess.check_output(command)
 
   f = open(status_file, 'w')
-  f.write(model_data)
+  f.write(str(model_data))
   f.close()
 
   return command, output
