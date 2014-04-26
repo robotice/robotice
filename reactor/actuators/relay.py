@@ -16,8 +16,7 @@ def run(device, model_data, real_data):
 
   status_file = '/tmp/robotice_%s' % device.get('name')
 
-
-  if device.get('reverse', 'off') == 'on':
+  if device.get('reverse', False):
 
     if int(model_data) == 0:
       command = [python, executable, "-a", device.get('architecture'), '-p', str(device.get('port')), '-m', 'off', '-r', 'on']
