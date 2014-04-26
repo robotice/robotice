@@ -101,6 +101,21 @@ def get_db_values(config, system_name, plan_name, type='sensors'):
     return model_value, real_value
 
 
+def get_value_for_actuator(config, actuator, model_values, real_value):
+    """v zavislosti na charakteru actuatoru vrati hodnotu, pokud bude rele zapni vypni 0/1
+    pripadne float pro pwm
+    """
+    if (model_values[0] < real_value) and (real_value < model_values[1]):
+        """je v intervalu vse ok"""
+        return 0
+    elif (real_value < model_values[0]):
+        """je mensi jako dolni hranice neni potreba ochlazovat"""
+        return 0
+    elif (real_value > model_values[1]):
+        """je je vetsi jako horni hranice neni potreba ochlazovat"""
+        return 1
+    return 0
+
 @task(name='reasoner.compare_data')
 def compare_data(config):
     """
@@ -145,14 +160,13 @@ def compare_data(config):
                     actuator.get("name"), actuator.get("name"), plan_name))
         else:
             logger.info("parsed real values : %s < %s and %s < %s"% (model_value[0],real_value,real_value, model_value[1]))
-            model_value_converted = 0
+            model_value_converted = get_value_for_actuator(config, actuator, model_value, real_value)
+            logger.info('converted value for actuator {0}'.format(model_value_converted))
             if (model_value[0] < real_value) and (real_value < model_value[1]):
                 model_value_converted = 0
                 results.append('OK - actuator: {0} hostname: {1}, plan: {2}'.format(
                     actuator.get("name"), actuator.get("name"), plan_name))
             else:
-                model_value_converted = 1
-                logger.info('converted value for actuator {0}'.format(model_value_converted))
                 logger.info('Registred commit_action for {0}'.format(actuator))
             send_task('reactor.commit_action', [config, actuator, str(model_value_converted), str(real_value)], {})
             results.append('actuator: {0} hostname: {1}, plan: {2}'.format(
