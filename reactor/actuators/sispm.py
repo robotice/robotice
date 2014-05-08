@@ -7,9 +7,13 @@ import logging
 logger = logging.getLogger("robotice")
 logger.setLevel(logging.DEBUG)
 
-executable = "/usr/local/bin/sispmctl"
-
 def run(device, model_data, real_data):
+
+  if device.get('os_family') == 'Debian':
+    executable = "/usr/bin/sispmctl"
+  else:
+    executable = "/usr/local/bin/sispmctl"
+
 
   if int(model_data) == 0:
     command = [executable, "-d", str(device.get('port')), '-f', str(device.get('socket'))]
