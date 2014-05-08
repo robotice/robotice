@@ -19,21 +19,17 @@ def run(device, model_data, real_data):
   if device.get('reverse', False):
 
     if int(model_data) == 0:
-      command = [python, executable, "-a", device.get('architecture'), '-p', str(device.get('port')), '-m', 'off', '-r', 'on']
+      command = [python, executable, '-p', str(device.get('port')), '-m', 'off', '-r', 'on']
     else:
-      command = [python, executable, "-a", device.get('architecture'), '-p', str(device.get('port')), '-m', 'on', '-r', 'on']
+      command = [python, executable, '-p', str(device.get('port')), '-m', 'on', '-r', 'on']
 
   else:
 
     if int(model_data) == 0:
-      command = [python, executable, "-a", device.get('architecture'), '-p', str(device.get('port')), '-m', 'off']
+      command = [python, executable, '-p', str(device.get('port')), '-m', 'off']
     else:
-      command = [python, executable, "-a", device.get('architecture'), '-p', str(device.get('port')), '-m', 'on']
+      command = [python, executable, '-p', str(device.get('port')), '-m', 'on']
 
   output = subprocess.check_output(command)
-
-  f = open(status_file, 'w')
-  f.write(str(model_data))
-  f.close()
-
+  
   return command, output
