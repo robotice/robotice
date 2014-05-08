@@ -1,19 +1,17 @@
-#!/usr/bin/python
 
 def get_data(sensor):
   """
-  relay reading
+  Relay status reading
   """
-  value = 0
 
-  status_file = '/tmp/robotice_%s' % sensor.get('name')
+  status_file = '/tmp/gpio_%s' % sensor.get('port')
 
   try:
     f = open(status_file, 'r')
     value = int(f.read())
     f.close()
   except:
-    pass
+    value = 0
 
   data = []
   data.append(("%s.socket" % sensor.get('name'), value))
