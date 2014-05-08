@@ -6,8 +6,6 @@ from celery.task import task
 from celery.execute import send_task
 from celery.utils.log import get_task_logger
 
-from reasoner.tasks import process_real_data, log_error
-
 from utils import get_grains, import_module
 
 logger = get_task_logger(__name__)
@@ -59,12 +57,4 @@ def get_sensor_data(config, sensor, grains):
                 config.metering.send(db_key, result[1])
                 config.database.set(db_key, result[1])
             
-            #return result[0].split('.')[-1]
     return results
-
-#@task(name='monitor.return_sensor_data', track_started=True)
-#def return_sensor_data(results, config):
-
-#    send_task("reasoner.process_real_data",[results, config], {})
-
-#    return results
