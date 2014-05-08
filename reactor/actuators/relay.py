@@ -14,8 +14,6 @@ def run(device, model_data, real_data):
 
   # python driver.py -a armv7l -p P8_10 -m on
 
-  status_file = '/tmp/robotice_%s' % device.get('name')
-
   if device.get('reverse', False):
 
     if int(model_data) == 0:
