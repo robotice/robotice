@@ -6,29 +6,27 @@ from datetime import datetime
 from celery.task import task
 from celery import group, chord
 from celery.execute import send_task
+from celery.signals import celeryd_after_setup
+
 from utils import setup_app
 from reactor.tasks import commit_action
 
 
-@task(name='reasoner.process_data')
-def process_data(model, data):
-    """
-    Ships data to some metrics collectors (StatsD)
-    save redis as well
-    """
+@celeryd_after_setup.connect
+def init_reactors(sender, instance, **kwargs):
 
-    pass
+    config = setup_app('reasoner')
 
-
-@task(name='reasoner.log_error')
-def log_error(model, data):
-    """
-    Ships data to some metrics collectors (StatsD)
-    save redis as well
-    """
-
-    pass
-
+    for host in config.devices:
+        for actuator in host.get('actuators'):
+            if actuator.has_key('default'):
+                if actuator.get('default') == 'off'
+                    model_value = 0
+                    real_value = 1
+                else:
+                    model_value = 1
+                    real_value = 0
+            send_task('reactor.commit_action', [config, actuator, str(model_value), str(real_value)], {})
 
 @task(name='reasoner.process_real_data')
 def process_real_data(results, grains):
@@ -100,7 +98,7 @@ def get_db_values(config, system_name, plan_name, type='sensors'):
         real_value = int(float(real_value))
     return model_value, real_value
 
-def get_value_for_realay(config, actuator, model_values, real_value):
+def get_value_for_relay(config, actuator, model_values, real_value):
     if (model_values[0] < real_value) and (real_value < model_values[1]):
         """je v intervalu vse ok"""
         return 0
@@ -135,7 +133,7 @@ def get_value_for_actuator(config, actuator, model_values, real_value):
     pripadne float pro pwm atp
     """
     if "relay" in actuator.get("device"):
-        return get_value_for_realay(config,actuator,model_values,real_value)
+        return get_value_for_relay(config,actuator,model_values,real_value)
     else:
         """PWM"""
         return float(0.00)
@@ -170,11 +168,10 @@ def compare_data(config):
         if real_value == None or model_value == None:
             logger.info('NO REAL DATA to COMPARE')
             continue
-        actuator_ = get_actuator_device(config, actuator.get('device'))
+        actuator_device = get_actuator_device(config, actuator.get('device'))
         actuator.pop('device')
-        #actuator_.pop("device")
-        logger.info(actuator_)
-        actuator.update(actuator_) 
+        logger.info(actuator_device)
+        actuator.update(actuator_device) 
         logger.info(actuator)
         if isinstance(model_value, int):
             logger.info("actuator")
