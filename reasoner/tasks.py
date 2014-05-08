@@ -20,7 +20,7 @@ def init_reactors(sender, instance, **kwargs):
     for host in config.devices:
         for actuator in host.get('actuators'):
             if actuator.has_key('default'):
-                if actuator.get('default') == 'off'
+                if actuator.get('default') == 'off':
                     model_value = 0
                     real_value = 1
                 else:
