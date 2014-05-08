@@ -26,7 +26,7 @@ def init_reactors(sender, instance, **kwargs):
                 else:
                     model_value = 1
                     real_value = 0
-            send_task('reactor.commit_action', [config, actuator, str(model_value), str(real_value)], {})
+                send_task('reactor.commit_action', [config, actuator, str(model_value), str(real_value)], {})
 
 @task(name='reasoner.process_real_data')
 def process_real_data(results, grains):
