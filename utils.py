@@ -54,7 +54,7 @@ class Settings(object):
     @property
     def get_system_plans(self):
         """vraci pole tuplu [(system, plan),]"""
-        results = [(None, None),]
+        results = []
         for system in self.systems:
             for plan in self.plans:
                 if plan.get("name") == system.get("plan"):
