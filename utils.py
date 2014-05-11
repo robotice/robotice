@@ -52,13 +52,14 @@ class Settings(object):
         return sensors
 
     @property
-    def get_system_plan(self):
-        """pro dany system vrati (system, plan)"""
+    def get_system_plans(self):
+        """vraci pole tuplu [(system, plan),]"""
+        results = []
         for system in self.systems:
             for plan in self.plans:
                 if plan.get("name") == system.get("plan"):
-                    return system, plan
-        return None, None
+                    results.append((system, plan),)
+        return [(None, None),]
 
     @property
     def grains(self):
