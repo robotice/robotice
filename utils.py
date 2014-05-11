@@ -54,12 +54,12 @@ class Settings(object):
     @property
     def get_system_plans(self):
         """vraci pole tuplu [(system, plan),]"""
-        results = []
+        results = [(None, None),]
         for system in self.systems:
             for plan in self.plans:
                 if plan.get("name") == system.get("plan"):
                     results.append((system, plan),)
-        return [(None, None),]
+        return results
 
     @property
     def grains(self):
