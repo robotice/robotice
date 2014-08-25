@@ -1,17 +1,17 @@
 
-# Robotice monitoring daemon
+# Robotice monitoring
 
-Application is in /srv/robotice/service.
+The open source monitoring framework.
 
-Configuration is in /srv/robotice/config.
+TODO
 
 ## Usage
 
-All services are run using supervisor daemon.
+TODO
 
 ## Requirements
 
-* PyYAML 
+TODO
 
 Logs in /srv/robotice/logs/service_xxx.log
 

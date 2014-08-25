@@ -1,0 +1,7 @@
+python-statsd==1.6.0
+PyYAML==3.10
+RPi.GPIO>=0.5.3a
+celery==3.1.7
+flower==0.6.0
+pytz==2013.9
+redis==2.9.0
