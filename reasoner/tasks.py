@@ -8,9 +8,10 @@ from celery import group, chord
 from celery.execute import send_task
 from celery.signals import celeryd_after_setup
 
-from utils import setup_app
+from conf import setup_app
+from util.database import get_db_values
+from util.config import get_plan, get_actuator_device, get_actuators
 from reactor.tasks import commit_action
-
 
 @celeryd_after_setup.connect
 def init_reactors(sender, instance, **kwargs):
@@ -44,59 +45,6 @@ def process_real_data(results, grains):
 
     return 'Finished processing real sensor data %s from device %s at %s' % (task_results, grains.hostname, time())
 
-
-def get_plan(config, device_name, device_metric):
-    """pro dany system vrati plan"""
-    for system in config.systems:
-        for sensor in system.get('sensors'):
-            if device_name == sensor.get('device'):
-                return system, sensor.get('plan')
-    return None, None
-
-
-def get_actuator(config, plan_name):
-    """pro dany system vrati plan"""
-    for system in config.systems:
-        for actuator in system.get('actuators'):
-            if plan_name == actuator.get('plan'):
-                return actuator
-    return None
-
-def get_actuator_device(config, device_name):
-    """pro dany system vrati plan"""
-    for host in config.devices:
-        for device in host.get('actuators'):
-            if device_name == device.get('name'):
-                return device
-    return None
-
-def get_actuators(config):
-    """pro dany system vrati plan"""
-    actuators = []
-    for system in config.systems:
-        for actuator in system.get('actuators'):
-            actuator['system_name'] = system.get('name')
-            actuator['system_plan'] = system.get('plan')
-            actuators.append(actuator)
-    return actuators
-
-def get_db_values(config, system_name, plan_name, type='sensors'):
-    """return tuple(model_value, real_value)
-    """
-    db_key_real = '%s.%s.%s.%s' % (system_name, type, plan_name, 'real')
-    db_key_model = '%s.%s.%s.%s' % (system_name, type, plan_name, 'model')
-    model_value = config.database.get(db_key_model)
-    if model_value == None:
-        return None, None
-    model_value = model_value.replace("(", "").replace(")", "").split(", ")
-    if len(model_value) == 1:
-        model_value = int(model_value[0])
-    else:
-        model_value = (int(model_value[0]), int(model_value[1]))
-    real_value = config.database.get(db_key_real)
-    if real_value != None:
-        real_value = int(float(real_value))
-    return model_value, real_value
 
 def get_value_for_relay(config, actuator, model_values, real_value):
     if (model_values[0] < real_value) and (real_value < model_values[1]):
