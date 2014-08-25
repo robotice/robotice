@@ -10,7 +10,16 @@ config = setup_app('monitor')
 logger = logging.getLogger("robotice.monitor")
 
 BROKER_URL = config.broker
-CELERY_RESULT_BACKEND = "amqp"
+
+if "rabbitmq" in config.broker:
+
+    CELERY_RESULT_BACKEND = "amqp"
+
+elif "redis" in config.broker:
+    CARROT_BACKEND = "ghettoq.taproot.Redis"
+
+    CELERY_RESULT_BACKEND = BROKER_URL
+
 CELERY_RESULT_EXCHANGE = 'results'
 CELERY_RESULT_EXCHANGE_TYPE = 'fanout'
 CELERY_TASK_RESULT_EXPIRES = 120
@@ -31,13 +40,26 @@ CELERY_ACCEPT_CONTENT = ['json', 'msgpack', 'yaml', 'application/x-python-serial
 
 CELERY_REDIRECT_STDOUTS_LEVEL = "INFO"
 
-CELERY_QUEUES = (
-    Queue('default', default_exchange, routing_key='default'),
-    Queue('monitor', monitor_exchange, routing_key='monitor.#'),
-    Queue('monitor_%s' % config.hostname, monitor_local_exchange, routing_key='monitor_%s.#' % config.hostname),
-    Queue('planner', planner_exchange, routing_key='planner.#'),
-#    Queue('reasoner', reasoner_exchange, routing_key='reasoner.#'),
-)
+if "rabbitmq" in config.broker:
+
+    CELERY_RESULT_BACKEND = "amqp"
+    CELERY_QUEUES = (
+        Queue('default', default_exchange, routing_key='default'),
+        Queue('monitor', monitor_exchange, routing_key='monitor.#'),
+        Queue('planner', planner_exchange, routing_key='planner.#'),
+    )
+
+elif "redis" in config.broker:
+    CARROT_BACKEND = "ghettoq.taproot.Redis"
+
+    CELERY_RESULT_BACKEND = BROKER_URL
+
+    CELERY_QUEUES = {
+        "default": {"default": "default"},
+        "monitor": {'monitor_%s' % config.hostname: "monitor_%s.#" % config.hostname},
+        "reactor": {"reactor": "reactor.#"},
+        "planner": {"planner": "planner.#"},
+    }
 
 CELERY_DEFAULT_QUEUE = 'default'
 CELERY_DEFAULT_EXCHANGE = 'default'

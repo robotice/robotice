@@ -6,7 +6,18 @@ config_file = open("/srv/robotice/config.yml", "r")
 config = load(config_file)
 
 BROKER_URL = config.get('broker')
-CELERY_RESULT_BACKEND = "amqp"
+
+if "rabbitmq" in config.get("broker"):
+
+    CELERY_RESULT_BACKEND = "amqp"
+
+elif "redis" in config.get("broker"):
+
+    CARROT_BACKEND = "ghettoq.taproot.Redis"
+    CELERY_RESULT_BACKEND = BROKER_URL
+
+SUPPORTS_FANOUT = True
+
 CELERY_IMPORTS = (
     "planner.tasks",
     "monitor.tasks",
@@ -23,9 +34,10 @@ reactor_exchange = Exchange('reactor', type='direct')
 planner_exchange = Exchange('planner', type='direct')
 
 CELERY_QUEUES = (
-    Queue('default', default_exchange, routing_key='default'),
-    Queue('monitor', monitor_exchange, routing_key='monitor.#'),
-    Queue('planner', planner_exchange, routing_key='planner.#'),
+    "default": {"default": "default"},
+    "monitor": {"monitor": "monitor.#"},
+    "reactor": {"reactor": "reactor.#"},
+    "planner": {"planner": "planner.#"},
 )
 
 CELERY_DEFAULT_QUEUE = 'default'

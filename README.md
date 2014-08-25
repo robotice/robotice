@@ -19,3 +19,4 @@ Logs in /srv/robotice/logs/service_xxx.log
 
 * http://learn.adafruit.com/setting-up-io-python-library-on-beaglebone-black/overview
 * http://celery.readthedocs.org/en/latest/userguide/signals.html#celeryd-after-setup
+* https://celery.readthedocs.org/en/release21-maint/tutorials/otherqueues.html
