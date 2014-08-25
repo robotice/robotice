@@ -10,11 +10,22 @@ BROKER_URL = config.broker
 if "rabbitmq" in config.broker:
 
     CELERY_RESULT_BACKEND = "amqp"
+    CELERY_QUEUES = (
+        Queue('default', default_exchange, routing_key='default'),
+        Queue('monitor', monitor_exchange, routing_key='monitor.#'),
+        Queue('planner', planner_exchange, routing_key='planner.#'),
+    )
 
 elif "redis" in config.broker:
-    CARROT_BACKEND = "ghettoq.taproot.Redis"
 
+    CARROT_BACKEND = "ghettoq.taproot.Redis"
     CELERY_RESULT_BACKEND = BROKER_URL
+    CELERY_QUEUES = {
+        "default": {"default": "default"},
+        "monitor": {"monitor": "monitor.#"},
+        "reactor": {"reactor": "reactor.#"},
+        "planner": {"planner": "planner.#"},
+    }
 
 CELERY_RESULT_EXCHANGE = 'results'
 CELERY_RESULT_EXCHANGE_TYPE = 'fanout'
@@ -30,27 +41,6 @@ reactor_exchange = Exchange('reactor', type='fanout')
 planner_exchange = Exchange('planner', type='fanout')
 
 CELERY_ACCEPT_CONTENT = ['json', 'msgpack', 'yaml', 'application/x-python-serialize',]
-
-if "rabbitmq" in config.broker:
-
-    CELERY_RESULT_BACKEND = "amqp"
-    CELERY_QUEUES = (
-        Queue('default', default_exchange, routing_key='default'),
-        Queue('monitor', monitor_exchange, routing_key='monitor.#'),
-        Queue('planner', planner_exchange, routing_key='planner.#'),
-    )
-
-elif "redis" in config.broker:
-    CARROT_BACKEND = "ghettoq.taproot.Redis"
-
-    CELERY_RESULT_BACKEND = BROKER_URL
-
-    CELERY_QUEUES = {
-        "default": {"default": "default"},
-        "monitor": {"monitor": "monitor.#"},
-        "reactor": {"reactor": "reactor.#"},
-        "planner": {"planner": "planner.#"},
-    }
 
 CELERY_DEFAULT_QUEUE = 'default'
 CELERY_DEFAULT_EXCHANGE = 'default'
