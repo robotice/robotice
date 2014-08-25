@@ -13,6 +13,11 @@ BROKER_URL = config.broker
 
 if "rabbitmq" in config.broker:
 
+    default_exchange = Exchange('default', type='fanout')
+    monitor_exchange = Exchange('monitor', type='fanout')
+    reactor_exchange = Exchange('reactor', type='fanout')
+    planner_exchange = Exchange('planner', type='fanout')
+
     CELERY_RESULT_BACKEND = "amqp"
     CELERY_QUEUES = (
         Queue('default', default_exchange, routing_key='default'),
@@ -39,13 +44,6 @@ CELERY_IMPORTS = (
     "monitor.tasks",
     "reasoner.tasks",
 )
-
-default_exchange = Exchange('default', type='fanout')
-monitor_exchange = Exchange('monitor', type='fanout')
-monitor_local_exchange = Exchange('monitor_%s' % config.hostname, type='fanout')
-reactor_exchange = Exchange('reactor', type='fanout')
-planner_exchange = Exchange('planner', type='fanout')
-#reasoner_exchange = Exchange('reasoner', type='fanout')
 
 CELERY_ACCEPT_CONTENT = ['json', 'msgpack', 'yaml', 'application/x-python-serialize',]
 
