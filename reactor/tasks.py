@@ -2,7 +2,7 @@
 from celery.task import task
 from celery.signals import celeryd_after_setup
  
-from utils import get_grains, import_module
+from utils import get_grains, import_module, setup_app
 
 @task(name='reactor.commit_action')
 def commit_action(config, actuator, model_data, real_data):
