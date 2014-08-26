@@ -27,11 +27,11 @@ if "rabbitmq" in config.broker:
     )
 
 elif "redis" in config.broker:
-    CARROT_BACKEND = "ghettoq.taproot.Redis"
+    CARROT_BACKEND = "redis"
     CELERY_RESULT_BACKEND = BROKER_URL
     # 1 hour.
-    BROKER_TRANSPORT_OPTIONS = {
-        'visibility_timeout': 3600, 'fanout_prefix': True}
+    #BROKER_TRANSPORT_OPTIONS = {
+    #    'visibility_timeout': 3600, 'fanout_prefix': True}
     CELERY_QUEUES = {
         "default": {"default": "default"},
         "monitor": {"monitor": "monitor.#"},
