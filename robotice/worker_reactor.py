@@ -23,8 +23,8 @@ elif "redis" in config.broker:
     CARROT_BACKEND = "ghettoq.taproot.Redis"
 
     CELERY_RESULT_BACKEND = BROKER_URL
-    BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 3600}  # 1 hour.
-
+    BROKER_TRANSPORT_OPTIONS = {
+        'visibility_timeout': 3600, 'fanout_prefix': True}
     CELERY_QUEUES = {
         "default": {"default": "default"},
         "monitor": {"monitor": "monitor.#"},

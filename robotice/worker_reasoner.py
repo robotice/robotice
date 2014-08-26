@@ -29,7 +29,9 @@ if "rabbitmq" in config.broker:
 elif "redis" in config.broker:
     CARROT_BACKEND = "ghettoq.taproot.Redis"
     CELERY_RESULT_BACKEND = BROKER_URL
-    BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 3600}  # 1 hour.
+    # 1 hour.
+    BROKER_TRANSPORT_OPTIONS = {
+        'visibility_timeout': 3600, 'fanout_prefix': True}
     CELERY_QUEUES = {
         "default": {"default": "default"},
         "monitor": {"monitor": "monitor.#"},
@@ -41,10 +43,12 @@ CELERY_RESULT_EXCHANGE = 'results'
 CELERY_RESULT_EXCHANGE_TYPE = 'fanout'
 CELERY_TASK_RESULT_EXPIRES = 120
 
-CELERY_IMPORTS = ("reasoner.tasks", "monitor.tasks", "reactor.tasks", "planner.tasks")
+CELERY_IMPORTS = (
+    "reasoner.tasks", "monitor.tasks", "reactor.tasks", "planner.tasks")
 
 
-CELERY_ACCEPT_CONTENT = ['json', 'msgpack', 'yaml','application/x-python-serialize',]
+CELERY_ACCEPT_CONTENT = [
+    'json', 'msgpack', 'yaml', 'application/x-python-serialize', ]
 
 CELERY_DEFAULT_QUEUE = 'default'
 CELERY_DEFAULT_EXCHANGE = 'default'
