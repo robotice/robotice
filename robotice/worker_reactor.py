@@ -1,6 +1,7 @@
 from kombu import Queue, Exchange
 from celery import Celery
-from utils import setup_app
+
+from conf import setup_app
 
 config = setup_app('reactor')
 

@@ -6,7 +6,7 @@ from celery.task import task
 from celery.execute import send_task
 from celery.utils.log import get_task_logger
 
-from utils import get_grains, import_module
+from conf import get_grains, import_module
 
 logger = get_task_logger(__name__)
 

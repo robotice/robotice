@@ -3,7 +3,7 @@ from kombu import Queue, Exchange
 from celery import Celery
 import logging
 
-from utils import setup_app
+from conf import setup_app
 
 config = setup_app('monitor')
 
