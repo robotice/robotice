@@ -30,14 +30,16 @@ class Settings(object):
         config_file = open("/srv/robotice/config_%s.yml" % worker, "r")
         self.config = load(config_file)
 
-        device_config_file = open("/srv/robotice/config/devices.yml", "r")
-        self.devices = load(device_config_file)['devices']
+        if worker == "reasoner":
 
-        plan_config_file = open("/srv/robotice/config/plans.yml", "r")
-        self.plans = load(plan_config_file)['plans']
+            device_config_file = open("/srv/robotice/config/devices.yml", "r")
+            self.devices = load(device_config_file)['devices']
 
-        system_config_file = open("/srv/robotice/config/systems.yml", "r")
-        self.systems = load(system_config_file)['systems']
+            plan_config_file = open("/srv/robotice/config/plans.yml", "r")
+            self.plans = load(plan_config_file)['plans']
+
+            system_config_file = open("/srv/robotice/config/systems.yml", "r")
+            self.systems = load(system_config_file)['systems']
 
     @property
     def sensors(self):
