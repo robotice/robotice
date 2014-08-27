@@ -6,6 +6,7 @@ from datetime import datetime
 from celery.task import task
 from celery import group, chord
 from celery.execute import send_task
+from celery.signals import celeryd_after_setup
 
 from conf import setup_app
 from util.database import get_db_values
@@ -126,3 +127,19 @@ def compare_data(config):
                 actuator.get("name"), actuator.get("name"), plan_name))
 
     return results
+
+@celeryd_after_setup.connect
+def init_reactors(sender, instance, **kwargs):
+
+    config = setup_app('reasoner')
+
+    for host in config.devices:
+        for actuator in host.get('actuators'):
+            if actuator.has_key('default'):
+                if actuator.get('default') == 'off':
+                    model_value = 0
+                    real_value = 1
+                else:
+                    model_value = 1
+                    real_value = 0
+                send_task('reactor.commit_action', [config, actuator, str(model_value), str(real_value)], {})

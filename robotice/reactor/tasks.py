@@ -1,6 +1,5 @@
 
 from celery.task import task
-from celery.signals import celeryd_after_setup
  
 from conf import get_grains, import_module, setup_app
 
@@ -25,20 +24,3 @@ def commit_action(config, actuator, model_data, real_data):
     logger.info(results)
 
     return results
-
-
-@celeryd_after_setup.connect
-def init_reactors(sender, instance, **kwargs):
-
-    config = setup_app('reasoner')
-
-    for host in config.devices:
-        for actuator in host.get('actuators'):
-            if actuator.has_key('default'):
-                if actuator.get('default') == 'off':
-                    model_value = 0
-                    real_value = 1
-                else:
-                    model_value = 1
-                    real_value = 0
-                send_task('reactor.commit_action', [config, actuator, str(model_value), str(real_value)], {})
