@@ -5,9 +5,9 @@ import logging
 
 from conf import setup_app
 
-config = setup_app('monitor')
-
 logger = logging.getLogger("robotice.monitor")
+
+config = setup_app('monitor')
 
 BROKER_URL = config.broker
 
@@ -44,7 +44,6 @@ CELERY_TASK_RESULT_EXPIRES = 120
 
 CELERY_IMPORTS = (
     "monitor.tasks",
-    "reasoner.tasks",
 )
 
 CELERY_ACCEPT_CONTENT = ['json', 'msgpack', 'yaml', 'application/x-python-serialize',]
