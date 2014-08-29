@@ -1,11 +1,11 @@
 #!/usr/bin/python
 
 import logging
-from yaml import load
 import statsd
 import redis
 import socket
 
+from yaml import load
 from grains import grains
 
 LOG = logging.getLogger(__name__)
@@ -13,10 +13,8 @@ LOG = logging.getLogger(__name__)
 
 class Settings(object):
 
-    config = None
-    devices = None
-    systems = None
-    plans = None
+    """Main object which contains all infromation about systems
+    """
 
     def setup_app(self, worker):
 
@@ -46,7 +44,7 @@ class Settings(object):
 
     @property
     def sensors(self):
-        
+
         if not getattr(self, "sensors", None):
             for host in self.devices:
                 if host.get('host') == self.hostname:
@@ -110,7 +108,7 @@ class Settings(object):
                 disabled=False
             )
             self.meter = statsd.Gauge(
-                self.config.get('metering').get('prefix', 'robotice'), 
+                self.config.get('metering').get('prefix', 'robotice'),
                 statsd_connection)
         return meter
 
@@ -120,6 +118,7 @@ class Settings(object):
 
 
 class RoboticeSettings(Settings):
+
     """A singleton implementation of Settings such that all dealings with settings
     get the same instance no matter what. There can be only one.
     you can use RoboticeSettings('reasoner') or setup_app declared below
@@ -132,7 +131,7 @@ class RoboticeSettings(Settings):
         return cls._instance
 
 
-settings = RoboticeSettings() # one true Settings
+settings = RoboticeSettings()  # one true Settings
 
 
 def setup_app(worker):
