@@ -3,7 +3,7 @@ python:
   - 2.7
   - 2.6
 before_install:
-  - su robotice export ROBOTICE_TEST=True 
+  - export ROBOTICE_TEST=True 
 install:
   - "pip install -r requirements/testing.txt"
 script: nosetests
