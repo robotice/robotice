@@ -47,7 +47,9 @@ class Settings(object):
 
         if not getattr(self, "sensors", None):
             for host in self.devices:
-                if host.get('host') == self.hostname:
+                # operator in support math in two forms `ubuntu1` or
+                # `ubuntu1.domain.com`
+                if host.get('host') in self.hostname:
                     for sensor in host.get('sensors'):
                         sensor['os_family'] = self.grains.os_family
                         sensor['cpu_arch'] = self.grains.cpu_arch

@@ -7,11 +7,10 @@ before_install:
 install:
   - "pip install -r requirements/testing.txt"
 script: nosetests
-after_success:
-  - coveralls
 branches:
   only:
     - master
+    - develop
 notifications:
   email:
     recipients:
