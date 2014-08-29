@@ -40,7 +40,7 @@ setup(
         'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
     ],
-    description='The open source monitoring framework.',
+    description='Opensource monitoring, reasoning and acting framework.',
     include_package_data=True,
     license=license,
     long_description=readme + '\n\n' + history,
