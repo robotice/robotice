@@ -19,6 +19,12 @@ class Settings(object):
     plans = None
 
     def setup_app(self, worker):
+
+        if not isinstance(worker, basestring):
+            raise Exception("Only string is allowed for worker.")
+
+        self.worker = worker
+
         config_file = open("/srv/robotice/config_%s.yml" % worker, "r")
         self.config = load(config_file)
 
@@ -86,21 +92,26 @@ class Settings(object):
         return self.redis
 
     @property
-    def metering_prefix(self):
-        #return '%s_%s.%s' % (self.config.get('system_name'), self.config.get('environment'), self.hostname.replace('.', '_'))
-        return 'robotice'
-
-    @property
     def metering(self):
+        """method create instance of statsd client
+        method expected metering settings in worker config file
+        metering:
+          host: localhost is default
+          port: 8125 is default
+          sample_rate: 1 is default
+          prefix: robotice is default
+        """
         meter = getattr(self, "meter", None)
         if not meter:
             statsd_connection = statsd.Connection(
-                host=self.config.get('metering').get('host'),
-                port=self.config.get('metering').get('port'),
-                sample_rate=self.config.get('metering').get('sample_rate'),
+                host=self.config.get('metering').get('host', '127.0.0.1'),
+                port=self.config.get('metering').get('port', 8125),
+                sample_rate=self.config.get('metering').get('sample_rate', 1),
                 disabled=False
             )
-            self.meter = statsd.Gauge(self.metering_prefix, statsd_connection)
+            self.meter = statsd.Gauge(
+                self.config.get('metering').get('prefix', 'robotice'), 
+                statsd_connection)
         return meter
 
     @property
@@ -126,6 +137,7 @@ settings = RoboticeSettings() # one true Settings
 
 def setup_app(worker):
     """dealing with global singleton and load configs
+    easiest way how you get settings instance is RoboticeSettings('reasoner')
     """
     global settings
 
