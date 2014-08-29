@@ -1,17 +1,27 @@
+import logging
 from yaml import load
+
+LOG = logging.getLogger(__name__)
 
 class Grains(object):
     """grains generated from salt
-    """
-
-    hostname = None
-    os_family = None
-    cpu_arch = None
     
-    def __init__(self):
+    excepted structure:
 
-        grains_file = open("/srv/robotice/grains.yml", "r")
-        grains = load(grains_file)['grains']
+    grains:
+      hostname: redis1.box.robotice.cz
+      os_family: Debian
+      cpu_arch: amd64
+    
+    """
+    
+    def __init__(self, path="/srv/robotice/grains.yml"):
+
+        try:
+            grains_file = open(path, "r")
+            grains = load(grains_file)['grains']
+        except IOError, e:
+            LOG.error("Missing grains file %s: %s" % (path, exc))
 
         self.hostname = grains['hostname']
         self.os_family = grains['os_family']
