@@ -21,7 +21,7 @@ class Grains(object):
             grains_file = open(path, "r")
             grains = load(grains_file)['grains']
         except IOError, e:
-            LOG.error("Missing grains file %s: %s" % (path, exc))
+            LOG.error("Missing grains file %s: %s" % (path, e))
 
         self.hostname = grains['hostname']
         self.os_family = grains['os_family']
