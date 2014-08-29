@@ -25,8 +25,7 @@ class Settings(object):
     systems = None
     plans = None
 
-    def __init__(self, worker):
-
+    def setup_app(self, worker):
         config_file = open("/srv/robotice/config_%s.yml" % worker, "r")
         self.config = load(config_file)
 
@@ -40,6 +39,11 @@ class Settings(object):
 
             system_config_file = open("/srv/robotice/config/systems.yml", "r")
             self.systems = load(system_config_file)['systems']
+
+    def __init__(self, worker=None):
+
+        if worker:
+            self.setup_app(worker)
 
     @property
     def sensors(self):
@@ -100,8 +104,29 @@ class Settings(object):
         return get_grains()
 
 
+
+class RoboticeSettings(Settings):
+    """A singleton implementation of Settings such that all dealings with settings
+    get the same instance no matter what. There can be only one.
+    you can use RoboticeSettings('reasoner') or setup_app declared below
+    """
+    _instance = None
+
+    def __new__(cls, *args, **kwargs):
+        if not cls._instance:
+            cls._instance = super(Settings, cls).__new__(cls, *args, **kwargs)
+        return cls._instance
+
+settings = RoboticeSettings()
+
 def setup_app(worker):
-    return Settings(worker)
+    """dealing with global singleton and load configs
+    """
+    global settings
+
+    settings.setup_app(worker)
+
+    return settings
 
 class Grains(object):
 
