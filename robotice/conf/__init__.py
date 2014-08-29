@@ -91,13 +91,16 @@ class Settings(object):
 
     @property
     def metering(self):
-        statsd_connection = statsd.Connection(
-            host=self.config.get('metering').get('host'),
-            port=self.config.get('metering').get('port'),
-            sample_rate=self.config.get('metering').get('sample_rate'),
-            disabled=False
-        )
-        return statsd.Gauge(self.metering_prefix, statsd_connection)
+        meter = getattr(self, "meter", None)
+        if not meter:
+            statsd_connection = statsd.Connection(
+                host=self.config.get('metering').get('host'),
+                port=self.config.get('metering').get('port'),
+                sample_rate=self.config.get('metering').get('sample_rate'),
+                disabled=False
+            )
+            self.meter = statsd.Gauge(self.metering_prefix, statsd_connection)
+        return meter
 
     @property
     def grains(self):
