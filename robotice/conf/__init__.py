@@ -6,7 +6,9 @@ import statsd
 import redis
 import socket
 
-log = logging.getLogger("robotice.conf")
+from grains import grains
+
+LOG = logging.getLogger(__name__)
 
 
 class Settings(object):
@@ -38,14 +40,15 @@ class Settings(object):
 
     @property
     def sensors(self):
-        sensors = []
-        for host in self.devices:
-            if host.get('host') == self.hostname:
-                for sensor in host.get('sensors'):
-                    sensor['os_family'] = self.grains.os_family
-                    sensor['cpu_arch'] = self.grains.cpu_arch
-                    sensor['hostname'] = self.hostname
-                    sensors.append(sensor)
+        
+        if not getattr(self, "sensors", None):
+            for host in self.devices:
+                if host.get('host') == self.hostname:
+                    for sensor in host.get('sensors'):
+                        sensor['os_family'] = self.grains.os_family
+                        sensor['cpu_arch'] = self.grains.cpu_arch
+                        sensor['hostname'] = self.hostname
+                        sensors.append(sensor)
         return sensors
 
     @property
@@ -69,11 +72,23 @@ class Settings(object):
 
     @property
     def broker(self):
+        """broker in string format
+        redis://localhost:6379/9
+        """
         return self.config.get('broker')
 
     @property
     def database(self):
-        return redis.Redis(host=self.config.get('database').get('host'), port=self.config.get('database').get('port'), db=self.config.get('database').get('number', 0))
+        """database connection
+        now is supported only redis
+        """
+        redis = getattr(self, "redis", None)
+        if not redis:
+            self.redis = redis.Redis(
+                host=self.config.get('database').get('host'),
+                port=self.config.get('database').get('port'),
+                db=self.config.get('database').get('number', 0))
+        return self.redis
 
     @property
     def metering_prefix(self):
@@ -95,7 +110,7 @@ class Settings(object):
 
     @property
     def grains(self):
-        return get_grains()
+        return grains
 
 
 
