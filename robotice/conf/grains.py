@@ -1,3 +1,4 @@
+from yaml import load
 
 class Grains(object):
     """grains generated from salt
