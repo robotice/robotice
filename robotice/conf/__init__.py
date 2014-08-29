@@ -62,11 +62,6 @@ class Settings(object):
         return results
 
     @property
-    def grains(self):
-        grains = Grains()
-        return grains
-
-    @property
     def hostname(self):
         return socket.getfqdn()
 
@@ -113,7 +108,6 @@ class Settings(object):
         return grains
 
 
-
 class RoboticeSettings(Settings):
     """A singleton implementation of Settings such that all dealings with settings
     get the same instance no matter what. There can be only one.
@@ -126,7 +120,9 @@ class RoboticeSettings(Settings):
             cls._instance = super(Settings, cls).__new__(cls, *args, **kwargs)
         return cls._instance
 
-settings = RoboticeSettings()
+
+settings = RoboticeSettings() # one true Settings
+
 
 def setup_app(worker):
     """dealing with global singleton and load configs
@@ -136,22 +132,3 @@ def setup_app(worker):
     settings.setup_app(worker)
 
     return settings
-
-class Grains(object):
-
-    hostname = None
-    os_family = None
-    cpu_arch = None
-    
-    def __init__(self):
-
-        grains_file = open("/srv/robotice/grains.yml", "r")
-        grains = load(grains_file)['grains']
-
-        self.hostname = grains['hostname']
-        self.os_family = grains['os_family']
-        self.cpu_arch = grains['cpu_arch']
-
-def get_grains():
-    grains = Grains()
-    return grains
