@@ -8,10 +8,10 @@ from robotice.conf import setup_app, RoboticeSettings
 
 from nose.tools import assert_equals, with_setup
 
+class ReactorTestCase(unittest.TestCase):
 
-def setUp(self):
-    self.config = setup_app('monitor')
+    def setUp(self):
+        self.config = setup_app('reactor')
 
-@with_setup(setUp)
-def test_commit_action(self):
-    pass
+    def test_commit_action(self):
+        pass
