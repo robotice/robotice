@@ -112,7 +112,7 @@ class Settings(object):
             self.meter = statsd.Gauge(
                 self.config.get('metering').get('prefix', 'robotice'),
                 statsd_connection)
-        return meter
+        return self.meter
 
     @property
     def grains(self):
