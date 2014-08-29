@@ -15,7 +15,8 @@ def get_plan(config, device_name, device_metric):
     """pro dany system vrati plan"""
     for system in config.systems:
         for sensor in system.get('sensors'):
-            if sensor.get('device') == device_name and sensor.get('metric') == device_metric:
+            if sensor.get('device') == device_name \
+            and sensor.get('metric') == device_metric:
                 return system, sensor.get('plan')
     return None, None
 
