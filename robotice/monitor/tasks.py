@@ -6,7 +6,8 @@ from celery.task import task
 from celery.execute import send_task
 from celery.utils.log import get_task_logger
 
-from conf import get_grains, import_module
+from conf.grains import grains
+from utils.functional import import_module
 
 logger = get_task_logger(__name__)
 
@@ -23,7 +24,6 @@ def get_real_data(config):
 
     tasks = []
     logger = get_real_data.get_logger()
-    grains = get_grains()
     logger.info('Sensors {0}'.format(config.sensors))
     
     for sensor in config.sensors:
