@@ -1,7 +1,7 @@
 
 # Robotice monitoring
 
-The open source monitoring framework.
+Opensource monitoring, reasoning and acting framework.
 
 TODO
 
