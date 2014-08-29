@@ -1,3 +1,4 @@
+"""
 import Adafruit_BBIO.ADC as ADC
 from time import sleep
  
@@ -12,3 +13,4 @@ while True:
     volts = reading * 1.800
     print('%f\t%f' % (reading, volts))
     sleep(1)
+"""

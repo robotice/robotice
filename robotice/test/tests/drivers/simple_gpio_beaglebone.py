@@ -1,4 +1,4 @@
-#for example diod or relay 
+"""
 import Adafruit_BBIO.GPIO as GPIO
 from time import sleep
 
@@ -20,5 +20,6 @@ while True:
 	sleep(timeout)	
 	GPIO.cleanup()
 	GPIO.setup(PORT, GPIO.OUT)
+"""
 
 

@@ -1,4 +1,4 @@
-#for example diod or relay 
+"""
 import RPi.GPIO as GPIO
 from time import sleep
 
@@ -21,3 +21,4 @@ while True:
 	GPIO.output(PORT, False)
 	logger.debug("off after %s s timeout" %timeout)
 	sleep(timeout)	
+"""

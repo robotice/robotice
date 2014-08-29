@@ -1,3 +1,4 @@
+"""
 import Adafruit_BBIO.ADC as ADC
 from time import sleep
  
@@ -15,3 +16,4 @@ while True:
     volts = reading * 1.800
     print('%f\tmax is: %f' % (reading, MAX))
     sleep(1)
+"""

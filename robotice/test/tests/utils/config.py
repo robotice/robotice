@@ -2,7 +2,7 @@ import sys
 import socket
 import unittest
 from statsd import Gauge
-
+from redis import Redis
 sys.path.append('/srv/robotice/service')
 
 from robotice.conf import setup_app, RoboticeSettings, Settings
@@ -14,7 +14,6 @@ class UtilTestCase(unittest.TestCase):
 
     def setUp(self):
         self.settings = setup_app('monitor')
-
 
     def test_setup_app(self):
 
@@ -36,14 +35,21 @@ class UtilTestCase(unittest.TestCase):
         # change role
 
         assert_equals(self.settings.worker, "monitor")
-        
+
         self.worker = setup_app('reasoner').worker
-        
+
         assert_equals(self.worker, "reasoner")
 
         self.assertIsInstance(self.settings.config.get("metering"), dict)
 
-        
+    def test_sensors_property(self):
+
+        self.assertIsInstance(self.settings.sensors, list)
+
+    def test_database(self):
+
+        self.assertIsInstance(self.settings.database, Redis)
+
     def test_broker(self):
 
         self.assertIsInstance(self.settings.broker, basestring)
@@ -52,7 +58,7 @@ class UtilTestCase(unittest.TestCase):
         settings = RoboticeSettings("reasoner")
 
         assert_equals(settings.worker, "reasoner")
-        
+
         self.assertIsInstance(settings.config.get("metering"), dict)
 
         self.assertIsInstance(self.settings.metering, Gauge)
