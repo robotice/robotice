@@ -29,3 +29,5 @@ CELERY_ROUTES = {
         'queue': 'reactor',
     }
 }
+
+CELERY_REDIRECT_STDOUTS_LEVEL = "INFO"

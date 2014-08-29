@@ -1,8 +1,14 @@
+
+import logging
+
 from datetime import timedelta
 from kombu import Queue, Exchange
 from celery import Celery
 
 from conf import setup_app
+from conf.celery import *
+
+LOG = logging.getLogger(__name__)
 
 config = setup_app('planner')
 

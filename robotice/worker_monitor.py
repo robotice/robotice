@@ -4,8 +4,9 @@ from celery import Celery
 import logging
 
 from conf import setup_app
+from conf.celery import *
 
-logger = logging.getLogger("robotice.monitor")
+LOG = logging.getLogger(__name__)
 
 config = setup_app('monitor')
 
@@ -46,9 +47,6 @@ CELERY_IMPORTS = (
     "monitor.tasks",
 )
 
-CELERY_ACCEPT_CONTENT = ['json', 'msgpack', 'yaml', 'application/x-python-serialize',]
-
-CELERY_REDIRECT_STDOUTS_LEVEL = "INFO"
 
 CELERY_DEFAULT_QUEUE = 'default'
 CELERY_DEFAULT_EXCHANGE = 'default'
