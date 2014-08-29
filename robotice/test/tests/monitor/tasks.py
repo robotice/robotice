@@ -1,3 +1,3 @@
-from utils import setup_app
+from conf import setup_app, RoboticeSettings
 
-config = setup_app('monitor')
+from nose.tools import assert_equals
