@@ -9,8 +9,8 @@ from celery.execute import send_task
 from celery.signals import celeryd_after_setup
 
 from conf import setup_app
-from util.database import get_db_values
-from util.config import get_plan, get_actuator_device, get_actuators
+from utils.database import get_db_values
+from utils.config import get_plan, get_actuator_device, get_actuators
 from reactor.tasks import commit_action
 
 @task(name='reasoner.process_real_data')
