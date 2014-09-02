@@ -6,7 +6,7 @@ import redis
 import socket
 
 from yaml import load
-from grains import grains
+from grains import Grains
 
 LOG = logging.getLogger(__name__)
 
@@ -137,7 +137,10 @@ class Settings(object):
 
     @property
     def grains(self):
-        return grains
+        _grains = getattr(self, "_grains", None)
+        if not _grains:
+            self._grains = Grains()
+        return self._grains
 
 
 class RoboticeSettings(Settings):
