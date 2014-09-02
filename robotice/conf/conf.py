@@ -64,18 +64,19 @@ class Settings(object):
     def sensors(self):
 
         sensors = []
+        
+        for host in self.devices:
+            # operator in support match in two forms `ubuntu1` or
+            # `ubuntu1.domain.com`
+            if host.get('host') in self.hostname:
+                for sensor in host.get('sensors'):
+                    sensor['os_family'] = self.grains.os_family
+                    sensor['cpu_arch'] = self.grains.cpu_arch
+                    sensor['hostname'] = self.hostname
+                    sensors.append(sensor)
 
-        if not getattr(self, "_sensors", None):
-            for host in self.devices:
-                # operator in support match in two forms `ubuntu1` or
-                # `ubuntu1.domain.com`
-                if host.get('host') in self.hostname:
-                    for sensor in host.get('sensors'):
-                        sensor['os_family'] = self.grains.os_family
-                        sensor['cpu_arch'] = self.grains.cpu_arch
-                        sensor['hostname'] = self.hostname
-                        sensors.append(sensor)
-            self._sensors = sensors
+        LOG.debug(sensors)
+
         return sensors
 
     @property

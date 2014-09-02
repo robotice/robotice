@@ -22,10 +22,10 @@ class UtilTestCase(unittest.TestCase):
         self.assertIsInstance(self.settings.config, dict)
 
         self.assertIsInstance(self.settings, Settings)
-
         # singleton test
         settings = RoboticeSettings("monitor")
 
+        self.assertIsInstance(self.settings.sensors, list)
         assert_equals(self.settings, settings)
 
         settings = setup_app('monitor')
