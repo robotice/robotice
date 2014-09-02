@@ -1,0 +1,48 @@
+devices:
+- host: test1
+  sensors:
+  - name: hygro_case1_do
+    device: hygro
+    type: DO
+    port: bcm25
+  - name: hygro_case1_ao
+    device: hygro
+    type: AO
+    port: bcm18
+  - name: sispm1
+    device: sispm
+    port: 0
+  - name: sispm2
+    device: sispm
+    port: 1
+  - name: sispm3
+    device: sispm
+    port: 2
+  - name: sispm4
+    device: sispm
+    port: 3
+  - name: hygro_case1_do
+    device: hygro
+    type: DO
+    port: 7
+  - name: hygro_case2_ao
+    device: hygro
+    type: AO
+    port: 29
+  - name: hygro_case3_ao
+    device: hygro
+    type: AO
+    port: 40
+  actuators:
+  - name: sispm1
+    device: sispm
+    port: 0
+  - name: sispm2
+    device: sispm
+    port: 1
+  - name: sispm3
+    device: sispm
+    port: 2
+  - name: sispm4
+    device: sispm
+    port: 3

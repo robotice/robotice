@@ -1,0 +1,22 @@
+systems:
+- name: test1
+  plan: hklab_box1
+  start: 2014-02-01 00:00:00
+  actuators:
+  - plan: water1
+    device: relay1
+  - plan: light1
+    device: relay3
+#  - plan: air_humidity1
+#    device: relay3
+#  - plan: terra_humidity1
+#    device: relay4
+  - plan: temp1
+    device: relay2
+  sensors:
+  - plan: water_humidity1
+    device: hygro_case1_do
+    metric: "humidity"
+  - plan: water_humidity2
+    device: hygro_case1_ao
+    metric: "humidity"

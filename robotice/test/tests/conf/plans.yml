@@ -1,0 +1,116 @@
+plans:
+- name: test1
+  description: simple test box
+  cycle: 1800
+  actuators:
+  - name: light1
+    cycles:
+    - value: 1
+      start: 6400
+      end: 80000
+  - name: water1
+    cycles:
+    - value: 0
+      start: 6400
+      end: 80000
+  - name: water2
+    cycles:
+    - start: 0
+      end: 59
+      value: 1
+    - start: 60
+      end: 599
+      value: 0
+    - start: 600
+      end: 699
+      value: 1
+    - start: 700
+      end: 1399
+      value: 0
+    - start: 1400
+      end: 1499
+      value: 0
+    - start: 1500
+      end: 1739
+      value: 0
+    - start: 1740
+      end: 1800
+      value: 1
+  sensors:
+  - name: temp1
+    cycles:
+    - start: 0
+      end: 599
+      value_low: 0
+      value_high: 25
+    - start: 600
+      end: 1199
+      value_low: 30
+      value_high: 50
+    - start: 1200
+      end: 1800
+      value_low: 35
+      value_high: 55
+  - name: hygro2
+    cycles:
+    - start: 0
+      end: 1800
+      value_low: 50
+      value_high: 2000
+  - name: hygro1
+    cycles:
+    - start: 0
+      end: 1800
+      value_low: 1
+      value_high: 0
+  - name: air_humidity1
+    cycles:
+    - start: 0
+      end: 899
+      value_low: 20
+      value_high: 30
+    - start: 900
+      end: 1800
+      value_low: 35
+      value_high: 65
+  - name: terra_humidity1
+    cycles:
+    - start: 0
+      end: 899
+      value_low: 20
+      value_high: 30
+    - start: 900
+      end: 1800
+      value_low: 35
+      value_high: 65
+  - name: light2
+    cycles:
+    - start: 0
+      end: 899
+      value: 1
+    - start: 900
+      end: 1800
+      value: 0
+  - name: water1
+    cycles:
+    - start: 0
+      end: 59
+      value: 1
+    - start: 60
+      end: 599
+      value: 0
+    - start: 600
+      end: 699
+      value: 1
+    - start: 700
+      end: 1399
+      value: 0
+    - start: 1400
+      end: 1499
+      value: 0
+    - start: 1500
+      end: 1739
+      value: 0
+    - start: 1740
+      end: 1800
+      value: 1
