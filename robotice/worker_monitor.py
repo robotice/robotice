@@ -22,7 +22,7 @@ if "rabbitmq" in config.broker:
     CELERY_RESULT_BACKEND = "amqp"
     CELERY_QUEUES = (
         Queue('default', default_exchange, routing_key='default'),
-        Queue('monitor', monitor_exchange, routing_key='monitor.#'),
+        Queue('monitor_%s' % config.hostname, monitor_exchange, routing_key='monitor.#'),
         Queue('planner', planner_exchange, routing_key='planner.#'),
     )
 
@@ -34,7 +34,7 @@ elif "redis" in config.broker:
     #    'visibility_timeout': 3600, 'fanout_prefix': True}
     CELERY_QUEUES = {
         "default": {"default": "default"},
-        "monitor": {'monitor_%s' % config.hostname: "monitor_%s.#" % config.hostname},
+        'monitor_%s' % config.hostname: {'monitor': "monitor.#"},
         "reactor": {"reactor": "reactor.#"},
         "planner": {"planner": "planner.#"},
     }
