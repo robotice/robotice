@@ -1,3 +1,11 @@
+
+class dotdict(dict):
+    """ Dictionary with dot access """
+    def __getattr__(self, attr):
+        return self.get(attr, None)
+    __setattr__= dict.__setitem__
+    __delattr__= dict.__delitem__
+
 def get_plan(config, device_name, device_metric):
     """pro dany system vrati plan"""
     for system in config.systems:

@@ -51,8 +51,8 @@ class Settings(object):
 
             self.load_conf("systems")
 
-    def __init__(self, worker=None, conf_dir="/srv/robotice/config/", 
-        workers_dir="/srv/robotice/service"):
+    def __init__(self, worker=None, conf_dir="/srv/robotice/config/",
+                 workers_dir="/srv/robotice/service"):
 
         if worker:
             self.setup_app(worker)
@@ -64,7 +64,7 @@ class Settings(object):
     def sensors(self):
 
         sensors = []
-        
+
         for host in self.devices:
             # operator in support match in two forms `ubuntu1` or
             # `ubuntu1.domain.com`
@@ -80,6 +80,20 @@ class Settings(object):
         return sensors
 
     @property
+    def actuators(self):
+        """return actuators for all systems, but add `system_name` variable"""
+        actuators = []
+        for system in self.systems:
+            for actuator in system.get('actuators'):
+                actuator['system_name'] = system.get('name')
+                actuator['system_plan'] = system.get('plan')
+                actuators.append(actuator)
+
+        LOG.debug(actuators)
+
+        return actuators
+
+    @property
     def get_system_plans(self):
         """vraci pole tuplu [(system, plan),]"""
         results = []
@@ -88,6 +102,22 @@ class Settings(object):
                 if plan.get("name") == system.get("plan"):
                     results.append((system, plan),)
         return results
+
+    def get_plan(self, device_name, device_metric):
+        """pro dany system vrati plan"""
+        for system in config.systems:
+            for sensor in system.get('sensors'):
+                if device_name == sensor.get('device'):
+                    return system, sensor.get('plan')
+        return None, None
+
+    def get_actuator_device(config, device_name):
+        """pro dany system vrati plan"""
+        for host in config.devices:
+            for device in host.get('actuators'):
+                if device_name == device.get('name'):
+                    return device
+        return None
 
     @property
     def hostname(self):

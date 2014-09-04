@@ -10,7 +10,7 @@ from celery.signals import celeryd_after_setup
 
 from conf import setup_app
 from utils.database import get_db_values
-from utils.config import get_plan, get_actuator_device, get_actuators
+from utils.conf import get_plan, get_actuator_device, get_actuators
 from reactor.tasks import commit_action
 
 @task(name='reasoner.process_real_data')
@@ -80,14 +80,13 @@ def compare_data(config):
     logger = compare_data.get_logger()
 
     now = time()
+    
     logger.info('Compare data started {0}'.format(now))
 
     results = []
 
-    actuators = get_actuators(config)
 
-    logger.info(actuators)
-    for actuator in actuators:
+    for actuator in config.actuators:
         #system, plan_name = get_plan(
         #    config, actuator.get('name'), actuator.get("metric"))
         #if not system:
