@@ -106,11 +106,11 @@ class Settings(object):
         return results
 
     def get_plan(self, device_name, device_metric):
-        """pro dany system vrati plan"""
-        
+        """reutnr tuple (system, plan)"""
         for system in self.systems:
             for sensor in system.get('sensors'):
-                if device_name == sensor.get('device'):
+                if sensor.get('device') == device_name \
+                and sensor.get('metric') == device_metric:
                     return system, sensor.get('plan')
         return None, None
 

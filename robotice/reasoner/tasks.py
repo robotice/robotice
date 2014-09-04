@@ -12,6 +12,7 @@ from conf import setup_app
 from utils.database import get_db_values
 from reactor.tasks import commit_action
 
+
 @task(name='reasoner.process_real_data')
 def process_real_data(results, grains):
 
@@ -56,19 +57,21 @@ def get_value_for_relay(config, actuator, model_values, real_value):
             return 0
         elif (real_value > model_values[1]):
             """je je vetsi jako horni hranice je potreba ochlazovat"""
-            return 1    
+            return 1
     return 0
+
 
 def get_value_for_actuator(config, actuator, model_values, real_value):
     """v zavislosti na charakteru actuatoru a planu vrati hodnotu, pokud bude rele zapni vypni 0/1
     pripadne float pro pwm atp
     """
     if "relay" in actuator.get("device"):
-        return get_value_for_relay(config,actuator,model_values,real_value)
+        return get_value_for_relay(config, actuator, model_values, real_value)
     else:
         """PWM"""
         return float(0.00)
     return None
+
 
 @task(name='reasoner.compare_data')
 def compare_data(config):
@@ -79,16 +82,15 @@ def compare_data(config):
     logger = compare_data.get_logger()
 
     now = time()
-    
+
     logger.info('Compare data started {0}'.format(now))
 
     results = []
 
-
     for actuator in config.actuators:
-        #system, plan_name = get_plan(
+        # system, plan_name = get_plan(
         #    config, actuator.get('name'), actuator.get("metric"))
-        #if not system:
+        # if not system:
         #    continue
         system = actuator.get('system_name')
         plan_name = actuator.get('plan')
@@ -101,30 +103,45 @@ def compare_data(config):
         actuator_device = config.get_actuator_device(actuator.get('device'))
         actuator.pop('device')
         logger.info(actuator_device)
-        actuator.update(actuator_device) 
+        actuator.update(actuator_device)
         logger.info(actuator)
+
         if isinstance(model_value, int):
+
             logger.info("actuator")
+
             if model_value != real_value:
                 logger.info('Registred commit_action for {0}'.format(actuator))
-                send_task('reactor.commit_action', [config, actuator, model_value, real_value], {})
+                send_task('reactor.commit_action', [
+                          config, actuator, model_value, real_value], {})
                 results.append('actuator: {0} hostname: {1}, plan: {2}'.format(
                     actuator.get("name"), actuator.get("name"), plan_name))
         else:
-            logger.info("parsed real values : %s < %s and %s < %s"% (model_value[0],real_value,real_value, model_value[1]))
-            model_value_converted = get_value_for_actuator(config, actuator, model_value, real_value)
-            logger.info('converted value for actuator {0}'.format(model_value_converted))
-            if (model_value[0] < real_value) and (real_value < model_value[1]):
+
+            logger.info("parsed real values : %s < %s and %s < %s" %
+                        (model_value[0], real_value, real_value, model_value[1]))
+            model_value_converted = get_value_for_actuator(
+                config, actuator, model_value, real_value)
+            logger.info(
+                'converted value for actuator {0}'.format(model_value_converted))
+
+            if (model_value[0] < real_value) \
+                and (real_value < model_value[1]):
+
                 model_value_converted = 0
                 results.append('OK - actuator: {0} hostname: {1}, plan: {2}'.format(
                     actuator.get("name"), actuator.get("name"), plan_name))
             else:
+
                 logger.info('Registred commit_action for {0}'.format(actuator))
-            send_task('reactor.commit_action', [config, actuator, str(model_value_converted), str(real_value)], {})
+
+            send_task('reactor.commit_action', [
+                      config, actuator, str(model_value_converted), str(real_value)], {})
             results.append('actuator: {0} hostname: {1}, plan: {2}'.format(
                 actuator.get("name"), actuator.get("name"), plan_name))
 
     return results
+
 
 @celeryd_after_setup.connect
 def init_reactors(sender, instance, **kwargs):
@@ -141,4 +158,5 @@ def init_reactors(sender, instance, **kwargs):
                 else:
                     model_value = 1
                     real_value = 0
-                send_task('reactor.commit_action', [config, actuator, str(model_value), str(real_value)], {})
+                send_task('reactor.commit_action', [
+                          config, actuator, str(model_value), str(real_value)], {})

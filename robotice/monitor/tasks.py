@@ -11,14 +11,6 @@ from utils.functional import import_module
 
 logger = get_task_logger(__name__)
 
-def get_plan(config, device_name, device_metric):
-    """pro dany system vrati plan"""
-    for system in config.systems:
-        for sensor in system.get('sensors'):
-            if sensor.get('device') == device_name \
-            and sensor.get('metric') == device_metric:
-                return system, sensor.get('plan')
-    return None, None
 
 @task(name='monitor.get_real_data')
 def get_real_data(config):
@@ -26,9 +18,10 @@ def get_real_data(config):
     tasks = []
     logger = get_real_data.get_logger()
     logger.info('Sensors {0}'.format(config.sensors))
-    
+
     for sensor in config.sensors:
-        tasks.append(get_sensor_data.subtask((config, sensor, grains), exchange='monitor_%s' % config.hostname))
+        tasks.append(get_sensor_data.subtask(
+            (config, sensor, grains), exchange='monitor_%s' % config.hostname))
         logger.info('Registred get_sensor_data {0}'.format(sensor))
 
     job = group(tasks)
@@ -36,8 +29,11 @@ def get_real_data(config):
 
     return 'Started reading real data from sensors %s on device %s at %s' % (config.sensors, config.hostname, time())
 
+
 @task(name='monitor.get_sensor_data', track_started=True)
 def get_sensor_data(config, sensor, grains):
+
+    LOG = get_real_data.get_logger()
 
     module_name = ".".join(["monitor", "sensors", sensor.get("device")])
 
@@ -45,17 +41,28 @@ def get_sensor_data(config, sensor, grains):
 
     results = mod.get_data(sensor)
 
+    LOG.debug("sensor: {0} result: {0}".format(sensor, results))
+
     for result in results:
         if isinstance(result[1], (int, long, float, decimal.Decimal)):
-            
 
             result_name = result[0].split('.')[0]
             result_metric = result[0].split('.')[1]
 
-            system, plan_name = get_plan(config, result_name, result_metric)
+            system, plan_name = config.get_plan(result_name, result_metric)
+            
+            LOG.debug("for result_name: {0} result_metric: {0} was found".format(
+                result_name, 
+                result_metric,
+                system,
+                plan_name))
+
             if system != None:
-                db_key = '%s.%s.%s.%s' % (system.get('name'), 'sensors', plan_name, 'real')    
+                db_key = '%s.%s.%s.%s' % (
+                    system.get('name'), 'sensors', plan_name, 'real')
                 config.metering.send(db_key, result[1])
                 config.database.set(db_key, result[1])
-            
+
+                LOG.debug("metric was sent to database and statsd")
+
     return results
