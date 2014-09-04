@@ -10,6 +10,7 @@ from grains import Grains
 
 LOG = logging.getLogger(__name__)
 
+from utils.conf import list_to_dotdict
 
 class Settings(object):
 
@@ -95,7 +96,8 @@ class Settings(object):
 
     @property
     def get_system_plans(self):
-        """vraci pole tuplu [(system, plan),]"""
+        """return array of tuples [(system, plan),]"""
+        
         results = []
         for system in self.systems:
             for plan in self.plans:
@@ -105,15 +107,17 @@ class Settings(object):
 
     def get_plan(self, device_name, device_metric):
         """pro dany system vrati plan"""
-        for system in config.systems:
+        
+        for system in self.systems:
             for sensor in system.get('sensors'):
                 if device_name == sensor.get('device'):
                     return system, sensor.get('plan')
         return None, None
 
-    def get_actuator_device(config, device_name):
-        """pro dany system vrati plan"""
-        for host in config.devices:
+    def get_actuator_device(self, device_name):
+        """return actuator from host devices"""
+
+        for host in self.devices:
             for device in host.get('actuators'):
                 if device_name == device.get('name'):
                     return device

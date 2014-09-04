@@ -10,7 +10,6 @@ from celery.signals import celeryd_after_setup
 
 from conf import setup_app
 from utils.database import get_db_values
-from utils.conf import get_plan, get_actuator_device, get_actuators
 from reactor.tasks import commit_action
 
 @task(name='reasoner.process_real_data')
@@ -99,7 +98,7 @@ def compare_data(config):
         if real_value == None or model_value == None:
             logger.info('NO REAL DATA to COMPARE')
             continue
-        actuator_device = get_actuator_device(config, actuator.get('device'))
+        actuator_device = config.get_actuator_device(actuator.get('device'))
         actuator.pop('device')
         logger.info(actuator_device)
         actuator.update(actuator_device) 
@@ -129,7 +128,8 @@ def compare_data(config):
 
 @celeryd_after_setup.connect
 def init_reactors(sender, instance, **kwargs):
-
+    """set default if specified
+    """
     config = setup_app('reasoner')
 
     for host in config.devices:
