@@ -5,15 +5,11 @@ executable = "/srv/robotice/sensors/hygro/driver.py"
 def clean_value(value):
 	vals = value.split(",")
 	
-	r = None
-
 	for v in vals:
 		try:
 			r = int(v)
 		except Exception, e:
-			pass
-		if r:
-			return r
+			r = value
 	return r
 
 def get_data(sensor):
