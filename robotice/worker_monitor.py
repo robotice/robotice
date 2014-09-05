@@ -15,7 +15,7 @@ BROKER_URL = config.broker
 if "rabbitmq" in config.broker:
 
     default_exchange = Exchange('default', type='fanout')
-    monitor_exchange = Exchange('monitor_%s' % config.hostname, type='fanout')
+    monitor_exchange = Exchange('monitor_%s' % config.hostname, type='topic')
     reactor_exchange = Exchange('reactor', type='fanout')
     planner_exchange = Exchange('planner', type='fanout')
 
