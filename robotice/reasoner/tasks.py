@@ -13,7 +13,8 @@ from conf import setup_app
 from utils.database import get_db_values
 from reactor.tasks import commit_action
 
-NUMBER = r'(\d+(?:[.,]\d*)?)'
+NUMBER = '(\d+(?:[.,]\d*)?)'
+number = re.compile(NUMBER)
 
 @task(name='reasoner.process_real_data')
 def process_real_data(results, sensor, grains=None):
@@ -28,7 +29,7 @@ def process_real_data(results, sensor, grains=None):
 
         if isinstance(value, basestring):
             try:
-                value = re.findall(NUMBER, value)[0]
+                value = number.match(value)
                 value = float(value)
             except Exception, e:
                 pass
@@ -156,8 +157,8 @@ def compare_data(config):
 
             if model_value != real_value:
                 logger.info('Registred commit_action for {0}'.format(actuator))
-                send_task('reactor.commit_action', args=(
-                          actuator, model_value, real_value))
+                send_task('reactor.commit_action', [
+                          config, actuator, model_value, real_value], {})
                 results.append('actuator: {0} hostname: {1}, plan: {2}'.format(
                     actuator.get("name"), actuator.get("name"), plan_name))
         else:
@@ -179,8 +180,8 @@ def compare_data(config):
 
                 logger.info('Registred commit_action for {0}'.format(actuator))
 
-            send_task('reactor.commit_action', args=[
-                      actuator, str(model_value_converted), str(real_value)])
+            send_task('reactor.commit_action', [
+                      config, actuator, str(model_value_converted), str(real_value)], {})
             results.append('actuator: {0} hostname: {1}, plan: {2}'.format(
                 actuator.get("name"), actuator.get("name"), plan_name))
 
