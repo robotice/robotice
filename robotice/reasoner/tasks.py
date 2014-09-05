@@ -13,8 +13,7 @@ from conf import setup_app
 from utils.database import get_db_values
 from reactor.tasks import commit_action
 
-NUMBER = '(\d+(?:[.,]\d*)?)'
-number = re.compile(NUMBER)
+NUMBER = r'(\d+(?:[.,]\d*)?)'
 
 @task(name='reasoner.process_real_data')
 def process_real_data(results, sensor, grains=None):
@@ -29,7 +28,7 @@ def process_real_data(results, sensor, grains=None):
 
         if isinstance(value, basestring):
             try:
-                value = number.match(value)
+                value = re.findall(NUMBER, value)[0]
                 value = float(value)
             except Exception, e:
                 pass
