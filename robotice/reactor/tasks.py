@@ -13,8 +13,6 @@ def commit_action(actuator, model_data, real_data):
 
     mod = import_module(module_name)
 
-    grains = get_grains()
-
     actuator['architecture'] = grains.cpu_arch
 
     LOG.info([actuator, model_data, real_data])
