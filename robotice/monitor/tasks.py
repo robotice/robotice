@@ -21,7 +21,7 @@ def get_real_data(config):
 
     for sensor in config.sensors:
         tasks.append(get_sensor_data.subtask(
-            (config, sensor, grains), queue='monitor_%s' % config.hostname))
+            (config, sensor, grains), exchange='monitor_%s' % config.hostname))
         logger.info('Registred get_sensor_data {0}'.format(sensor))
 
     job = group(tasks)
@@ -63,7 +63,7 @@ def get_sensor_data(config, sensor, grains):
                 config.metering.send(db_key, result[1])
                 config.database.set(db_key, result[1])
 
-                LOG.debug("metric was sent to database and statsd")
+                LOG.debug("%s: %s" % (db_key, result[1]))
 
                 LOG.debug("metric was sent to database and statsd")
 

@@ -15,14 +15,14 @@ BROKER_URL = config.broker
 if "rabbitmq" in config.broker:
 
     default_exchange = Exchange('default', type='fanout')
-    monitor_exchange = Exchange('monitor', type='fanout')
+    monitor_exchange = Exchange('monitor_%s' % config.hostname, type='fanout')
     reactor_exchange = Exchange('reactor', type='fanout')
     planner_exchange = Exchange('planner', type='fanout')
 
     CELERY_RESULT_BACKEND = "amqp"
     CELERY_QUEUES = (
         Queue('default', default_exchange, routing_key='default'),
-        Queue('monitor_%s' % config.hostname, monitor_exchange, routing_key='monitor.#'),
+        Queue('monitor', monitor_exchange, routing_key='monitor.#'),
         Queue('planner', planner_exchange, routing_key='planner.#'),
     )
 
@@ -34,7 +34,7 @@ elif "redis" in config.broker:
     #    'visibility_timeout': 3600, 'fanout_prefix': True}
     CELERY_QUEUES = {
         "default": {"default": "default"},
-        'monitor_%s' % config.hostname: {'monitor': "monitor.#"},
+        'monitor': {'monitor_%s' % config.hostname: "monitor.#"},
         "reactor": {"reactor": "reactor.#"},
         "planner": {"planner": "planner.#"},
     }
@@ -60,10 +60,10 @@ CELERY_ROUTES = {
         'queue': 'reasoner',
     },
     'monitor.get_sensor_data': {
-        'queue': 'monitor',
+        'queue': 'monitor_%s' % config.hostname,
     },
     'monitor.return_sensor_data': {
-        'queue': 'monitor_%s' % config.hostname,
+        'queue': 'monitor',
     },
 }
 
