@@ -14,6 +14,7 @@ def commit_action(actuator, model_data, real_data):
     mod = import_module(module_name)
 
     actuator['architecture'] = grains.cpu_arch
+    actuator['os_family'] = grains.os_family
 
     LOG.info([actuator, model_data, real_data])
 
