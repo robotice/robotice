@@ -105,14 +105,25 @@ class Settings(object):
                     results.append((system, plan),)
         return results
 
-    def get_plan(self, device_name, device_metric):
-        """reutnr tuple (system, plan)"""
+    def get_plan(self, device_name, device_metric=None):
+        """return tuple (system, plan)
+        """
+
+        result = (None, None)
+
         for system in self.systems:
             for sensor in system.get('sensors'):
-                if sensor.get('device') == device_name \
-                and sensor.get('metric') == device_metric:
-                    return system, sensor.get('plan')
-        return None, None
+                
+                if device_metric \
+                and sensor.has_key("metric"):
+                    if (sensor.get('device', None) == device_name \
+                    or sensor.get('name', None) == device_name) \
+                    and sensor.get("metric") == device_metric:
+                        result = system, sensor.get('plan')
+                else:
+                    if sensor.get('name') == device_name:
+                        result = system, sensor.get('plan')                        
+        return result
 
     def get_actuator_device(self, device_name):
         """return actuator from host devices"""
