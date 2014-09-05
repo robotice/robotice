@@ -5,9 +5,9 @@ from conf.grains import grains
 from utils.functional import import_module
 
 @task(name='reactor.commit_action')
-def commit_action(config, actuator, model_data, real_data):
+def commit_action(actuator, model_data, real_data):
 
-    logger = commit_action.get_logger()
+    LOG = commit_action.get_logger()
 
     module_name = ".".join(["reactor", "actuators", actuator.get("device")])
 
@@ -17,11 +17,11 @@ def commit_action(config, actuator, model_data, real_data):
 
     actuator['architecture'] = grains.cpu_arch
 
-    logger.info([actuator, model_data, real_data])
+    LOG.info([actuator, model_data, real_data])
 
     command, results = mod.run(actuator, model_data, real_data)
 
-    logger.info(command)
-    logger.info(results)
+    LOG.info(command)
+    LOG.info(results)
 
     return results
