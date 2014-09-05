@@ -28,4 +28,4 @@ class Grains(object):
         self.os_family = grains['os_family']
         self.cpu_arch = grains['cpu_arch']
 
-grains = Grains
+grains = Grains()
