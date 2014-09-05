@@ -14,20 +14,53 @@ from reactor.tasks import commit_action
 
 
 @task(name='reasoner.process_real_data')
-def process_real_data(results, grains):
+def process_real_data(results, sensor, grains=None):
+
+    LOG = process_real_data.get_logger()
 
     config = setup_app('reasoner')
 
-    metering = config.metering
-    database = config.database
-    task_results = []
+    for result in list(results):
 
-    for datum in results:
-        if isinstance(datum[1], (int, long, float, decimal.Decimal)):
-            task_results.append(datum)
-            metering.send(datum[0], datum[1])
+        if isinstance(result[1], (int, long, float, decimal.Decimal)):
 
-    return 'Finished processing real sensor data %s from device %s at %s' % (task_results, grains.hostname, time())
+            result_name = result[0].split('.')[0]
+            result_metric = result[0].split('.')[1]
+
+            system, plan_name = config.get_plan(result_name, result_metric)
+            
+            LOG.info("for result_name: {0} result_metric: {1} system: {2} plan: {3}".format(
+                result_name, 
+                result_metric,
+                system,
+                plan_name))
+
+            if system != None:
+                db_key = '.'.join([system.get('name'), 'sensors', sensor.get("name"), 'real'])
+                    
+                try:
+                    config.metering.send(db_key, result[1])
+                except Exception, e:
+                    LOG.error("Fail: send to metering %s " % e)
+                
+                try:                   
+                    redis_status = config.database.set(db_key, result[1])
+                except Exception, er:
+                    raise er
+
+                LOG.debug("%s: %s" % (db_key, result[1]))
+
+                LOG.debug("metric was sent to database and statsd")
+
+            else:
+
+                LOG.error("System for device %s not found" % result_name)
+
+        else:
+
+            LOG.error("Result from sensor module must be a instance of int, long, float, decimal.Decimal but found %s %s " % (type(result[1]), result[1]))
+
+    return "results: %s" % results
 
 
 def get_value_for_relay(config, actuator, model_values, real_value):
