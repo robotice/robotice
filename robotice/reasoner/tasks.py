@@ -1,3 +1,4 @@
+import re
 
 from time import time
 import decimal
@@ -12,6 +13,8 @@ from conf import setup_app
 from utils.database import get_db_values
 from reactor.tasks import commit_action
 
+NUMBER = '(\d+(?:[.,]\d*)?)'
+number = re.compile(NUMBER)
 
 @task(name='reasoner.process_real_data')
 def process_real_data(results, sensor, grains=None):
@@ -22,7 +25,16 @@ def process_real_data(results, sensor, grains=None):
 
     for result in list(results):
 
-        if isinstance(result[1], (int, long, float, decimal.Decimal)):
+        value = result[1]
+
+        if isinstance(value, basestring):
+            try:
+                value = number.match(value)
+                value = float(value)
+            except Exception, e:
+                pass
+
+        if isinstance(value, (int, long, float, decimal.Decimal)):
 
             result_name = result[0].split('.')[0]
             result_metric = result[0].split('.')[1]
@@ -36,19 +48,19 @@ def process_real_data(results, sensor, grains=None):
                 plan_name))
 
             if system != None:
-                db_key = '.'.join([system.get('name'), 'sensors', sensor.get("name"), 'real'])
+                db_key = '.'.join([system.get('name'), 'sensors', plan_name, 'real'])
                     
                 try:
-                    config.metering.send(db_key, result[1])
+                    config.metering.send(db_key, value)
                 except Exception, e:
                     LOG.error("Fail: send to metering %s " % e)
                 
                 try:                   
-                    redis_status = config.database.set(db_key, result[1])
+                    redis_status = config.database.set(db_key, value)
                 except Exception, er:
                     raise er
 
-                LOG.debug("%s: %s" % (db_key, result[1]))
+                LOG.debug("%s: %s" % (db_key, value))
 
                 LOG.debug("metric was sent to database and statsd")
 
@@ -58,7 +70,7 @@ def process_real_data(results, sensor, grains=None):
 
         else:
 
-            LOG.error("Result from sensor module must be a instance of int, long, float, decimal.Decimal but found %s %s " % (type(result[1]), result[1]))
+            LOG.error("Result from sensor module must be a instance of int, long, float, decimal.Decimal but found %s %s " % (type(value), value))
 
     return "results: %s" % results
 
