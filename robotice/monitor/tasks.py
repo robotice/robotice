@@ -22,7 +22,7 @@ def get_real_data(config):
 
     for sensor in config.sensors:
         tasks.append(get_sensor_data.subtask(
-            (config, sensor, grains), exchange='monitor_%s' % config.hostname))
+            (config, sensor, grains)))
         logger.info('Registred get_sensor_data {0}'.format(sensor))
 
     job = group(tasks)
