@@ -7,6 +7,7 @@ from celery.execute import send_task
 from celery.utils.log import get_task_logger
 
 from conf.grains import grains
+from conf import setup_app
 from utils.functional import import_module
 
 logger = get_task_logger(__name__)
@@ -60,8 +61,18 @@ def get_sensor_data(config, sensor, grains):
 
             if system != None:
                 db_key = '.'.join([system.get('name'), 'sensors', sensor.get("name"), 'real'])
-                config.metering.send(db_key, result[1])
-                config.database.set(db_key, result[1])
+                    
+                config = setup_app("monitor")
+                
+                try:
+                    config.metering.send(db_key, result[1])
+                except Exception, e:
+                    LOG.error("Fail: send to metering %s " % e)
+                
+                try:                   
+                    redis_status = config.database.set(db_key, result[1])
+                except Exception, er:
+                    raise er
 
                 LOG.debug("%s: %s" % (db_key, result[1]))
 

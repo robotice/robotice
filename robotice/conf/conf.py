@@ -10,8 +10,6 @@ from grains import Grains
 
 LOG = logging.getLogger(__name__)
 
-from utils.conf import list_to_dotdict
-
 class Settings(object):
 
     """Main object which contains all infromation about systems
@@ -150,13 +148,15 @@ class Settings(object):
         """database connection
         now is supported only redis
         """
-        _redis = getattr(self, "redis", None)
-        if _redis is None:
-            self.redis = redis.Redis(
-                host=self.config.get('database').get('host'),
-                port=self.config.get('database').get('port'),
-                db=self.config.get('database').get('number', 0))
-        return self.redis
+
+        _redis = redis.Redis(
+            host=self.config.get('database').get('host'),
+            port=self.config.get('database').get('port'),
+            db=self.config.get('database').get('number', 0))
+
+        LOG.info("Inicialized database connection %s " % _redis)
+        
+        return _redis
 
     @property
     def metering(self):
