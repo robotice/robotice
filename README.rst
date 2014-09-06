@@ -59,6 +59,6 @@ Read more
 .. _TMP36: /docs/source/_static/imgs/tmp36.jpg
 .. _relay_board: /docs/source/_static/imgs/relay_board.jpg
 
-.. |Build Status| .. image:: https://travis-ci.org/robotice/robotice.svg?branch=master
+.. |Build Status| image:: https://travis-ci.org/robotice/robotice.svg?branch=master
     :target: https://travis-ci.org/robotice/robotice
 .. |License badge| image:: http://img.shields.io/badge/license-Apache%202.0-green.svg?style=flat
