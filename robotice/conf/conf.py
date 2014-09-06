@@ -163,10 +163,10 @@ class Settings(object):
         """method create instance of statsd client
         method expected metering settings in worker config file
         metering:
-          host: localhost is default
-          port: 8125 is default
-          sample_rate: 1 is default
-          prefix: robotice is default
+        host: localhost is default
+        port: 8125 is default
+        sample_rate: 1 is default
+        prefix: robotice is default
         """
         meter = getattr(self, "meter", None)
         if not meter:
