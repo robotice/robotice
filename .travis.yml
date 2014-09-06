@@ -10,7 +10,6 @@ script: nosetests
 branches:
   only:
     - master
-    - develop
 notifications:
   email:
     recipients:
