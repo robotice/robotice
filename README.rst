@@ -1,3 +1,5 @@
+|Build Status| |License badge| |Issues|
+
 Robotice monitoring
 ===============
 
@@ -45,6 +47,8 @@ Show me in action
 Read more
 -----
 
+* http://www.celeryproject.org/
+
 .. _Website: http://www.robotice.cz
 .. _Documentation: http://robotice.github.io/robotice/
 .. _Video demostration: TODO
@@ -54,3 +58,8 @@ Read more
 .. _DHT2302: /docs/source/_static/imgs/dht2302.jpg
 .. _TMP36: /docs/source/_static/imgs/tmp36.jpg
 .. _relay_board: /docs/source/_static/imgs/relay_board.jpg
+
+.. |Build Status| image:: http://img.shields.io/travis/mayan-edms/mayan-edms/master.svg?style=flat
+   :target: https://travis-ci.org/mayan-edms/mayan-edms
+.. |License badge| image:: http://img.shields.io/badge/license-Apache%202.0-green.svg?style=flat
+.. |Issues| image:: http://img.shields.io/github/issues/badges/shields.svg
