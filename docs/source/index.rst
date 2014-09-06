@@ -6,7 +6,6 @@
 Welcome to Robotice's documentation!
 ====================================
 
-.. image:: _static/imgs/show_me.gif
 
 .. toctree::
    :maxdepth: 2
@@ -17,6 +16,16 @@ Welcome to Robotice's documentation!
 .. automodule:: robotice.reasoner
    :members: compare_data, process_real_data 
 
+Show me in action !
+-----
+
+.. image:: _static/imgs/show_me.gif
+
+First steps
+===========
+
+  :doc:`Overview <intro/overview>` |
+  :doc:`Supervisor <intro/supervisor>` |
 
 Indices and tables
 ==================
@@ -24,4 +33,3 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-

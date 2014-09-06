@@ -1,0 +1,9 @@
+=================
+Supervisor for production environment
+=================
+
+.. toctree::
+   :maxdepth: 2
+
+.. automodule:: robotice.conf
+   :members: Settings, RoboticeSettings, Grains, setup_app

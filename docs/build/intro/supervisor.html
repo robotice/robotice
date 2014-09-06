@@ -1,0 +1,131 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Supervisor for production environment &mdash; Robotice 0.1.1a documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1.1a',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="Robotice 0.1.1a documentation" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li><a href="../index.html">Robotice 0.1.1a documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="supervisor-for-production-environment">
+<h1>Supervisor for production environment<a class="headerlink" href="#supervisor-for-production-environment" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="reasoner-service-config">
+<h2>Reasoner service config<a class="headerlink" href="#reasoner-service-config" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-bash"><div class="highlight"><pre><span class="o">[</span>program:robotice_reasoner<span class="o">]</span>
+<span class="nv">directory</span><span class="o">=</span>/srv/robotice/service/robotice
+<span class="nv">environment</span><span class="o">=</span><span class="nv">PATH</span><span class="o">=</span><span class="s2">&quot;/srv/robotice/bin;/srv/robotice/service&quot;</span>
+<span class="nb">command</span><span class="o">=</span>/srv/robotice/bin/celery worker -s /srv/robotice/logs/celerybeat-schedule -B -E -Q reasoner,reasoner_rabbitmq1.box.robotice.cz,default --config<span class="o">=</span>worker_reasoner --hostname<span class="o">=</span>reasoner@rabbitmq1.box.robotice.cz --loglevel<span class="o">=</span>INFO --concurrency<span class="o">=</span>1
+<span class="nv">user</span><span class="o">=</span>robotice
+<span class="nv">stdout_logfile</span><span class="o">=</span>/srv/robotice/logs/robotice_reasoner.log
+<span class="nv">stderr_logfile</span><span class="o">=</span>/srv/robotice/logs/robotice_reasoner.log
+<span class="nv">autostart</span><span class="o">=</span><span class="nb">true</span>
+<span class="nv">autorestart</span><span class="o">=</span><span class="nb">true</span>
+<span class="nv">startsecs</span><span class="o">=</span>10
+<span class="nv">stopwaitsecs</span><span class="o">=</span>600
+</pre></div>
+</div>
+</div>
+<div class="section" id="monitor-service-config">
+<h2>Monitor service config<a class="headerlink" href="#monitor-service-config" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-bash"><div class="highlight"><pre><span class="o">[</span>program:robotice_monitor<span class="o">]</span>
+<span class="nv">directory</span><span class="o">=</span>/srv/robotice/service/robotice
+<span class="nv">environment</span><span class="o">=</span><span class="nv">PATH</span><span class="o">=</span><span class="s2">&quot;/srv/robotice/bin&quot;</span>
+<span class="nb">command</span><span class="o">=</span>/srv/robotice/bin/celery worker -E -Q monitor,monitor_rabbitmq1.box.robotice.cz,default --config<span class="o">=</span>worker_monitor --hostname<span class="o">=</span>monitor@rabbitmq1.box.robotice.cz --loglevel<span class="o">=</span>INFO --concurrency<span class="o">=</span>1
+<span class="nv">user</span><span class="o">=</span>robotice
+<span class="nv">stdout_logfile</span><span class="o">=</span>/srv/robotice/logs/robotice_monitor.log
+<span class="nv">stderr_logfile</span><span class="o">=</span>/srv/robotice/logs/robotice_monitor.log
+<span class="nv">autostart</span><span class="o">=</span><span class="nb">true</span>
+<span class="nv">autorestart</span><span class="o">=</span><span class="nb">true</span>
+<span class="nv">startsecs</span><span class="o">=</span>10
+<span class="nv">stopwaitsecs</span><span class="o">=</span>600
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Supervisor for production environment</a><ul>
+<li><a class="reference internal" href="#reasoner-service-config">Reasoner service config</a></li>
+<li><a class="reference internal" href="#monitor-service-config">Monitor service config</a></li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/intro/supervisor.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li><a href="../index.html">Robotice 0.1.1a documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Michael Kuty &amp; Ales Komarek.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>
