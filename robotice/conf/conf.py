@@ -18,14 +18,14 @@ class Settings(object):
     Args:
        worker (str):  The role name to use.
        conf_dir (str):  path to root of config.
-       workers_dir (str):  path to root of workers config.
+       worker_dir (str):  path to root of workers config.
 
     you can change config PATH
 
-    if you set system variable R_CONFIG_DIR and R_WORKERS_DIR
+    if you set system variable R_CONFIG_DIR and R_worker_dir
 
     in directory `R_CONFIG_DIR` is expected devices.yml, systems.yml, plans.yml
-    in directory `R_WORKERS_DIR` is expected worker_monitos.yml etc.
+    in directory `R_worker_dir` is expected worker_monitos.yml etc.
 
     """
 
@@ -45,7 +45,7 @@ class Settings(object):
         """
 
         try:
-            full_conf_path = "%s{0}.yml" % self.conf_dir
+            full_conf_path = "%s/{0}.yml" % self.conf_dir
             config_file = open(full_conf_path.format(name), "r")
             yaml_file = load(config_file)
             if yaml_file.get(name, None):
@@ -67,7 +67,7 @@ class Settings(object):
 
         self.worker = worker
 
-        config_file = open("".join([self.workers_dir, "/config_%s.yml" % worker ]), "r")
+        config_file = open("".join([self.worker_dir, "/config_%s.yml" % worker ]), "r")
         self.config = load(config_file)
 
         if worker == "reasoner":
@@ -78,17 +78,17 @@ class Settings(object):
 
             self.load_conf("systems")
 
-    def __init__(self, worker=None, conf_dir="/srv/robotice/config/",
-                 workers_dir="/srv/robotice"):
+    def __init__(self, worker=None, conf_dir="/srv/robotice/config",
+                 worker_dir="/srv/robotice"):
 
         if worker:
             self.setup_app(worker)
 
         self.conf_dir = getattr(os.environ, "R_CONFIG_DIR", conf_dir)
-        self.workers_dir = getattr(os.environ, "R_WORKERS_DIR", workers_dir)
+        self.worker_dir = getattr(os.environ, "R_WORKER_DIR", worker_dir)
 
         LOG.info("Main configuration PATH: %s" % self.conf_dir)
-        LOG.info("Worker PATH: %s" % self.workers_dir)
+        LOG.info("Worker PATH: %s" % self.worker_dir)
 
     @property
     def sensors(self):

@@ -28,13 +28,13 @@ Full example for the reasoner:
 	  port: 8125
 	  sample_rate: 1
 
-You can override this path if will be set system variable `R_WORKERS_DIR`
+You can override this path if will be set system variable `R_WORKER_DIR`
 
 Expected files:
 -----
 
-* <R_WORKERS_DIR>/config_monitor.yml
-* <R_WORKERS_DIR>/config_reasoner.yml
+* <R_WORKER_DIR>/config_monitor.yml
+* <R_WORKER_DIR>/config_reasoner.yml
 
 *etc..*
 

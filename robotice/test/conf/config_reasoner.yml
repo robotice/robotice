@@ -1,0 +1,16 @@
+
+cpu_arch: x86_64
+os_family: Debian
+system_name: box
+name: test1
+environment: dev
+debug: true
+broker: "amqp://robotice:robotice@localhost:5672//robotice"
+database:
+  engine: redis
+  host: localhost
+  port: 6379
+metering:
+  host: localhost
+  port: 8125
+  sample_rate: 1

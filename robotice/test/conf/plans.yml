@@ -1,5 +1,5 @@
 plans:
-- name: test1
+- name: test_box1
   description: simple test box
   cycle: 1800
   actuators:

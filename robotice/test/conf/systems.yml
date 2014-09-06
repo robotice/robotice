@@ -1,6 +1,6 @@
 systems:
 - name: test1
-  plan: hklab_box1
+  plan: test_box1
   start: 2014-02-01 00:00:00
   actuators:
   - plan: water1
@@ -18,5 +18,5 @@ systems:
     device: hygro_case1_do
     metric: "humidity"
   - plan: water_humidity2
-    device: hygro_case1_ao
+    device: dummy1
     metric: "humidity"

@@ -12,15 +12,14 @@ devices:
   - name: sispm1
     device: sispm
     port: 0
-  - name: sispm2
-    device: sispm
-    port: 1
-  - name: sispm3
-    device: sispm
-    port: 2
-  - name: sispm4
-    device: sispm
-    port: 3
+  - name: dummy1
+    device: dummy
+    type: dummy
+    port: bcm18
+  - name: dummy1
+    device: dummy
+    type: dummy
+    port: bcm18
   - name: hygro_case1_do
     device: hygro
     type: DO
