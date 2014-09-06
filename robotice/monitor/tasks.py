@@ -6,8 +6,8 @@ from celery.task import task
 from celery.execute import send_task
 from celery.utils.log import get_task_logger
 
-from conf.grains import grains
-from conf import setup_app
+from robotice.conf.grains import grains
+from robotice.conf import setup_app
 from utils.functional import import_module
 
 logger = get_task_logger(__name__)

@@ -1,8 +1,8 @@
 
 from celery.task import task
  
-from conf.grains import grains
-from utils.functional import import_module
+from robotice.conf.grains import grains
+from robotice.utils.functional import import_module
 
 @task(name='reactor.commit_action')
 def commit_action(actuator, model_data, real_data):

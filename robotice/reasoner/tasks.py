@@ -9,9 +9,9 @@ from celery import group, chord
 from celery.execute import send_task
 from celery.signals import celeryd_after_setup
 
-from conf import setup_app
-from utils.database import get_db_values
-from reactor.tasks import commit_action
+from robotice.conf import setup_app
+from robotice.utils.database import get_db_values
+from robotice.reactor.tasks import commit_action
 
 NUMBER = r'(\d+(?:[.,]\d*)?)'
 

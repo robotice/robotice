@@ -8,16 +8,15 @@ env:
   - ROBOTICE_TEST=True
   - R_ROOT_DIR=:/home/travis/build/robotice/robotice
   - PYTHONPATH=:/home/travis/build/robotice/robotice
-  - PYTHONPATH=:/home/travis/build/robotice/robotice/robotice
   - R_WORKER_DIR=/home/travis/build/robotice/robotice/robotice/test/conf
   - R_CONFIG_DIR=/home/travis/build/robotice/robotice/robotice/test/conf
   - R_GRAINS_DIR=/home/travis/build/robotice/robotice/robotice/test/conf
 install:
   - "pip install -r requirements/testing.txt"
 script: 
-  - nosetests /home/travis/build/robotice/robotice/robotice/test/tests/utils
-  - nosetests /home/travis/build/robotice/robotice/robotice/test/tests/reactor
-  - nosetests /home/travis/build/robotice/robotice/robotice/test/tests/monitor
+  - python setup.py nosetests -w robotice/test/tests/utils/
+  - python setup.py nosetests -w robotice/test/tests/monitor/
+  - python setup.py nosetests -w robotice/test/tests/reactor/
 branches:
   only:
     - master
