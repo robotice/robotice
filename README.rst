@@ -5,6 +5,8 @@ Opensource monitoring, reasoning and acting framework.
 
 `Website`_
 
+`Documentation`_
+
 `Video demostration`_
 
 Usage
@@ -25,8 +27,11 @@ Supported sensors:
 Requirements
 -----
 
-* celery
-* database - now only redis is supported
+* Python 2.6 / 2.7
+* Celery
+* database - Redis
+* Graphite - Statsd (for Gauge)
+* Service wrapper - Supervisor is recommended
 
 Installation
 ------------
@@ -46,6 +51,7 @@ Read more
 -----
 
 .. _Website: http://www.robotice.cz
+.. _Documentation: http://robotice.github.io/robotice/
 .. _Video demostration: TODO
 .. _Sispm: http://sispmctl.sourceforge.net/
 .. _Hygro soil: /docs/img/hygro.JPG
