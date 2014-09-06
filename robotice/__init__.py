@@ -11,10 +11,8 @@ except ImportError:
     pass
     #raise Exception("Could not import Robotice dependencies.")
 
-from robotice import reasoner
 
 __all__ = [
     "RoboticeSettings",
     "Grains",
-    "reasoner",
 ]

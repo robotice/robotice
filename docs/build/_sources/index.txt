@@ -10,12 +10,6 @@ Welcome to Robotice's documentation!
 .. toctree::
    :maxdepth: 2
 
-.. automodule:: robotice.conf
-   :members: Settings, RoboticeSettings, Grains, setup_app
-
-.. automodule:: robotice.reasoner
-   :members: compare_data, process_real_data 
-
 Show me in action !
 -----
 
@@ -27,6 +21,11 @@ First steps
   :doc:`Overview <intro/overview>` |
   :doc:`Configuration <intro/configuration>` |
   :doc:`Supervisor <intro/supervisor>` |
+  
+Robotice internals
+===========
+
+  :doc:`Settings module <robotice/settings>` |
 
 Indices and tables
 ==================
