@@ -1,0 +1,230 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Configuration &mdash; Robotice 0.1.1a documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1.1a',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="Robotice 0.1.1a documentation" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li><a href="../index.html">Robotice 0.1.1a documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="configuration">
+<h1>Configuration<a class="headerlink" href="#configuration" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="devices">
+<h2>Devices<a class="headerlink" href="#devices" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">devices</span><span class="p-Indicator">:</span>
+<span class="p-Indicator">-</span> <span class="l-Scalar-Plain">host</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">rabbitmq2</span>
+  <span class="l-Scalar-Plain">sensors</span><span class="p-Indicator">:</span>
+  <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">dummy2</span>
+    <span class="l-Scalar-Plain">device</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">dummy</span>
+    <span class="l-Scalar-Plain">type</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">dummy</span>
+    <span class="l-Scalar-Plain">port</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">bcm18</span>
+  <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">sispm1</span>
+    <span class="l-Scalar-Plain">device</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">sispm</span>
+    <span class="l-Scalar-Plain">port</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">0</span>
+  <span class="l-Scalar-Plain">actuators</span><span class="p-Indicator">:</span>
+  <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">sispm1</span>
+    <span class="l-Scalar-Plain">device</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">sispm</span>
+    <span class="l-Scalar-Plain">port</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">0</span>
+    <span class="l-Scalar-Plain">socket</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">1</span>
+  <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">sispm2</span>
+    <span class="l-Scalar-Plain">device</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">sispm</span>
+    <span class="l-Scalar-Plain">port</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">0</span>
+    <span class="l-Scalar-Plain">socket</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">2</span>
+  <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">sispm3</span>
+    <span class="l-Scalar-Plain">device</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">sispm</span>
+    <span class="l-Scalar-Plain">port</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">0</span>
+    <span class="l-Scalar-Plain">socket</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">3</span>
+  <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">sispm4</span>
+    <span class="l-Scalar-Plain">device</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">sispm</span>
+    <span class="l-Scalar-Plain">port</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">0</span>
+    <span class="l-Scalar-Plain">socket</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">4</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="plans">
+<h2>Plans<a class="headerlink" href="#plans" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">plans</span><span class="p-Indicator">:</span>
+<span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">hklab_box1</span>
+  <span class="l-Scalar-Plain">description</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">simple test box</span>
+  <span class="l-Scalar-Plain">cycle</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">1800</span>
+  <span class="l-Scalar-Plain">actuators</span><span class="p-Indicator">:</span>
+  <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">light1</span>
+    <span class="l-Scalar-Plain">cycles</span><span class="p-Indicator">:</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">value</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">1</span>
+      <span class="l-Scalar-Plain">start</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">6400</span>
+      <span class="l-Scalar-Plain">end</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">80000</span>
+  <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">water1</span>
+    <span class="l-Scalar-Plain">cycles</span><span class="p-Indicator">:</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">value</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">0</span>
+      <span class="l-Scalar-Plain">start</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">6400</span>
+      <span class="l-Scalar-Plain">end</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">80000</span>
+  <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">water2</span>
+    <span class="l-Scalar-Plain">cycles</span><span class="p-Indicator">:</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">start</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">0</span>
+      <span class="l-Scalar-Plain">end</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">59</span>
+      <span class="l-Scalar-Plain">value</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">1</span>
+  <span class="l-Scalar-Plain">sensors</span><span class="p-Indicator">:</span>
+  <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">temp1</span>
+    <span class="l-Scalar-Plain">cycles</span><span class="p-Indicator">:</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">start</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">0</span>
+      <span class="l-Scalar-Plain">end</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">599</span>
+      <span class="l-Scalar-Plain">value_low</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">0</span>
+      <span class="l-Scalar-Plain">value_high</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">25</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">start</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">600</span>
+      <span class="l-Scalar-Plain">end</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">1199</span>
+      <span class="l-Scalar-Plain">value_low</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">30</span>
+      <span class="l-Scalar-Plain">value_high</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">50</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">start</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">1200</span>
+      <span class="l-Scalar-Plain">end</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">1800</span>
+      <span class="l-Scalar-Plain">value_low</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">35</span>
+      <span class="l-Scalar-Plain">value_high</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">55</span>
+  <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">hygro1</span>
+    <span class="l-Scalar-Plain">cycles</span><span class="p-Indicator">:</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">start</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">0</span>
+      <span class="l-Scalar-Plain">end</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">1800</span>
+      <span class="l-Scalar-Plain">value_low</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">1</span>
+      <span class="l-Scalar-Plain">value_high</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">0</span>
+  <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">water1</span>
+    <span class="l-Scalar-Plain">cycles</span><span class="p-Indicator">:</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">start</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">0</span>
+      <span class="l-Scalar-Plain">end</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">59</span>
+      <span class="l-Scalar-Plain">value</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">1</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">start</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">60</span>
+      <span class="l-Scalar-Plain">end</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">599</span>
+      <span class="l-Scalar-Plain">value</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">0</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">start</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">600</span>
+      <span class="l-Scalar-Plain">end</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">699</span>
+      <span class="l-Scalar-Plain">value</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">1</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">start</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">700</span>
+      <span class="l-Scalar-Plain">end</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">1399</span>
+      <span class="l-Scalar-Plain">value</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">0</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">start</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">1400</span>
+      <span class="l-Scalar-Plain">end</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">1499</span>
+      <span class="l-Scalar-Plain">value</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">0</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">start</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">1500</span>
+      <span class="l-Scalar-Plain">end</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">1739</span>
+      <span class="l-Scalar-Plain">value</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">0</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">start</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">1740</span>
+      <span class="l-Scalar-Plain">end</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">1800</span>
+      <span class="l-Scalar-Plain">value</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">1</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="systems">
+<h2>Systems<a class="headerlink" href="#systems" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">systems</span><span class="p-Indicator">:</span>
+<span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">rabbitmq2</span>
+  <span class="l-Scalar-Plain">plan</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">hklab_box1</span>
+  <span class="l-Scalar-Plain">start</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">2014-02-01 00:00:00</span>
+  <span class="l-Scalar-Plain">actuators</span><span class="p-Indicator">:</span>
+  <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">plan</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">water1</span>
+    <span class="l-Scalar-Plain">device</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">sispm1</span>
+    <span class="l-Scalar-Plain">metric</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">socket1</span>
+  <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">plan</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">light1</span>
+    <span class="l-Scalar-Plain">device</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">sispm1</span>
+    <span class="l-Scalar-Plain">metric</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">socket2</span>
+  <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">plan</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">water2</span>
+    <span class="l-Scalar-Plain">device</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">sispm1</span>
+    <span class="l-Scalar-Plain">metric</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">socket3</span>
+  <span class="l-Scalar-Plain">sensors</span><span class="p-Indicator">:</span>
+  <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">plan</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">hygro1</span>
+    <span class="l-Scalar-Plain">device</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">hygro_case1_do</span>
+    <span class="l-Scalar-Plain">metric</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">hygro_do</span>
+  <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">plan</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">light1</span>
+    <span class="l-Scalar-Plain">device</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">sispm1</span>
+    <span class="l-Scalar-Plain">metric</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">socket2</span>
+  <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">plan</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">water2</span>
+    <span class="l-Scalar-Plain">device</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">sispm1</span>
+    <span class="l-Scalar-Plain">metric</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">socket3</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Configuration</a><ul>
+<li><a class="reference internal" href="#devices">Devices</a></li>
+<li><a class="reference internal" href="#plans">Plans</a></li>
+<li><a class="reference internal" href="#systems">Systems</a></li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/intro/configuration.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li><a href="../index.html">Robotice 0.1.1a documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Michael Kuty &amp; Ales Komarek.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

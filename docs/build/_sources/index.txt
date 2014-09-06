@@ -25,6 +25,7 @@ First steps
 ===========
 
   :doc:`Overview <intro/overview>` |
+  :doc:`Configuration <intro/configuration>` |
   :doc:`Supervisor <intro/supervisor>` |
 
 Indices and tables
