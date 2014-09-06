@@ -8,23 +8,23 @@ Simple CLI for easy debuging.
 import argparse
 
 from robotice.conf import RoboticeSettings
+from robotice.utils.output import output
 
-
-def inspect_config(role):
+def inspect_config(role, pretty_print=True):
     """print all loaded configuration
     """
 
     conf = RoboticeSettings(role)
 
-    print conf.config
+    print output(conf.config)
 
     if role == "reasoner":
 
-        print conf.sensors
+        print output(conf.sensors)
 
-        print conf.actuators
+        print output(conf.actuators)
 
-        print conf.plans
+        print output(conf.plans)
 
 
 def nodeinfo(node):
