@@ -3,6 +3,8 @@ python:
   - 2.7
 before_install:
   - export ROBOTICE_TEST=True
+  - export PYTHONPATH=:/home/travis/build/robotice/robotice
+  - export PYTHONPATH=:/home/travis/build/robotice/robotice/robotice
   - export R_WORKER_DIR=/home/travis/build/robotice/robotice/robotice/test/conf
   - export R_CONFIG_DIR=/home/travis/build/robotice/robotice/robotice/test/conf
   - export R_GRAINS_DIR=/home/travis/build/robotice/robotice/robotice/test/conf
