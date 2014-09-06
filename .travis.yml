@@ -14,9 +14,9 @@ env:
 install:
   - "pip install -r requirements/testing.txt"
 script: 
-  - python setup.py nosetests -w robotice/test/tests/utils/
-  - python setup.py nosetests -w robotice/test/tests/monitor/
-  - python setup.py nosetests -w robotice/test/tests/reactor/
+  - python setup.py nosetests --tests robotice/test/tests/utils/
+  - python setup.py nosetests --tests robotice/test/tests/monitor/
+  - python setup.py nosetests --tests robotice/test/tests/reactor/
 branches:
   only:
     - master
