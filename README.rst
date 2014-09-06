@@ -3,8 +3,6 @@ Robotice monitoring
 
 Opensource monitoring, reasoning and acting framework.
 
-`Website`_
-
 `Documentation`_
 
 `Video demostration`_
@@ -36,11 +34,8 @@ Requirements
 Installation
 ------------
 
-TODO
+`Documentation`_
 
-::
-
-	Logs in /srv/robotice/logs/service_xxx.log
 
 Show me in action
 -----
@@ -54,8 +49,8 @@ Read more
 .. _Documentation: http://robotice.github.io/robotice/
 .. _Video demostration: TODO
 .. _Sispm: http://sispmctl.sourceforge.net/
-.. _Hygro soil: /docs/img/hygro.JPG
+.. _Hygro soil: /docs/source/_static/imgs/hygro.JPG
 .. _DHT11: /docs/img/dht11.jpg
-.. _DHT2302: /docs/img/dht2302.jpg
-.. _TMP36: /docs/img/tmp36.jpg
-.. _relay_board: /docs/img/relay_board.jpg
+.. _DHT2302: /docs/source/_static/imgs/dht2302.jpg
+.. _TMP36: /docs/source/_static/imgs/tmp36.jpg
+.. _relay_board: /docs/source/_static/imgs/relay_board.jpg

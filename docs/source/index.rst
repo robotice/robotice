@@ -19,7 +19,8 @@ First steps
 ===========
 
   :doc:`Overview <intro/overview>` |
-  :doc:`Configuration <intro/configuration>` |
+  :doc:`Configuration workers <intro/worker_conf>` |
+  :doc:`Configuration Environment <intro/env_conf>` |
   :doc:`Supervisor <intro/supervisor>` |
   
 Robotice internals
