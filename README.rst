@@ -50,6 +50,6 @@ Read more
 .. _Sispm: http://sispmctl.sourceforge.net/
 .. _Hygro soil: /docs/img/hygro.JPG
 .. _DHT11: /docs/img/dht11.jpg
-.. _DHT2302: /docs/img/dht2301.jpg
+.. _DHT2302: /docs/img/dht2302.jpg
 .. _TMP36: /docs/img/tmp36.jpg
 .. _relay_board: /docs/img/relay_board.jpg
