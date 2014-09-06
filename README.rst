@@ -15,10 +15,10 @@ App for distributed monitoring small devices like a BeagleBone black or Raspberr
 Supported sensors:
 -----
 
-* DHT11 / DHT2302
-* TMP36
+* `DHT11`_ / `DHT2302`_
+* `TMP36`_
 * `Hygro soil`_
-* Relay
+* `relay_board`_
 * `Sispm`_
 
 
@@ -46,6 +46,10 @@ Read more
 -----
 
 .. _Website: http://www.robotice.cz
-.. _Video demontration: TODO
+.. _Video demostration: TODO
 .. _Sispm: http://sispmctl.sourceforge.net/
 .. _Hygro soil: /docs/img/hygro.JPG
+.. _DHT11: /docs/img/dht11.jpg
+.. _DHT2302: /docs/img/dht2301.jpg
+.. _TMP36: /docs/img/tmp36.jpg
+.. _relay_board: /docs/img/relay_board.jpg
