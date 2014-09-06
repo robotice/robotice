@@ -84,8 +84,8 @@ class Settings(object):
         if worker:
             self.setup_app(worker)
 
-        self.conf_dir = getattr(os.environ, "R_CONFIG_DIR", conf_dir)
-        self.worker_dir = getattr(os.environ, "R_WORKER_DIR", worker_dir)
+        self.conf_dir = os.getenv("R_CONFIG_DIR", conf_dir)
+        self.worker_dir = os.getenv("R_WORKER_DIR", worker_dir)
 
         LOG.info("Main configuration PATH: %s" % self.conf_dir)
         LOG.info("Worker PATH: %s" % self.worker_dir)

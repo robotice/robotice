@@ -23,7 +23,7 @@ class Grains(object):
     def __init__(self, path="/srv/robotice"):
 
         try:
-            R_GRAINS_DIR = getattr(os.environ, "R_GRAINS_DIR", path)
+            R_GRAINS_DIR = os.getenv("R_GRAINS_DIR", path)
             _path = "".join([R_GRAINS_DIR,"/grains.yml"])
             grains_file = open(_path, "r")
             grains = load(grains_file)['grains']
