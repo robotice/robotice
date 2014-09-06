@@ -3,3 +3,18 @@ __version__ = '0.0.1'
 __author__ = 'Ales Komarek & Michael Kuty'
 __license__ = 'Apache 2.0'
 __copyright__ = ''
+
+try:
+    from robotice.conf import RoboticeSettings
+    from robotice.conf import Grains
+except ImportError:
+    pass
+    #raise Exception("Could not import Robotice dependencies.")
+
+from robotice import reasoner
+
+__all__ = [
+    "RoboticeSettings",
+    "Grains",
+    "reasoner",
+]
