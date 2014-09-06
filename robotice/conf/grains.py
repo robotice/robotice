@@ -27,11 +27,11 @@ class Grains(object):
             _path = "".join([R_GRAINS_DIR,"/grains.yml"])
             grains_file = open(_path, "r")
             grains = load(grains_file)['grains']
+            self.hostname = grains['hostname']
+            self.os_family = grains['os_family']
+            self.cpu_arch = grains['cpu_arch']
         except IOError, e:
             LOG.error("Missing grains file %s: %s" % (path, e))
 
-        self.hostname = grains['hostname']
-        self.os_family = grains['os_family']
-        self.cpu_arch = grains['cpu_arch']
 
 grains = Grains()
