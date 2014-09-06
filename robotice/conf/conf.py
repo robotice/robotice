@@ -9,6 +9,8 @@ import socket
 from yaml import load
 from grains import Grains
 
+from robotice.utils.celery import init_sentry
+
 LOG = logging.getLogger(__name__)
 
 class Settings(object):
@@ -70,6 +72,9 @@ class Settings(object):
         config_file = open("".join([self.worker_dir, "/config_%s.yml" % worker ]), "r")
         self.config = load(config_file)
 
+        if self.config.has_key("dsn"):
+            init_sentry(self.config.get("dsn"))
+
         if worker == "reasoner":
 
             self.load_conf("devices")
@@ -87,8 +92,8 @@ class Settings(object):
         self.conf_dir = os.getenv("R_CONFIG_DIR", conf_dir)
         self.worker_dir = os.getenv("R_WORKER_DIR", worker_dir)
 
-        LOG.info("Main configuration PATH: %s" % self.conf_dir)
-        LOG.info("Worker PATH: %s" % self.worker_dir)
+        LOG.debug("Main configuration PATH: %s" % self.conf_dir)
+        LOG.debug("Worker PATH: %s" % self.worker_dir)
 
     @property
     def sensors(self):
@@ -185,7 +190,7 @@ class Settings(object):
             port=self.config.get('database').get('port'),
             db=self.config.get('database').get('number', 0))
 
-        LOG.info("Inicialized database connection %s " % _redis)
+        LOG.debug("Inicialized database connection %s " % _redis)
         
         return _redis
 
