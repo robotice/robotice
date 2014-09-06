@@ -1,4 +1,4 @@
-|Build Status| |License badge| |Issues|
+|Build Status| |License badge|
 
 Robotice monitoring
 ===============
@@ -59,7 +59,6 @@ Read more
 .. _TMP36: /docs/source/_static/imgs/tmp36.jpg
 .. _relay_board: /docs/source/_static/imgs/relay_board.jpg
 
-.. |Build Status| image:: http://img.shields.io/travis/mayan-edms/mayan-edms/master.svg?style=flat
-   :target: https://travis-ci.org/mayan-edms/mayan-edms
+.. |Build Status| .. image:: https://travis-ci.org/robotice/robotice.svg?branch=master
+    :target: https://travis-ci.org/robotice/robotice
 .. |License badge| image:: http://img.shields.io/badge/license-Apache%202.0-green.svg?style=flat
-.. |Issues| image:: http://img.shields.io/github/issues/badges/shields.svg
