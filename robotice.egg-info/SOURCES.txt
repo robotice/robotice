@@ -1,6 +1,0 @@
-setup.py
-robotice.egg-info/PKG-INFO
-robotice.egg-info/SOURCES.txt
-robotice.egg-info/dependency_links.txt
-robotice.egg-info/not-zip-safe
-robotice.egg-info/top_level.txt
