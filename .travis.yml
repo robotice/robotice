@@ -4,6 +4,7 @@ python:
 before_install:
   - echo "Robotice build started"
 env:
+  global:
   - ROBOTICE_TEST=True
   - PYTHONPATH=:/home/travis/build/robotice/robotice
   - PYTHONPATH=:/home/travis/build/robotice/robotice/robotice
