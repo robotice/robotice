@@ -6,7 +6,7 @@
 Welcome to Robotice's documentation!
 ====================================
 
-Contents:
+.. image:: _static/imgs/show_me.gif
 
 .. toctree::
    :maxdepth: 2

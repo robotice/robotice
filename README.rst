@@ -3,18 +3,24 @@ Robotice monitoring
 
 Opensource monitoring, reasoning and acting framework.
 
+`Website`_
+
+`Video demostration`_
+
 Usage
 -----
 
 App for distributed monitoring small devices like a BeagleBone black or Raspberry Pi.
 
 Supported sensors:
+-----
 
 * DHT11 / DHT2302
 * TMP36
-* [Hygro](/docs/img/hygro.JPG)
+* `Hygro soil`_
 * Relay
-* [Sispm](http://sispmctl.sourceforge.net/)
+* `Sispm`_
+
 
 Requirements
 -----
@@ -34,11 +40,12 @@ TODO
 Show me in action
 -----
 
-![Show me in action](/docs/img/show_me.gif)
-
+.. image:: /docs/img/show_me.gif
 
 Read more
 -----
 
 .. _Website: http://www.robotice.cz
 .. _Video demontration: TODO
+.. _Sispm: http://sispmctl.sourceforge.net/
+.. _Hygro soil: /docs/img/hygro.JPG

@@ -32,9 +32,6 @@
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
         <li><a href="#">Robotice 0.1.1a documentation</a> &raquo;</li> 
       </ul>
     </div>  
@@ -46,109 +43,12 @@
             
   <div class="section" id="welcome-to-robotice-s-documentation">
 <h1>Welcome to Robotice&#8217;s documentation!<a class="headerlink" href="#welcome-to-robotice-s-documentation" title="Permalink to this headline">¶</a></h1>
-<p>Contents:</p>
+<img alt="_images/show_me.gif" src="_images/show_me.gif" />
 <div class="toctree-wrapper compound">
 <ul class="simple">
 </ul>
 </div>
-<span class="target" id="module-robotice.conf"></span><dl class="class">
-<dt id="robotice.conf.Settings">
-<em class="property">class </em><tt class="descclassname">robotice.conf.</tt><tt class="descname">Settings</tt><big>(</big><em>worker=None</em>, <em>conf_dir='/srv/robotice/config/'</em>, <em>workers_dir='/srv/robotice/service'</em><big>)</big><a class="headerlink" href="#robotice.conf.Settings" title="Permalink to this definition">¶</a></dt>
-<dd><p>Main object which contains all infromation about systems</p>
-<dl class="attribute">
-<dt id="robotice.conf.Settings.actuators">
-<tt class="descname">actuators</tt><a class="headerlink" href="#robotice.conf.Settings.actuators" title="Permalink to this definition">¶</a></dt>
-<dd><p>return actuators for all systems, but add <cite>system_name</cite> variable</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="robotice.conf.Settings.broker">
-<tt class="descname">broker</tt><a class="headerlink" href="#robotice.conf.Settings.broker" title="Permalink to this definition">¶</a></dt>
-<dd><p>broker in string format
-redis://localhost:6379/9</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="robotice.conf.Settings.database">
-<tt class="descname">database</tt><a class="headerlink" href="#robotice.conf.Settings.database" title="Permalink to this definition">¶</a></dt>
-<dd><p>database connection
-now is supported only redis</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="robotice.conf.Settings.get_actuator_device">
-<tt class="descname">get_actuator_device</tt><big>(</big><em>device_name</em><big>)</big><a class="headerlink" href="#robotice.conf.Settings.get_actuator_device" title="Permalink to this definition">¶</a></dt>
-<dd><p>return actuator from host devices</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="robotice.conf.Settings.get_plan">
-<tt class="descname">get_plan</tt><big>(</big><em>device_name</em>, <em>device_metric=None</em><big>)</big><a class="headerlink" href="#robotice.conf.Settings.get_plan" title="Permalink to this definition">¶</a></dt>
-<dd><p>return tuple (system, plan)</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="robotice.conf.Settings.get_system_plans">
-<tt class="descname">get_system_plans</tt><a class="headerlink" href="#robotice.conf.Settings.get_system_plans" title="Permalink to this definition">¶</a></dt>
-<dd><p>return array of tuples [(system, plan),]</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="robotice.conf.Settings.load_conf">
-<tt class="descname">load_conf</tt><big>(</big><em>_type</em><big>)</big><a class="headerlink" href="#robotice.conf.Settings.load_conf" title="Permalink to this definition">¶</a></dt>
-<dd><p>encapsulation logic for load yaml</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="robotice.conf.Settings.metering">
-<tt class="descname">metering</tt><a class="headerlink" href="#robotice.conf.Settings.metering" title="Permalink to this definition">¶</a></dt>
-<dd><p>method create instance of statsd client
-method expected metering settings in worker config file
-metering:
-host: localhost is default
-port: 8125 is default
-sample_rate: 1 is default
-prefix: robotice is default</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="robotice.conf.Settings.setup_app">
-<tt class="descname">setup_app</tt><big>(</big><em>worker</em><big>)</big><a class="headerlink" href="#robotice.conf.Settings.setup_app" title="Permalink to this definition">¶</a></dt>
-<dd><p>main method which init all settings for specific role</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="robotice.conf.RoboticeSettings">
-<em class="property">class </em><tt class="descclassname">robotice.conf.</tt><tt class="descname">RoboticeSettings</tt><big>(</big><em>worker=None</em>, <em>conf_dir='/srv/robotice/config/'</em>, <em>workers_dir='/srv/robotice/service'</em><big>)</big><a class="headerlink" href="#robotice.conf.RoboticeSettings" title="Permalink to this definition">¶</a></dt>
-<dd><p>A singleton implementation of Settings such that all dealings with settings
-get the same instance no matter what. There can be only one.
-you can use RoboticeSettings(&#8216;reasoner&#8217;) or setup_app declared below</p>
-</dd></dl>
-
-<dl class="class">
-<dt id="robotice.conf.Grains">
-<em class="property">class </em><tt class="descclassname">robotice.conf.</tt><tt class="descname">Grains</tt><big>(</big><em>path='/srv/robotice/grains.yml'</em><big>)</big><a class="headerlink" href="#robotice.conf.Grains" title="Permalink to this definition">¶</a></dt>
-<dd><p>grains generated from salt
-note: not using now</p>
-<p>excepted structure:</p>
-<dl class="docutils">
-<dt>grains:</dt>
-<dd>hostname: redis1.box.robotice.cz
-os_family: Debian
-cpu_arch: amd64</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
-<dt id="robotice.conf.setup_app">
-<tt class="descclassname">robotice.conf.</tt><tt class="descname">setup_app</tt><big>(</big><em>worker</em><big>)</big><a class="headerlink" href="#robotice.conf.setup_app" title="Permalink to this definition">¶</a></dt>
-<dd><p>dealing with global singleton and load configs
-easiest way how you get settings instance is RoboticeSettings(&#8216;reasoner&#8217;)</p>
-</dd></dl>
-
-<span class="target" id="module-robotice.reasoner"></span></div>
+</div>
 <div class="section" id="indices-and-tables">
 <h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
 <ul class="simple">
@@ -198,9 +98,6 @@ easiest way how you get settings instance is RoboticeSettings(&#8216;reasoner&#8
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              >index</a></li>
-        <li class="right" >
-          <a href="py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
         <li><a href="#">Robotice 0.1.1a documentation</a> &raquo;</li> 
       </ul>
     </div>
