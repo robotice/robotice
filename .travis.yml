@@ -6,6 +6,7 @@ before_install:
 env:
   global:
   - ROBOTICE_TEST=True
+  - R_ROOT_DIR=:/home/travis/build/robotice/robotice
   - PYTHONPATH=:/home/travis/build/robotice/robotice
   - PYTHONPATH=:/home/travis/build/robotice/robotice/robotice
   - R_WORKER_DIR=/home/travis/build/robotice/robotice/robotice/test/conf
