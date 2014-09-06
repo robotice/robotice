@@ -40,7 +40,7 @@ Installation
 Show me in action
 -----
 
-.. image:: /docs/img/show_me.gif
+.. image:: /docs/source/_static/imgs/show_me.gif
 
 Read more
 -----
@@ -50,7 +50,7 @@ Read more
 .. _Video demostration: TODO
 .. _Sispm: http://sispmctl.sourceforge.net/
 .. _Hygro soil: /docs/source/_static/imgs/hygro.JPG
-.. _DHT11: /docs/img/dht11.jpg
+.. _DHT11: /docs/source/_static/imgs/dht11.jpg
 .. _DHT2302: /docs/source/_static/imgs/dht2302.jpg
 .. _TMP36: /docs/source/_static/imgs/tmp36.jpg
 .. _relay_board: /docs/source/_static/imgs/relay_board.jpg
