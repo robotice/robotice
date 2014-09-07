@@ -32,8 +32,28 @@ def nodeinfo(node):
 
     note: can be call only on reaoner.
     """
+    
+    conf = RoboticeSettings("reasoner")
+    plan_name = None
+    
+    for system in conf.systems:
+        if node in system.get("name"):
+            print system
+            plan_name = system.get("plan")
 
-    print "TODO"
+    for device in conf.devices:
+        if node in device.get("host"):
+            print device
+
+    plan_printed = False
+    
+    for plan in conf.plans:
+        if plan.get("name") == plan_name:
+            print plan
+            plan_printed = True
+
+    if not plan_printed:
+        print "Plan %s not found" % plan
 
 
 def status():
