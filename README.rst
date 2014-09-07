@@ -48,6 +48,15 @@ Read more
 
 * http://www.celeryproject.org/
 
+Contribution
+-----
+
+* Check for open issues or open a fresh issue to start a discussion around a feature idea or a bug.
+* Fork https://github.com/robotice/robotice on GitHub to start making your changes to the **develop** branch.
+* Write a test which shows that the bug was fixed or that the feature works as expected.
+* Make sure to add yourself to the `contributors`_ file.
+* Send a pull request
+
 .. _Website: http://www.robotice.cz
 .. _Documentation: http://robotice.github.io/robotice/
 .. _Video demostration: TODO
@@ -57,6 +66,7 @@ Read more
 .. _DHT2302: /docs/source/_static/imgs/dht2302.jpg
 .. _TMP36: /docs/source/_static/imgs/tmp36.jpg
 .. _relay_board: /docs/source/_static/imgs/relay_board.jpg
+.. _contributors: https://github.com/robotice/robotice/blob/develop/docs/source/contrib/contributors.rst
 
 .. |Build Status| image:: https://travis-ci.org/robotice/robotice.svg?branch=master
     :target: https://travis-ci.org/robotice/robotice
