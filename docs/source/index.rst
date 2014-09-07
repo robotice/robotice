@@ -3,32 +3,38 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Robotice's documentation!
-====================================
-
+========================
+Robotice's documentation
+========================
 
 .. toctree::
    :maxdepth: 2
 
-Show me in action !
------
-
-.. image:: _static/imgs/show_me.gif
-
-First steps
+Overview
 ===========
 
   :doc:`Overview <intro/overview>` |
-  :doc:`Configuration workers <intro/worker_conf>` |
-  :doc:`Configuration Environment <intro/env_conf>` |
-  :doc:`Supervisor <intro/supervisor>` |
-  
-Robotice internals
+  :doc:`Screenshots <intro/screenshot>` |
+  :doc:`Screencasts <intro/screencast>`
+
+Installation
 ===========
 
-  :doc:`Settings module <robotice/settings>` |
+  :doc:`Salt installation <install/salt>`
 
-Indices and tables
+Configuration
+===========
+
+  :doc:`Workers <config/worker>` |
+  :doc:`Environment <config/environment>` |
+  :doc:`Supervisor <config/supervisor>`
+  
+Robotice Internals
+===========
+
+  :doc:`Settings module <robotice/settings>`
+
+Indices and Tables
 ==================
 
 * :ref:`genindex`

@@ -2,7 +2,7 @@
 Environment Configuration - Physical Hardware
 =================
 
-This configuration is only on the Reasoner ! And is distributed for all hosts connected to same AMQP broker.
+This configuration applies only to the Reasoner role. It is distributed to all hosts connected to same AMQP broker.
 
 You can override path to configuration direcotry by setting system variable `R_CONFIG_DIR`.
 
