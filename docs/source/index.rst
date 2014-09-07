@@ -60,6 +60,15 @@ Sensors / Actuators
 * :doc:`CDS <hardware/cds>`
 * :doc:`TSL2561 <hardware/tls>`
 
+:doc:`How i can add support for new device ? <hardware/extend>`
+
+Contribution
+===========
+
+* :doc:`Source code <contrib/git>`
+* :doc:`How i can add support for new device ? <contrib/new_device>`
+* :doc:`Contributors <contrib/contributors>`
+
 Indices and Tables
 ==================
 
