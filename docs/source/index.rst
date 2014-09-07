@@ -42,11 +42,22 @@ Robotice Support
 Supported Hardware
 ===========
 
+Mini PC
+-----
+
+* :doc:`BeagleBone Black<hardware/bb>`
+* :doc:`Raspberry Pi <hardware/pi>`
+* :doc:`Udoo <hardware/udoo>`
+
+Sensors / Actuators
+-----
+
 * :doc:`Hygro soil <hardware/hygro>`
 * :doc:`DHT <hardware/dht>`
 * :doc:`Sispm <hardware/sispm>`
 * :doc:`Relay <hardware/relay>`
 * :doc:`TMP36 <hardware/tmp36>`
+* :doc:`CDS <hardware/cds>`
 
 Indices and Tables
 ==================
