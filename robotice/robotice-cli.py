@@ -18,13 +18,7 @@ def inspect_config(role, pretty_print=True):
 
     print output(conf.config)
 
-    if role == "reasoner":
 
-        print output(conf.sensors)
-
-        print output(conf.actuators)
-
-        print output(conf.plans)
 
 
 def nodeinfo(node):
@@ -68,6 +62,22 @@ def status():
         Reactor      ........   :-)
     """
 
+    try:
+        conf = RoboticeSettings("reasoner")
+        
+        print """
+            Sensors      ........   %s
+            Actuators    ........   %s
+            Devices      ........   %s
+            Systems      ........   %s
+            Plans        ........   %s
+        """ % (len(conf.sensors), len(conf.actuators),
+            len(conf.devices), len(conf.systems), len(conf.plans)
+            )
+    except Exception, e:
+        pass
+
+
 parser = argparse.ArgumentParser(
     formatter_class=argparse.RawDescriptionHelpFormatter,
     description="""
@@ -80,13 +90,13 @@ parser = argparse.ArgumentParser(
     """)
 parser.add_argument("-c", "--conf",
                     help="default: /srv/robotice/conf", default="/srv/robotice/conf")
-parser.add_argument("-w", "--workerconf", dest="worker configuration PATH",
-                    help="worker configuration PATH", default="/srv/robotice")
+parser.add_argument("-w", "--workerconf",
+                    help="default: /srv/robotice", default="/srv/robotice")
 parser.add_argument("-l", "--nodeinfo",
                     dest="nodeinfo",
-                    help="don't print status messages to stdout")
+                    help="`-l ubuntu1`")
 parser.add_argument("-i", "--inspect",
-                    help="print configuration expect role `reasoner` for example.")
+                    help="print worker configuration expect role `reasoner` for example.")
 parser.add_argument("-s", "--status",
                     default=False,
                     help="print status for all services",
