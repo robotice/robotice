@@ -1,8 +1,12 @@
+.. _cli-test:
+
 =================
 Command Line Interface
 =================
 
+
 If you have problem with Robotice you can use cli for debugging.
+
 
 Welcome !
 -----

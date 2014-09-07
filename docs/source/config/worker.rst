@@ -25,7 +25,7 @@ Full example for the reasoner:
 	  port: 8125
 	  sample_rate: 1
 
-You can override this path by settings system variable `R_WORKER_DIR`
+You can override this path by settings system variable `R_WORKER_DIR`.
 
 Expected files:
 -----

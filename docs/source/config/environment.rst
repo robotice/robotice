@@ -148,3 +148,5 @@ Systems
 	  - plan: water2
 	    device: sispm1
 	    metric: socket3
+
+Help with setup environment :ref:`cli-test`.
