@@ -1,8 +1,8 @@
 =================
-Supervisor for production environment
+Supervisor Configuration
 =================
 
-Reasoner service config
+Reasoner Service
 -----
 
 .. code-block:: bash
@@ -19,7 +19,7 @@ Reasoner service config
 	startsecs=10
 	stopwaitsecs=600
 
-Monitor service config
+Monitor Service
 -----
 
 .. code-block:: bash

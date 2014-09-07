@@ -1,13 +1,13 @@
 |Build Status| |License badge|
 
-Robotice monitoring
-===============
+Robotice: Monitoring deamon
+===========================
 
 Opensource monitoring, reasoning and acting framework.
 
 `Documentation`_
 
-`Video demostration`_
+`Video Demonstration`_
 
 Usage
 -----
@@ -22,7 +22,6 @@ Supported sensors:
 * `Hygro soil`_
 * `relay_board`_
 * `Sispm`_
-
 
 Requirements
 -----

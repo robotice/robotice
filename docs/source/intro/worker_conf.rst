@@ -1,11 +1,8 @@
 =================
-Configuration
+Worker Configuration
 =================
 
-Configuration - workers
-=================
-
-Root PATH for load workers is default to `/srv/robotice`. Here is expected one file per role in format yml.
+Root PATH for load workers defaults to `/srv/robotice`. Here is expected one file per role in format yml.
 
 Full example for the reasoner:
 -----
@@ -28,7 +25,7 @@ Full example for the reasoner:
 	  port: 8125
 	  sample_rate: 1
 
-You can override this path if will be set system variable `R_WORKER_DIR`
+You can override this path by settings system variable `R_WORKER_DIR`
 
 Expected files:
 -----
@@ -38,7 +35,7 @@ Expected files:
 
 *etc..*
 
-Default is `/srv/robotice/`.
+Defaults to `/srv/robotice/`.
 
 RabbitMQ or Redis:
 =====
@@ -77,7 +74,7 @@ Raven DSN
 
     dsn: http://public:private@host/project
 
-More about this topic [Raven]_ and [Sentry]_
+More about loggin, read [Raven]_ and [Sentry]_ documentation.
 
 Graphite / Statsd:
 =====
@@ -94,7 +91,7 @@ Statsd configuration
 	  port: 8125
 	  sample_rate: 1
 
-More about this topic [Graphite]_ and [Statsd]_
+For more information about Graphite metering used in Robotice, read [Graphite]_ and [Statsd]_ documentation.
 
 .. [Raven] http://raven.readthedocs.org/en/latest/
 .. [Sentry] https://getsentry.com/welcome/

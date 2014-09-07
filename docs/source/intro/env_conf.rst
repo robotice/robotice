@@ -1,10 +1,10 @@
 =================
-Environemnt configuration - psychical hardware
+Environment Configuration - Physical Hardware
 =================
 
-This configuration is only on the Reasoner ! And is distributed for all hosts connected to same broker vhost.
+This configuration is only on the Reasoner ! And is distributed for all hosts connected to same AMQP broker.
 
-You can override this path if will be set system variable `R_CONFIG_DIR`.
+You can override path to configuration direcotry by setting system variable `R_CONFIG_DIR`.
 
 Default is `/srv/robotice/conf`.
 
