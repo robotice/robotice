@@ -1,7 +1,4 @@
 .. Robotice documentation master file, created by
-   sphinx-quickstart on Sat Sep  6 10:33:57 2014.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
 
 ========================
 Robotice's documentation
@@ -75,3 +72,9 @@ Indices and Tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
+
+|Build Status| |License badge|
+
+.. |Build Status| image:: https://travis-ci.org/robotice/robotice.svg?branch=master
+    :target: https://travis-ci.org/robotice/robotice
+.. |License badge| image:: http://img.shields.io/badge/license-Apache%202.0-green.svg?style=flat
