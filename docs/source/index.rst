@@ -13,9 +13,9 @@ Robotice's documentation
 Overview
 ===========
 
-  :doc:`Overview <intro/overview>` |
-  :doc:`Screenshots <intro/screenshot>` |
-  :doc:`Screencasts <intro/screencast>`
+* :doc:`Overview <intro/overview>`
+* :doc:`Screenshots <intro/screenshot>`
+* :doc:`Screencasts <intro/screencast>`
 
 Installation
 ===========
@@ -25,9 +25,9 @@ Installation
 Configuration
 ===========
 
-  :doc:`Workers <config/worker>` |
-  :doc:`Environment <config/environment>` |
-  :doc:`Supervisor <config/supervisor>`
+* :doc:`Workers <config/worker>`
+* :doc:`Environment <config/environment>`
+* :doc:`Supervisor <config/supervisor>`
   
 Robotice Internals
 ===========
@@ -39,6 +39,14 @@ Robotice Support
 
   :doc:`CLI <support/cli>`
 
+Supported Hardware
+===========
+
+* :doc:`Hygro soil <hardware/hygro>`
+* :doc:`DHT <hardware/dht>`
+* :doc:`Sispm <hardware/sispm>`
+* :doc:`Relay <hardware/relay>`
+* :doc:`TMP36 <hardware/tmp36>`
 
 Indices and Tables
 ==================
