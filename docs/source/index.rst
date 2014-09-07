@@ -42,7 +42,7 @@ Robotice Support
 Supported Hardware
 ===========
 
-Mini PC
+Single board computers
 -----
 
 * :doc:`BeagleBone Black<hardware/bb>`
