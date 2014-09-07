@@ -2,4 +2,4 @@
 Robotice Screenshots
 =================
 
-.. image:: _static/imgs/show_me.gif
+.. image:: /_static/imgs/show_me.gif
