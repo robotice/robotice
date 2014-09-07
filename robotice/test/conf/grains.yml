@@ -1,0 +1,4 @@
+grains:
+  hostname: test1
+  os_family: Debian
+  cpu_arch: amd64

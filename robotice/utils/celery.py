@@ -21,37 +21,36 @@ from celery.signals import after_setup_logger, task_failure
 
 LOG = logging.getLogger(__name__)
 
-"""register_signal and register_logger_signal if RAVEN DSN is specified in main conf
-   and raven lib is installed
-"""
-
-RAVEN = False
-
 try:
-    from conf import DSN
+    from raven.handlers.logging import SentryHandler
+    from raven import Client
     RAVEN = True
-except Exception, e:
-    pass
+except ImportError, e:
+    RAVEN = False
 
-if DSN:
-    try:
-        from raven.handlers.logging import SentryHandler
-        from raven import Client
-    except ImportError, e:
-        raise Exception(
+def init_sentry(dsn):
+    """
+    load raven lib and init handlers
+
+    Returns True / False
+
+    """
+    
+    if RAVEN:
+        client = Client(dsn)
+
+        register_signal(client)
+        register_logger_signal(client)
+        
+        LOG.debug(
+            "Registred Raven handlers.")
+
+        return True
+    else:
+        LOG.error(
             "You have set DSN, but missing raven lib - maybe pip install raven will fix this issue")
-
-try:
-
-    client = Client(DSN)
-
-    register_signal(client)
-    register_logger_signal(client)
-
-except Exception, e:
-    client = None
-    raise e
-
+        
+    return False
 
 class CeleryFilter(logging.Filter):
 

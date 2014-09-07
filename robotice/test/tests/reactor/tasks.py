@@ -2,7 +2,9 @@ import os
 import sys
 import unittest
 
-sys.path.append('/srv/robotice/service')
+R_ROOT = getattr(os.environ, "R_ROOT_DIR", '/srv/robotice/service')
+
+sys.path.append(R_ROOT)
 
 from robotice.conf import setup_app, RoboticeSettings
 

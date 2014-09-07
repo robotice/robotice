@@ -1,11 +1,21 @@
 import os
 import sys
+import logging
 import unittest
-from conf import setup_app, RoboticeSettings
+
+LOG = logging.getLogger(__name__)
+
+R_ROOT = getattr(os.environ, "R_ROOT_DIR", '/srv/robotice/service')
+
+LOG.info(R_ROOT)
+LOG.error(R_ROOT)
+
+sys.path.append(R_ROOT)
+
+from robotice.conf import setup_app, RoboticeSettings
 
 from nose.tools import assert_equals
 
-sys.path.append('/srv/robotice/service')
 
 class MonitorTestCase(unittest.TestCase):
 

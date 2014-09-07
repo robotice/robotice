@@ -1,9 +1,13 @@
+import os
 import sys
 import socket
 import unittest
 from statsd import Gauge
 from redis import Redis
-sys.path.append('/srv/robotice/service')
+
+R_ROOT = getattr(os.environ, "R_ROOT_DIR", '/srv/robotice/service')
+
+sys.path.append(R_ROOT)
 
 from robotice.conf import setup_app, RoboticeSettings, Settings
 
@@ -22,10 +26,10 @@ class UtilTestCase(unittest.TestCase):
         self.assertIsInstance(self.settings.config, dict)
 
         self.assertIsInstance(self.settings, Settings)
-
         # singleton test
         settings = RoboticeSettings("monitor")
 
+        self.assertIsInstance(self.settings.sensors, list)
         assert_equals(self.settings, settings)
 
         settings = setup_app('monitor')
