@@ -34,6 +34,12 @@ Robotice Internals
 
   :doc:`Settings module <robotice/settings>`
 
+Robotice Support
+===========
+
+  :doc:`CLI <support/cli>`
+
+
 Indices and Tables
 ==================
 

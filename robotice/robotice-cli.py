@@ -68,11 +68,10 @@ def status():
         print """
             Sensors      ........   %s
             Actuators    ........   %s
-            Devices      ........   %s
             Systems      ........   %s
             Plans        ........   %s
         """ % (len(conf.sensors), len(conf.actuators),
-            len(conf.devices), len(conf.systems), len(conf.plans)
+            len(conf.systems), len(conf.plans)
             )
     except Exception, e:
         pass
@@ -94,12 +93,12 @@ parser.add_argument("-w", "--workerconf",
                     help="default: /srv/robotice", default="/srv/robotice")
 parser.add_argument("-l", "--nodeinfo",
                     dest="nodeinfo",
-                    help="`-l ubuntu1`")
+                    help="-l ubuntu1")
 parser.add_argument("-i", "--inspect",
-                    help="print worker configuration expect role `reasoner` for example.")
+                    help="print worker configuration -i reasoner")
 parser.add_argument("-s", "--status",
                     default=False,
-                    help="print status for all services",
+                    help="print robotice status",
                     action="store_true")
 
 
