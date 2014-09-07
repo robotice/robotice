@@ -58,6 +58,7 @@ Sensors / Actuators
 * :doc:`Relay <hardware/relay>`
 * :doc:`TMP36 <hardware/tmp36>`
 * :doc:`CDS <hardware/cds>`
+* :doc:`TSL2561 <hardware/tls>`
 
 Indices and Tables
 ==================

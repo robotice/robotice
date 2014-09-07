@@ -2,4 +2,4 @@
 Robotice Overview
 =================
 
-TODO
+.. image :: /_static/imgs/real_1.jpg
