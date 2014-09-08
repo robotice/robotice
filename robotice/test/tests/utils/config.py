@@ -19,6 +19,13 @@ class UtilTestCase(unittest.TestCase):
     def setUp(self):
         self.settings = setup_app('monitor')
 
+    def get_system(self):
+
+        system = self.settings.get_system()
+
+        self.assertIsInstance(self.settings.config, dict)
+        
+
     def test_setup_app(self):
 
         assert_equals(self.settings.hostname, socket.getfqdn())

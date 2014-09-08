@@ -95,6 +95,57 @@ class Settings(object):
         LOG.debug("Main configuration PATH: %s" % self.conf_dir)
         LOG.debug("Worker PATH: %s" % self.worker_dir)
 
+    def uuid(self, host=None, worker=None):
+        """return uuid for host and role
+        """
+        if not host:
+            host = self.hostname
+        if not worker:
+            worker = self.worker
+
+        key = ".".join([host, worker])
+        
+        return key
+
+    def set_system(self, system, host=None, worker=None):
+        """set system direcly into database and file backend
+        """
+
+        key = self.uuid(host, worker)
+        
+        if system:
+
+            try:
+                result = self.database.set(key, system)
+                if not result:
+                    raise Exception(result)
+                system = self.database.get(key)
+            except Exception, e:
+                raise e
+
+        return system
+        
+    def get_system(self, host=None, worker=None):
+        """return plan for host and role from db or file
+        """
+        key = self.uuid(host, worker)
+        _system = self.database.get(key)
+
+        if not _system:
+            # sync to db
+            try:
+                _system = {}
+                _system["actuators"] = self.actuators
+                _system["sensors"] = self.sensors
+                _system["plans"] = self.get_system_plans
+                result = self.database.set(key, _system)
+                if not result:
+                    raise Exception(result)
+            except Exception, e:
+                raise e
+
+        return _system
+
     @property
     def sensors(self):
 
