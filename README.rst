@@ -1,4 +1,4 @@
-|Build Status| |License badge|
+|Build Status| |Coverage Status| |License badge|
 
 Robotice: Monitoring deamon
 ===========================
@@ -71,3 +71,4 @@ Contribution
 .. |Build Status| image:: https://travis-ci.org/robotice/robotice.svg?branch=master
     :target: https://travis-ci.org/robotice/robotice
 .. |License badge| image:: http://img.shields.io/badge/license-Apache%202.0-green.svg?style=flat
+.. |Coverage Status| image:: https://coveralls.io/repos/robotice/robotice/master.svg?style=flat :target: https://coveralls.io/r/robotice/robotice?branch=master
