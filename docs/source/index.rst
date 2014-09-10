@@ -57,7 +57,7 @@ Sensors / Actuators
 * :doc:`CDS <hardware/cds>`
 * :doc:`TSL2561 <hardware/tls>`
 * :doc:`Liquid Flow <hardware/liquid_flow>`
-* :doc:`Non-Invasive Current Sensor - 30A - **TODO** <hardware/current_sensor>`
+* :doc:`Current Sensor - 30A<hardware/current_sensor>`
 
 
 
