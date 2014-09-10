@@ -7,7 +7,9 @@ redis==2.9.0
 python-dateutil==2.2
 
 #TESTS
-coverage>=3.6
+coverage==3.7.1
+coveralls==0.4.2
+
 hacking>=0.8.0,<0.9
 mox>=0.5.3
 nose

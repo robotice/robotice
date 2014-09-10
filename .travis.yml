@@ -17,6 +17,8 @@ script:
   - python setup.py nosetests --tests robotice/test/tests/utils/
   - python setup.py nosetests --tests robotice/test/tests/monitor/
   - python setup.py nosetests --tests robotice/test/tests/reactor/
+after_success:
+  - coveralls
 branches:
   only:
     - master
