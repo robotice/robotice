@@ -17,3 +17,4 @@ Read More
 
 * :download:`Datasheet <datasheet/current_sensor.pdf>`
 * https://www.sparkfun.com/products/11005
+* http://openenergymonitor.org/emon/node/58
