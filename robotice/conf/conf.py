@@ -7,7 +7,6 @@ import redis
 import socket
 
 from yaml import load
-from grains import Grains
 
 from robotice.utils.celery import init_sentry
 
@@ -156,8 +155,8 @@ class Settings(object):
             # `ubuntu1.domain.com`
             if host.get('host') in self.hostname:
                 for sensor in host.get('sensors'):
-                    sensor['os_family'] = self.grains.os_family
-                    sensor['cpu_arch'] = self.grains.cpu_arch
+                    sensor['os_family'] = self.config.get("os_family")
+                    sensor['cpu_arch'] = self.config.get("cpu_arch")
                     sensor['hostname'] = self.hostname
                     sensors.append(sensor)
 
@@ -267,14 +266,6 @@ class Settings(object):
                 self.config.get('metering').get('prefix', 'robotice'),
                 statsd_connection)
         return self.meter
-
-    @property
-    def grains(self):
-        _grains = getattr(self, "_grains", None)
-        if not _grains:
-            self._grains = Grains()
-        return self._grains
-
 
 class RoboticeSettings(Settings):
 
