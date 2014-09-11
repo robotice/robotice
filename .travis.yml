@@ -3,7 +3,7 @@ python:
   - 2.7
 before_install:
   - echo "Robotice build started"
-  - apt-get install pep8
+  - sudo apt-get install pep8
 env:
   global:
   - ROBOTICE_TEST=True
@@ -18,7 +18,7 @@ script:
   - python setup.py nosetests --tests robotice/test/tests/utils/
   - python setup.py nosetests --tests robotice/test/tests/monitor/
   - python setup.py nosetests --tests robotice/test/tests/reactor/
-  - sudo pep8 robotice
+  - pep8 robotice
 after_success:
   - coveralls
 branches:
