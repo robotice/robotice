@@ -8,9 +8,7 @@ def commit_action(config, actuator, model_data, real_data):
 
     LOG = commit_action.get_logger()
 
-    module_name = ".".join(["reactor", "actuators", actuator.get("device")])
-
-    mod = import_module(module_name)
+    mod = import_module(actuator.get("device"))
 
     actuator['architecture'] = config["cpu_arch"]
     actuator['os_family'] = config["os_family"]

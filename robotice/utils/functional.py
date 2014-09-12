@@ -1,13 +1,15 @@
+import sys
 
-def import_module(name):
-    """wrapper for inport module
-    name:string  monitor.sensors.afm
-    return afm module
+def import_module(name, _type="sensor", drivers_path="/srv/robotice/sensors"):
+    """wrapper for import module
+    
+    drivers_path/name_module
+    
+    return name module
     """
-    mod = __import__(name)
-    components = name.split('.')
 
-    for comp in components[1:]:
-        mod = getattr(mod, comp)
+    sys.path.append("/".join([drivers_path, name]))
+
+    mod = __import__(_type)
 
     return mod

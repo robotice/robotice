@@ -1,3 +1,4 @@
+import os
 from time import time
 import decimal
 
@@ -35,10 +36,8 @@ def get_sensor_data(config, sensor):
 
     LOG = get_real_data.get_logger()
 
-    module_name = ".".join(["monitor", "sensors", sensor.get("device")])
-
     try:
-        mod = import_module(module_name)
+        mod = import_module(sensor.get("device"))
     except Exception, e:
         LOG.error("Cannot import module %s" % module_name)
         raise e
