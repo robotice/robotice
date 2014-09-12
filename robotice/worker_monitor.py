@@ -68,4 +68,4 @@ CELERY_ROUTES = {
 }
 
 celery = Celery('robotice', broker=BROKER_URL)
-celery.control.time_limit('monitor.get_sensor   _data', soft=60, hard=120, reply=True)
+celery.control.time_limit('monitor.get_sensor_data', soft=60, hard=120, reply=True)

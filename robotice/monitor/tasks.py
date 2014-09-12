@@ -1,6 +1,7 @@
 import os
 from time import time
 import decimal
+import subprocess
 
 from celery import group, chord
 from celery.task import task
@@ -36,10 +37,12 @@ def get_sensor_data(config, sensor):
 
     LOG = get_real_data.get_logger()
 
+    result = None
+
     try:
         mod = import_module(sensor.get("device"))
     except Exception, e:
-        LOG.error("Cannot import module %s" % module_name)
+        LOG.error("Cannot import sensor %s" % sensor)
         raise e
 
     results = mod.get_data(sensor)
@@ -47,9 +50,11 @@ def get_sensor_data(config, sensor):
     LOG.debug("sensor: {0} result: {0}".format(sensor, results))
 
     send_task("reasoner.process_real_data",
-        args=(results, sensor))
-        
-    LOG.debug('Registred process_real_data for {0}'.format(sensor.get("name")))
+              args=(results, sensor))
 
+    LOG.debug(
+        'Registred process_real_data for {0}'.format(sensor.get("name")))
 
-    return 'Real data from sensor %s on device %s results %s' % (sensor.get("name"), config.hostname, results)
+    result = 'Real data from sensor %s on device %s results %s' % (sensor.get("name"), config.hostname, results)
+
+    return result

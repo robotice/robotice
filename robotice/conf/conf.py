@@ -12,6 +12,7 @@ from robotice.utils.celery import init_sentry
 
 LOG = logging.getLogger(__name__)
 
+
 class Settings(object):
 
     """**Main object which contains all infromation about systems**
@@ -68,7 +69,8 @@ class Settings(object):
 
         self.worker = worker
 
-        config_file = open("".join([self.worker_dir, "/config_%s.yml" % worker ]), "r")
+        config_file = open(
+            "".join([self.worker_dir, "/config_%s.yml" % worker]), "r")
         self.config = load(config_file)
 
         if self.config.has_key("dsn"):
@@ -103,7 +105,7 @@ class Settings(object):
             worker = self.worker
 
         key = ".".join([host, worker])
-        
+
         return key
 
     def set_system(self, system, host=None, worker=None):
@@ -111,7 +113,7 @@ class Settings(object):
         """
 
         key = self.uuid(host, worker)
-        
+
         if system:
 
             try:
@@ -123,7 +125,7 @@ class Settings(object):
                 raise e
 
         return system
-        
+
     def get_system(self, host=None, worker=None):
         """return plan for host and role from db or file
         """
@@ -145,8 +147,37 @@ class Settings(object):
 
         return _system
 
+    @classmethod
+    def cache_file(self, key="devices"):
+
+        # load from db
+
+        _key = ".".join([self.uuid(host, worker), key])
+
+        result = self.database.get(_key)
+
+        if result:
+            return result
+
+        return None
+
     @property
-    def sensors(self):
+    def sensors(self, host=None, worker=None):
+
+        # load from db
+        """
+        cached_file = self.cache_file()
+
+        if cached_file:
+            return list(cache_file)
+        system = self.get_system(self.hostname, worker)
+
+        if system:
+            return system.get("sensors")
+        """
+        #_key = ".".join([self.uuid(host, worker), "devices"])
+        # scan from file
+        
 
         sensors = []
 
@@ -160,7 +191,12 @@ class Settings(object):
                     sensor['hostname'] = self.hostname
                     sensors.append(sensor)
 
+                    self.database.sadd("test", sensor)
+
         LOG.debug(sensors)
+        
+        # set to db
+        #self.database.set(key, sensors)
 
         return sensors
 
@@ -181,7 +217,7 @@ class Settings(object):
     @property
     def get_system_plans(self):
         """return array of tuples [(system, plan),]"""
-        
+
         results = []
         for system in self.systems:
             for plan in self.plans:
@@ -197,16 +233,16 @@ class Settings(object):
 
         for system in self.systems:
             for sensor in system.get('sensors'):
-                
+
                 if device_metric \
-                and sensor.has_key("metric"):
-                    if (sensor.get('device', None) == device_name \
-                    or sensor.get('name', None) == device_name) \
-                    and sensor.get("metric") == device_metric:
+                    and sensor.has_key("metric"):
+                    if (sensor.get('device', None) == device_name
+                       or sensor.get('name', None) == device_name) \
+                        and sensor.get("metric") == device_metric:
                         result = system, sensor.get('plan')
                 else:
                     if sensor.get('name') == device_name:
-                        result = system, sensor.get('plan')                        
+                        result = system, sensor.get('plan')
         return result
 
     def get_actuator_device(self, device_name):
@@ -241,7 +277,7 @@ class Settings(object):
             db=self.config.get('database').get('number', 0))
 
         LOG.debug("Inicialized database connection %s " % _redis)
-        
+
         return _redis
 
     @property
@@ -266,6 +302,7 @@ class Settings(object):
                 self.config.get('metering').get('prefix', 'robotice'),
                 statsd_connection)
         return self.meter
+
 
 class RoboticeSettings(Settings):
 
