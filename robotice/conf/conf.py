@@ -6,7 +6,7 @@ import statsd
 import redis
 import socket
 
-from yaml import load, dump
+from yaml import load, dump, safe_dump
 
 from robotice.utils.celery import init_sentry
 from redis_collections import Dict, List
@@ -114,7 +114,7 @@ class Settings(object):
     def devices(self):
         return self._devices
 
-    def save_sensor(self, sensor, host):
+    def save_sensor(self, sensor, host, only_db=False):
         """method save sensor into two keys
         host.sensors.metric.name as dict
         and update host.sensors list
@@ -131,7 +131,9 @@ class Settings(object):
 
         saved_as_dict = self.update_or_create(sensor, key)
 
-        #result = self.dump_devices(saved_as_dict, host)
+        # for load from file
+        if not only_db:
+            result = self.dump_device(dict(saved_as_dict), host)
 
         # update host.sensors list
         key = ".".join([host, "sensors"])
@@ -149,7 +151,8 @@ class Settings(object):
                 "missing actuator device or system_plan %s" % actuator)
 
         key = ".".join(
-            [host, "actuators",
+            [host,
+            "actuators",
             actuator.get("system_plan"),
             actuator.get("device")])
 
@@ -162,27 +165,48 @@ class Settings(object):
 
         return saved_as_list
 
-    def dump_devices(self, obj, host):
-        update = {}
+    def dump_device(self, obj, host, key="sensors"):
+        """dump new sensor or actuator to file
+        
+        .. code-block:: yaml
+            hostname:
+              sensors:
+                id:
+                  type: type
+                  name: name
+                  port: port
+              actuators:
+                id:
+                  port: port
+        """
+
+        devices = self.devices # copy local devices
+
         for hostname, system in self.devices.iteritems():
-            sensors = {}
-            if hostname == host:
-                for name, device in system.get("sensors").iteritems():
-                    if name == obj.get("name"):
-                        sensors[name] = obj
-                    else:
-                        sensors[name] = device
-                update[hostname] = {
-                    "sensors": sensors,
-                    "actuators": system.get("actuators"),
-                }
-            else:
-                update[hostname] = system
+            if hostname in host:
+                _dict = system.get(key)
+                
+                name = obj.get("id", None)
+                
+                if not name:
+                    name = obj.get("name", obj.get("device", None))
+                
+                if not name:
+                    raise Exception("missing name or device %s" % obj)
+                
+                _dict[name] = obj
+                devices[hostname][key] = _dict
+
+                created = False # switch to update
+
+        # write to file
 
         full_conf_path = "%s/devices.yml" % self.conf_dir
 
         with open(full_conf_path, 'w') as yaml_file:
-            dump(update, yaml_file, default_flow_style=False)
+            safe_dump(devices, yaml_file, default_flow_style=False)
+
+        self._devices = devices # save new devices
 
         return True
 
@@ -234,7 +258,10 @@ class Settings(object):
         actuators = []
         for name, system in self.systems.iteritems():
             for uuid, actuator in system.get('actuators').iteritems():
-                actuator['device'] = uuid
+                
+                if not "device" in actuator:
+                    actuator['device'] = uuid
+                
                 actuator['system_name'] = system.get('name')
                 actuator['system_plan'] = system.get('plan')
                 actuators.append(actuator)
@@ -305,12 +332,15 @@ class Settings(object):
             # `ubuntu1.domain.com`
             if name in self.hostname:
                 for name, sensor in host.get('sensors').iteritems():
-                    sensor["name"] = name
+                    
+                    if not "name" in sensor:
+                        sensor["name"] = name
+
                     sensor['os_family'] = self.config.get("os_family")
                     sensor['cpu_arch'] = self.config.get("cpu_arch")
                     sensor['hostname'] = self.hostname
                     sensors.append(sensor)
-                    self.save_sensor(sensor, host=self.hostname)  # save to db
+                    self.save_sensor(sensor, host=self.hostname, only_db=True)  # save to db
 
         LOG.debug(sensors)
 
