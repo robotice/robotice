@@ -10,7 +10,7 @@ def get_model_data(config):
     """
     logger = get_model_data.get_logger()
 
-    for system, plan in config.get_system_plans :
+    for system, plan in config.get_system_plans:
 
         devices = plan.get('sensors')
         start = datetime.datetime.strptime(str(system.get('start')), "%Y-%m-%d %H:%M:%S")

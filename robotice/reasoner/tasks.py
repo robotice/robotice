@@ -193,7 +193,7 @@ def init_reactors(sender, instance, **kwargs):
     """
     config = setup_app('reasoner')
 
-    for host in config.devices:
+    for name, host in config.devices.iteritems():
         for actuator in host.get('actuators'):
             if actuator.has_key('default'):
                 if actuator.get('default') == 'off':

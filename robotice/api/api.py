@@ -27,7 +27,7 @@ class RoboticeAPI(Settings):
     """
         API for comunication with Robotice
 
-        this method expose all robotice.conf methods
+        this class expose all robotice.conf methods
     """
 
     def __init__(self, worker="reasoner", conf_dir="/srv/robotice/config",
