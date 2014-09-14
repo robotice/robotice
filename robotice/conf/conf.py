@@ -72,7 +72,7 @@ class Settings(object):
             "".join([self.worker_dir, "/config_%s.yml" % worker]), "r")
         self.config = load(config_file)
 
-        if self.config.has_key("dsn"):
+        if "dsn" in self.config:
             init_sentry(self.config.get("dsn"))
 
         if worker == "reasoner":
@@ -102,10 +102,10 @@ class Settings(object):
             host = self.hostname
         if not worker:
             worker = self.worker
-        
+
         if device:
             key = ".".join([host, device])
-        
+
         key = ".".join([host, worker])
 
         return key
@@ -123,36 +123,41 @@ class Settings(object):
         # set host.sensors.metric.name as dict
 
         if not sensor.get("metric", None) \
-        or not sensor.get("name", None):
+            or not sensor.get("name", None):
             raise Exception("missing sensor name or metric %s" % sensor)
 
-        key = ".".join([host, "sensors", sensor.get("metric"), sensor.get("name")])
-        
+        key = ".".join(
+            [host, "sensors", sensor.get("metric"), sensor.get("name")])
+
         saved_as_dict = self.update_or_create(sensor, key)
-        
+
         #result = self.dump_devices(saved_as_dict, host)
-        
+
         # update host.sensors list
         key = ".".join([host, "sensors"])
-        
+
         saved_as_list = self.update_or_create([sensor], key)
 
         return saved_as_list
 
     def save_actuator(self, actuator, host):
         key = self.uuid(host, "actuators")
-        
-        if not actuator.get("system_plan", None) \
-        or not actuator.get("device", None):
-            raise Exception("missing actuator device or system_plan %s" % actuator)
 
-        key = ".".join([host, "actuators", actuator.get("system_plan"), actuator.get("device")])
-        
+        if not actuator.get("system_plan", None) \
+            or not actuator.get("device", None):
+            raise Exception(
+                "missing actuator device or system_plan %s" % actuator)
+
+        key = ".".join(
+            [host, "actuators",
+            actuator.get("system_plan"),
+            actuator.get("device")])
+
         saved_as_dict = self.update_or_create(actuator, key)
-        
+
         # update host.sensors list
         key = ".".join([host, "actuators"])
-        
+
         saved_as_list = self.update_or_create([actuator], key)
 
         return saved_as_list
@@ -173,9 +178,9 @@ class Settings(object):
                 }
             else:
                 update[hostname] = system
-        
+
         full_conf_path = "%s/devices.yml" % self.conf_dir
-        
+
         with open(full_conf_path, 'w') as yaml_file:
             dump(update, yaml_file, default_flow_style=False)
 
@@ -185,7 +190,7 @@ class Settings(object):
         key = self.uuid(host, "sensors")
 
         sensors = List([], key=key, redis=self.database)
-        
+
         if len(sensors) == 0:
             sensors = self.load_sensors()
 
@@ -197,11 +202,11 @@ class Settings(object):
         default to self.hostname
         if sensors is empty method call load_sensors from file
         """
-        
+
         key = self.uuid(self.hostname, "sensors")
 
         sensors = List([], key=key, redis=self.database)
-        
+
         if len(sensors) == 0:
             sensors = self.load_sensors()
 
@@ -217,7 +222,7 @@ class Settings(object):
         key = self.uuid(self.hostname, "actuators")
 
         actuators = List([], key=key, redis=self.database)
-        
+
         if len(actuators) == 0:
             actuators = self.load_actuators()
 
@@ -225,14 +230,15 @@ class Settings(object):
 
     def load_actuators(self):
         """return actuators for all systems, but add `system_name` variable"""
-        
+
         actuators = []
         for name, system in self.systems.iteritems():
-            for actuator in system.get('actuators'):
+            for uuid, actuator in system.get('actuators').iteritems():
+                actuator['device'] = uuid
                 actuator['system_name'] = system.get('name')
                 actuator['system_plan'] = system.get('plan')
                 actuators.append(actuator)
-                self.save_actuator(actuator, host=self.hostname) # save to db
+                self.save_actuator(actuator, host=self.hostname)  # save to db
 
         LOG.debug(actuators)
 
@@ -241,8 +247,9 @@ class Settings(object):
     def update_or_create(self, instance, key):
         """method accept list or dict
         both save into redis as Dict or List
-        if instance is a list method automaticaly update list in redis 
+        if instance is a list method automaticaly update list in redis
         """
+
         created = True
 
         if isinstance(instance, dict):
@@ -254,13 +261,13 @@ class Settings(object):
 
             return saved
 
-        # update list especially sensors or actuators collection 
+        # update list especially sensors or actuators collection
         if isinstance(instance, list):
             try:
                 devices = List([], key=key, redis=self.database)
             except Exception, e:
                 raise e
-            
+
             update = []
 
             for device in devices:
@@ -286,26 +293,27 @@ class Settings(object):
     @property
     def plans(self):
         return self._plans
-    
+
     def load_sensors(self, host=None, worker=None):
         """method load and save sensors from self._devices file
         """
-    
+
         sensors = []
 
         for name, host in self.devices.iteritems():
             # operator in support match in two forms `ubuntu1` or
             # `ubuntu1.domain.com`
             if name in self.hostname:
-                for sensor in host.get('sensors'):
+                for name, sensor in host.get('sensors').iteritems():
+                    sensor["name"] = name
                     sensor['os_family'] = self.config.get("os_family")
                     sensor['cpu_arch'] = self.config.get("cpu_arch")
                     sensor['hostname'] = self.hostname
                     sensors.append(sensor)
-                    self.save_sensor(sensor, host=self.hostname) # save to db
-    
+                    self.save_sensor(sensor, host=self.hostname)  # save to db
+
         LOG.debug(sensors)
-        
+
         return sensors
 
     def set_system(self, system, host=None, worker=None):
@@ -353,7 +361,7 @@ class Settings(object):
 
         results = []
         for name, system in self.systems.iteritems():
-            system["name"] = name # hotfix
+            system["name"] = name  # hotfix
             for name, plan in self.plans.iteritems():
                 if name == system.get("plan"):
                     results.append((system, plan),)
@@ -366,12 +374,12 @@ class Settings(object):
         result = (None, None)
 
         for name, system in self.systems.iteritems():
-            
-            system["name"] = name # hotfix
-            
+
+            system["name"] = name  # hotfix
+
             for sensor in system.get('sensors'):
                 if device_metric \
-                    and sensor.has_key("metric"):
+                    and "metric" in sensor:
                     if (sensor.get('device', None) == device_name
                        or sensor.get('name', None) == device_name) \
                         and sensor.get("metric") == device_metric:
@@ -441,9 +449,8 @@ class Settings(object):
 
 
 class RoboticeSettings(Settings):
-
-    """A singleton implementation of Settings such that all dealings with settings
-    get the same instance no matter what. There can be only one.
+    """A singleton implementation of Settings such that all dealings
+    with settings get the same instance no matter what. There can be only one.
     you can use RoboticeSettings('reasoner') or setup_app declared below
     """
     _instance = None
