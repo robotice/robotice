@@ -131,7 +131,7 @@ def compare_data(config):
 
     results = []
 
-    for actuator in config.actuators:
+    for actuator_name, actuator in config.actuators.iteritems():
         # system, plan_name = get_plan(
         #    config, actuator.get('name'), actuator.get("metric"))
         # if not system:
@@ -144,7 +144,7 @@ def compare_data(config):
         if real_value == None or model_value == None:
             logger.info('NO REAL DATA to COMPARE')
             continue
-        actuator_device = config.get_actuator_device(actuator.get('device'))
+        actuator_device = config.get_actuator_device(actuator_name)
         actuator.pop('device')
         logger.info(actuator_device)
         actuator.update(actuator_device)

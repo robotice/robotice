@@ -165,6 +165,28 @@ class Settings(object):
 
         return saved_as_list
 
+    def save_host(self, host):
+
+        hostname = host.get("hostname", host.get("host", None))
+
+        devices = self.devices # copy local devices
+
+        devices[hostname] = host
+
+        # write to file
+
+        full_conf_path = "%s/devices.yml" % self.conf_dir
+
+        with open(full_conf_path, 'w') as yaml_file:
+            safe_dump(devices, yaml_file, default_flow_style=False)
+
+        self._devices = devices # save new devices
+
+        self.load_sensors() # this saves devices to database
+
+        return True
+        
+
     def dump_device(self, obj, host, key="sensors"):
         """dump new sensor or actuator to file
         
@@ -232,6 +254,8 @@ class Settings(object):
         sensors = List([], key=key, redis=self.database)
 
         if len(sensors) == 0:
+            # load all sensors
+            # returns sensors for all hosts !!
             sensors = self.load_sensors()
 
         return list(sensors)
@@ -328,20 +352,18 @@ class Settings(object):
         sensors = []
 
         for name, host in self.devices.iteritems():
-            # operator in support match in two forms `ubuntu1` or
-            # `ubuntu1.domain.com`
-            if name in self.hostname:
-                for name, sensor in host.get('sensors').iteritems():
-                    
-                    if not "name" in sensor:
-                        sensor["name"] = name
 
-                    sensor['os_family'] = self.config.get("os_family")
-                    sensor['cpu_arch'] = self.config.get("cpu_arch")
-                    sensor['hostname'] = self.hostname
-                    sensors.append(sensor)
-                    self.save_sensor(sensor, host=self.hostname, only_db=True)  # save to db
+            for name, sensor in host.get('sensors').iteritems():
 
+                if not "name" in sensor:
+                    sensor["name"] = name
+
+                sensor['os_family'] = self.config.get("os_family")
+                sensor['cpu_arch'] = self.config.get("cpu_arch")
+                sensor['hostname'] = self.hostname
+                sensors.append(sensor)
+                self.save_sensor(sensor, host=self.hostname, only_db=True)  # save to db
+            
         LOG.debug(sensors)
 
         return sensors
