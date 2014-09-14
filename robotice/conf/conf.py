@@ -363,6 +363,7 @@ class Settings(object):
         for name, system in self.systems.iteritems():
             system["name"] = name  # hotfix
             for name, plan in self.plans.iteritems():
+                plan["name"] = name # hotfix
                 if name == system.get("plan"):
                     results.append((system, plan),)
         return results
@@ -377,7 +378,8 @@ class Settings(object):
 
             system["name"] = name  # hotfix
 
-            for sensor in system.get('sensors'):
+            for uuid, sensor in system.get('sensors').iteritems():
+                sensor["device"] = uuid # hotfix
                 if device_metric \
                     and "metric" in sensor:
                     if (sensor.get('device', None) == device_name
@@ -393,7 +395,8 @@ class Settings(object):
         """return actuator from host devices"""
 
         for name, host in self.devices.iteritems():
-            for device in host.get('actuators'):
+            for uuid, device in host.get('actuators').iteritems():
+                device["device"] = uuid # hotfix
                 if device_name == device.get('name'):
                     return device
         return None
