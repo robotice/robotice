@@ -16,7 +16,7 @@ from robotice.reactor.tasks import commit_action
 NUMBER = r'(\d+(?:[.,]\d*)?)'
 
 @task(name='reasoner.process_real_data')
-def process_real_data(results, sensor, grains=None):
+def process_real_data(results, sensor):
 
     LOG = process_real_data.get_logger()
 
@@ -131,7 +131,7 @@ def compare_data(config):
 
     results = []
 
-    for actuator in config.actuators:
+    for actuator_name, actuator in config.actuators.iteritems():
         # system, plan_name = get_plan(
         #    config, actuator.get('name'), actuator.get("metric"))
         # if not system:
@@ -144,7 +144,7 @@ def compare_data(config):
         if real_value == None or model_value == None:
             logger.info('NO REAL DATA to COMPARE')
             continue
-        actuator_device = config.get_actuator_device(actuator.get('device'))
+        actuator_device = config.get_actuator_device(actuator_name)
         actuator.pop('device')
         logger.info(actuator_device)
         actuator.update(actuator_device)
@@ -157,7 +157,7 @@ def compare_data(config):
             if model_value != real_value:
                 logger.info('Registred commit_action for {0}'.format(actuator))
                 send_task('reactor.commit_action', args=(
-                          actuator, model_value, real_value))
+                          config, actuator, model_value, real_value))
                 results.append('actuator: {0} hostname: {1}, plan: {2}'.format(
                     actuator.get("name"), actuator.get("name"), plan_name))
         else:
@@ -180,7 +180,7 @@ def compare_data(config):
                 logger.info('Registred commit_action for {0}'.format(actuator))
 
             send_task('reactor.commit_action', args=[
-                      actuator, str(model_value_converted), str(real_value)])
+                      config, actuator, str(model_value_converted), str(real_value)])
             results.append('actuator: {0} hostname: {1}, plan: {2}'.format(
                 actuator.get("name"), actuator.get("name"), plan_name))
 
@@ -193,9 +193,9 @@ def init_reactors(sender, instance, **kwargs):
     """
     config = setup_app('reasoner')
 
-    for host in config.devices:
-        for actuator in host.get('actuators'):
-            if actuator.has_key('default'):
+    for name, host in config.devices.iteritems():
+        for uuid, actuator in host.get('actuators').iteritems():
+            if 'default' in actuator:
                 if actuator.get('default') == 'off':
                     model_value = 0
                     real_value = 1

@@ -60,6 +60,10 @@ Sensors / Actuators
 * :doc:`TMP36 <hardware/tmp36>`
 * :doc:`CDS <hardware/cds>`
 * :doc:`TSL2561 <hardware/tls>`
+* :doc:`Liquid Flow <hardware/liquid_flow>`
+* :doc:`Current Sensor - 30A<hardware/current_sensor>`
+
+
 
 :doc:`How i can add support for new device? <contrib/new_device>`
 

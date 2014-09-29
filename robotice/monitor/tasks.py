@@ -1,12 +1,13 @@
+import os
 from time import time
 import decimal
+import subprocess
 
 from celery import group, chord
 from celery.task import task
 from celery.execute import send_task
 from celery.utils.log import get_task_logger
 
-from robotice.conf.grains import grains
 from robotice.conf import setup_app
 from utils.functional import import_module
 
@@ -22,7 +23,7 @@ def get_real_data(config):
 
     for sensor in config.sensors:
         tasks.append(get_sensor_data.subtask(
-            (config, sensor, grains), exchange='monitor_%s' % config.hostname))
+            (config, sensor), exchange='monitor_%s' % config.hostname))
         logger.info('Registred get_sensor_data {0}'.format(sensor))
 
     job = group(tasks)
@@ -32,16 +33,16 @@ def get_real_data(config):
 
 
 @task(name='monitor.get_sensor_data', track_started=True)
-def get_sensor_data(config, sensor, grains):
+def get_sensor_data(config, sensor):
 
     LOG = get_real_data.get_logger()
 
-    module_name = ".".join(["monitor", "sensors", sensor.get("device")])
+    result = None
 
     try:
-        mod = import_module(module_name)
+        mod = import_module(sensor.get("device"))
     except Exception, e:
-        LOG.error("Cannot import module %s" % module_name)
+        LOG.error("Cannot import sensor %s" % sensor)
         raise e
 
     results = mod.get_data(sensor)
@@ -49,9 +50,11 @@ def get_sensor_data(config, sensor, grains):
     LOG.debug("sensor: {0} result: {0}".format(sensor, results))
 
     send_task("reasoner.process_real_data",
-        args=(results, sensor, grains))
-        
-    LOG.debug('Registred process_real_data for {0}'.format(sensor.get("name")))
+              args=(results, sensor))
 
+    LOG.debug(
+        'Registred process_real_data for {0}'.format(sensor.get("name")))
 
-    return 'Real data from sensor %s on device %s results %s' % (sensor.get("name"), config.hostname, results)
+    result = 'Real data from sensor %s on device %s results %s' % (sensor.get("name"), config.hostname, results)
+
+    return result

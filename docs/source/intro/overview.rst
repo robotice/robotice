@@ -2,4 +2,7 @@
 Robotice Overview
 =================
 
-TODO
+Architecture
+------
+
+.. image :: img/architecture.png

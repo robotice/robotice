@@ -10,7 +10,7 @@ def get_model_data(config):
     """
     logger = get_model_data.get_logger()
 
-    for system, plan in config.get_system_plans :
+    for system, plan in config.get_system_plans:
 
         devices = plan.get('sensors')
         start = datetime.datetime.strptime(str(system.get('start')), "%Y-%m-%d %H:%M:%S")
@@ -21,8 +21,8 @@ def get_model_data(config):
         relative = floor(total_time_delta.seconds / plan_cycle)
         time_delta = total_time_delta.seconds - (relative * plan_cycle)
 
-        for device in devices:
-            db_key = "{0}.{1}.{2}.{3}".format(system.get('name'), 'sensors', device.get('name'), 'model')
+        for uuid, device in plan.get('sensors').iteritems():
+            db_key = "{0}.{1}.{2}.{3}".format(system.get('name'), 'sensors', (device.get('name', None) or uuid), 'model')
             value, values = 0, (0, 0)
 
             for cycle in device.get('cycles'):

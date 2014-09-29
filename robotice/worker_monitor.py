@@ -15,14 +15,14 @@ BROKER_URL = config.broker
 if "rabbitmq" in config.broker:
 
     default_exchange = Exchange('default', type='fanout')
-    monitor_exchange = Exchange('monitor_%s' % config.hostname, type='topic')
+    monitor_exchange = Exchange('monitor', type='fanout')
     reactor_exchange = Exchange('reactor', type='fanout')
     planner_exchange = Exchange('planner', type='fanout')
 
     CELERY_RESULT_BACKEND = "amqp"
     CELERY_QUEUES = (
         Queue('default', default_exchange, routing_key='default'),
-        Queue('monitor', monitor_exchange, routing_key='monitor.#'),
+        Queue('monitor', monitor_exchange, routing_key='monitor_%s' % config.hostname),
         Queue('planner', planner_exchange, routing_key='planner.#'),
     )
 
