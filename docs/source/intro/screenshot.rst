@@ -16,3 +16,4 @@ Gardening system visualization
 ==============================
 
 .. image:: /_static/imgs/boardie_systemchart.png
+
