@@ -58,8 +58,8 @@ Contribution
 * Send a pull request
 
 .. _Website: http://www.robotice.cz
-.. _Documentation: http://robotice.github.io/robotice/
-.. _Video demostration: TODO
+.. _Documentation: robotice.readthedocs.org
+.. _Video Demonstration: TODO
 .. _Sispm: http://sispmctl.sourceforge.net/
 .. _Hygro soil: /docs/source/_static/imgs/hygro.JPG
 .. _DHT11: /docs/source/_static/imgs/dht11.jpg
