@@ -186,27 +186,54 @@ class Settings(object):
 
         return saved_as_list
 
-    def save_host(self, host):
+    def save_meta(self, metadata, name, attr="systems"):
+        """saves metadata
+        """
 
-        hostname = host.get("hostname", host.get("host", None))
+        items = getattr(self, attr) # copy local devices
 
-        devices = self.devices # copy local devices
-
-        devices[hostname] = host
+        if name in items:
+            # update
+            obj = items[name]
+            for key, value in metadata.iteritems():
+                if key in obj:
+                    obj[key] = value
+            items[name] = obj
+        else:
+            # create
+            if not "actuators" in metadata \
+            or not "sensors" in metadata:
+                # init
+                metadata["actuators"] = {}
+                metadata["sensors"] = {}
+            items[name] = metadata
 
         # write to file
 
-        full_conf_path = "%s/devices.yml" % self.conf_dir
+        full_conf_path = "%s/%s.yml" % (self.conf_dir, attr)
 
-        with open(full_conf_path, 'w') as yaml_file:
-            safe_dump(devices, yaml_file, default_flow_style=False)
-
-        self._devices = devices # save new devices
-
-        self.load_sensors() # this saves devices to database
+        self.dump_to_file_and_set(
+            full_conf_path,
+            items,
+            attr)
 
         return True
 
+    def dump_to_file_and_set(self, path, items, name):
+        """helper
+        TODO: move into utils
+        """
+        try:
+            with open(path, 'w') as yaml_file:
+                safe_dump(items, yaml_file, default_flow_style=False)
+
+            # set new items
+            setattr(self, "_%s" % str(name), items)
+        except Exception, e:
+            # cannot write to disk
+            raise e
+
+        return True
 
     def dump_to_file(self, obj, host, key="sensors", attr="devices"):
         """dump new sensor or actuator to file
@@ -227,8 +254,8 @@ class Settings(object):
 
         items = getattr(self, attr) # copy local devices
 
-        for hostname, system in getattr(self, attr).iteritems():
-            if hostname in host:
+        for id, system in getattr(self, attr).iteritems():
+            if id in host:
                 _dict = system.get(key)
                 
                 name = obj.pop("id", None)
@@ -240,18 +267,17 @@ class Settings(object):
                     raise Exception("missing id, name or device %s" % obj)
 
                 _dict[name] = obj
-                items[hostname][key] = _dict
+                items[id][key] = _dict
 
                 created = False # switch to update
 
         # write to file
-
         full_conf_path = "%s/%s.yml" % (self.conf_dir, attr)
 
-        with open(full_conf_path, 'w') as yaml_file:
-            safe_dump(items, yaml_file, default_flow_style=False)
-
-        setattr(self, "_%s" % attr, items)
+        self.dump_to_file_and_set(
+            full_conf_path,
+            items,
+            attr)
 
         return True
 
