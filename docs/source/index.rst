@@ -4,32 +4,35 @@
 Robotice's documentation
 ========================
 
+Robotice is autonomous agent-based system to solve common problems.
+
+* ICT Service Monitoring - React to hardware and load problems by integration with opensource monitoring and configuration management frameworks.
+* Security and survailance - Interact with cameras to capture and evaluate the data for alarms or other actions.
+* Gardening Automation - Integrate various hardware sensors and actuators to support gardening automation.
+
 .. toctree::
    :maxdepth: 2
 
 Overview
 ===========
 
-* :doc:`Overview <intro/overview>`
+* :doc:`Robotice Overview <intro/overview>`
 * :doc:`Screenshots <intro/screenshot>`
 * :doc:`Screencasts <intro/screencast>`
 
 Installation
 ===========
 
-  :doc:`Salt installation <install/salt>`
+* :doc:`Installation by SaltStack<install/salt>`
+* Manual installation
 
 Configuration
 ===========
 
-* :doc:`Workers <config/worker>`
+* :doc:`Agents <config/worker>`
 * :doc:`Environment <config/environment>`
-* :doc:`Supervisor <config/supervisor>`
-  
-Robotice Internals
-===========
-
-  :doc:`Settings module <robotice/settings>`
+* :doc:`Management <config/supervisor>`
+*  :doc:`Settings module <robotice/settings>`
 
 Robotice Support
 ===========
@@ -42,8 +45,9 @@ Supported Hardware
 Single board computers
 -----
 
-* :doc:`BeagleBone Black<hardware/bb>`
+* Any x86/64 machine
 * :doc:`Raspberry Pi <hardware/pi>`
+* :doc:`BeagleBone Black<hardware/bb>`
 * :doc:`Udoo <hardware/udoo>`
 
 Sensors / Actuators
@@ -61,7 +65,7 @@ Sensors / Actuators
 
 
 
-:doc:`How i can add support for new device ? <contrib/new_device>`
+:doc:`How i can add support for new device? <contrib/new_device>`
 
 Contribution
 ===========
