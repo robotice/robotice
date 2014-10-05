@@ -208,13 +208,13 @@ class Settings(object):
             if hostname in host:
                 _dict = system.get(key)
                 
-                name = obj.get("id", None)
+                name = obj.pop("id", None)
                 
                 if not name:
                     name = obj.get("name", obj.get("device", None))
                 
                 if not name:
-                    raise Exception("missing name or device %s" % obj)
+                    raise Exception("missing id, name or device %s" % obj)
                 
                 _dict[name] = obj
                 devices[hostname][key] = _dict
