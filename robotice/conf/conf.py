@@ -147,17 +147,19 @@ class Settings(object):
         return saved_as_list
 
     def save_plan(self, name, plan, key="sensors", only_db=False):
-        """method save sensor into two keys
-        host.sensors.metric.name as dict
-        and update host.sensors list
+        """dump plan into dile
         """
         result = self.dump_to_file(name, plan, key, "plans")
         return result
 
     def save_system(self, name, system, key="sensors", only_db=False):
-        """method save sensor into two keys
-        host.sensors.metric.name as dict
-        and update host.sensors list
+        """dump system into file
+        """
+        result = self.dump_to_file(name, system, key, "systems")
+        return result
+
+    def save_host(self, name, system, key="sensors", only_db=False):
+        """method save host into file
         """
         result = self.dump_to_file(name, system, key, "systems")
         return result
