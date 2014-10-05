@@ -114,7 +114,7 @@ class Settings(object):
     def devices(self):
         return self._devices
 
-    def save_sensor(self, sensor, host, only_db=False):
+    def save_sensor(self, name, sensor, only_db=False):
         """method save sensor into two keys
         host.sensors.metric.name as dict
         and update host.sensors list
@@ -126,42 +126,41 @@ class Settings(object):
             or not sensor.get("name", None):
             raise Exception("missing sensor name or metric %s" % sensor)
 
-        key = ".".join(
-            [host, "sensors", sensor.get("metric"), sensor.get("name")])
+        key = ".".join([
+            name, 
+            sensor.get("type"),
+            sensor.get("metric"),
+            sensor.get("name")
+        ])
 
         saved_as_dict = self.update_or_create(sensor, key)
 
         # for load from file
         if not only_db:
-            result = self.dump_to_file(dict(saved_as_dict), host)
+            result = self.dump_to_file(name, dict(saved_as_dict), sensor.get("type"))
 
         # update host.sensors list
-        key = ".".join([host, "sensors"])
+        key = ".".join([name, "sensors"])
 
         saved_as_list = self.update_or_create([sensor], key)
 
         return saved_as_list
 
-    def save_plan(self, plan, host, key="sensors", only_db=False):
+    def save_plan(self, name, plan, key="sensors", only_db=False):
         """method save sensor into two keys
         host.sensors.metric.name as dict
         and update host.sensors list
         """
-
-        result = self.dump_to_file(plan, host, key, "plans")
-
+        result = self.dump_to_file(name, plan, key, "plans")
         return result
 
-    def save_system(self, system, host, key="sensors", only_db=False):
+    def save_system(self, name, system, key="sensors", only_db=False):
         """method save sensor into two keys
         host.sensors.metric.name as dict
         and update host.sensors list
         """
-
-        result = self.dump_to_file(system, host, key, "plans")
-
+        result = self.dump_to_file(name, system, key, "systems")
         return result
-
 
     def save_actuator(self, actuator, host):
         key = self.uuid(host, "actuators")
@@ -186,7 +185,7 @@ class Settings(object):
 
         return saved_as_list
 
-    def save_meta(self, metadata, name, attr="systems"):
+    def save_meta(self, name, metadata, attr="systems"):
         """saves metadata
         """
 
@@ -235,7 +234,52 @@ class Settings(object):
 
         return True
 
-    def dump_to_file(self, obj, host, key="sensors", attr="devices"):
+    def delete(self, obj, host, key="sensors", attr="devices"):
+        """delete object from file
+        
+        attr = plans, systems, devices
+
+        .. code-block:: yaml
+            obj = { id: 10 } or name / device
+        """
+        deleted = True
+        items = getattr(self, attr) # copy local devices
+
+        for id, system in getattr(self, attr).iteritems():
+            if id in host:
+                _dict = system.get(key)
+                
+                name = obj.pop("id", None)
+                
+                if not name:
+                    name = obj.get("name", obj.get("device", None))
+                
+                if not name:
+                    raise Exception("missing id, name or device %s" % obj)
+
+                # actuator or sensor
+                if name in _dict:
+                    _dict.pop(name)
+                    deleted = False # switch to update
+                elif name in items:
+                    # host
+                    items.pop(name)
+                    deleted = False # switch to update
+
+
+        if deleted:
+            # write to file
+            full_conf_path = "%s/%s.yml" % (self.conf_dir, attr)
+
+            self.dump_to_file_and_set(
+                full_conf_path,
+                items,
+                attr)
+
+        return True
+
+
+    def dump_to_file(self, name, data, key="sensors", attr="devices"):
         """dump new sensor or actuator to file
         
         attr = plans, systems, devices
@@ -251,11 +295,11 @@ class Settings(object):
                 id:
                   port: port
         """
-
+        created = True
         items = getattr(self, attr) # copy local devices
 
         for id, system in getattr(self, attr).iteritems():
-            if id in host:
+            if id in name:
                 _dict = system.get(key)
                 
                 name = obj.pop("id", None)
@@ -271,13 +315,20 @@ class Settings(object):
 
                 created = False # switch to update
 
-        # write to file
-        full_conf_path = "%s/%s.yml" % (self.conf_dir, attr)
+        if created:
+            self.save_meta(
+                name,
+                data,
+                attr=attr
+                )
+        else:
+            # write to file
+            full_conf_path = "%s/%s.yml" % (self.conf_dir, attr)
 
-        self.dump_to_file_and_set(
-            full_conf_path,
-            items,
-            attr)
+            self.dump_to_file_and_set(
+                full_conf_path,
+                items,
+                attr)
 
         return True
 
