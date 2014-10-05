@@ -5,6 +5,8 @@ Robotice: Monitoring deamon
 
 Opensource monitoring, reasoning and acting framework.
 
+Similar with Cylonjs or Artoo.
+
 `Documentation`_
 
 `Video Demonstration`_
