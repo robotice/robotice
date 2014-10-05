@@ -185,11 +185,13 @@ class Settings(object):
         self.load_sensors() # this saves devices to database
 
         return True
-        
 
-    def dump_device(self, obj, host, key="sensors"):
+
+    def dump_device(self, obj, host, key="sensors", attr="devices"):
         """dump new sensor or actuator to file
         
+        attr = plans, systems, devices
+
         .. code-block:: yaml
             hostname:
               sensors:
@@ -202,9 +204,9 @@ class Settings(object):
                   port: port
         """
 
-        devices = self.devices # copy local devices
+        items = getattr(self, attr) # copy local devices
 
-        for hostname, system in self.devices.iteritems():
+        for hostname, system in getattr(self, attr).iteritems():
             if hostname in host:
                 _dict = system.get(key)
                 
@@ -215,20 +217,20 @@ class Settings(object):
                 
                 if not name:
                     raise Exception("missing id, name or device %s" % obj)
-                
+
                 _dict[name] = obj
-                devices[hostname][key] = _dict
+                items[hostname][key] = _dict
 
                 created = False # switch to update
 
         # write to file
 
-        full_conf_path = "%s/devices.yml" % self.conf_dir
+        full_conf_path = "%s/%s.yml" % (self.conf_dir, attr)
 
         with open(full_conf_path, 'w') as yaml_file:
-            safe_dump(devices, yaml_file, default_flow_style=False)
+            safe_dump(items, yaml_file, default_flow_style=False)
 
-        self._devices = devices # save new devices
+        setattr(self, "_%s" % attr, items)
 
         return True
 
