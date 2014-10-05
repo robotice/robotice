@@ -140,7 +140,7 @@ class Settings(object):
             result = self.dump_to_file(name, dict(saved_as_dict), sensor.get("type"))
 
         # update host.sensors list
-        key = ".".join([name, "sensors"])
+        key = ".".join([name, sensor.get("type")])
 
         saved_as_list = self.update_or_create([sensor], key)
 
@@ -236,7 +236,7 @@ class Settings(object):
 
         return True
 
-    def delete(self, obj, host, key="sensors", attr="devices"):
+    def delete(self, name, data, key="sensors", attr="devices"):
         """delete object from file
         
         attr = plans, systems, devices
@@ -244,30 +244,30 @@ class Settings(object):
         .. code-block:: yaml
             obj = { id: 10 } or name / device
         """
-        deleted = True
+        deleted = False
+        
         items = getattr(self, attr) # copy local devices
 
         for id, system in getattr(self, attr).iteritems():
-            if id in host:
+            if id in name:
                 _dict = system.get(key)
                 
-                name = obj.pop("id", None)
+                _name = data.pop("id", None)
                 
-                if not name:
-                    name = obj.get("name", obj.get("device", None))
+                if not _name:
+                    _name = data.get("name", data.get("device", None))
                 
-                if not name:
-                    raise Exception("missing id, name or device %s" % obj)
+                if not _name:
+                    raise Exception("missing id, name or device %s" % data)
 
                 # actuator or sensor
-                if name in _dict:
-                    _dict.pop(name)
-                    deleted = False # switch to update
+                if _name in _dict:
+                    _dict.pop(_name)
+                    deleted = True
                 elif name in items:
                     # host
                     items.pop(name)
-                    deleted = False # switch to update
-
+                    deleted = True
 
         if deleted:
             # write to file
@@ -304,15 +304,15 @@ class Settings(object):
             if id in name:
                 _dict = system.get(key)
                 
-                name = obj.pop("id", None)
+                _name = data.pop("id", None)
                 
-                if not name:
-                    name = obj.get("name", obj.get("device", None))
+                if not _name:
+                    _name = data.get("name", data.get("device", None))
                 
-                if not name:
-                    raise Exception("missing id, name or device %s" % obj)
+                if not _name:
+                    raise Exception("missing id, name or device %s" % data)
 
-                _dict[name] = obj
+                _dict[_name] = data
                 items[id][key] = _dict
 
                 created = False # switch to update
@@ -321,7 +321,7 @@ class Settings(object):
             self.save_meta(
                 name,
                 data,
-                attr=attr
+                attr
                 )
         else:
             # write to file
