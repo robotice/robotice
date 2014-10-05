@@ -133,7 +133,7 @@ class Settings(object):
 
         # for load from file
         if not only_db:
-            result = self.dump_device(dict(saved_as_dict), host)
+            result = self.dump_to_file(dict(saved_as_dict), host)
 
         # update host.sensors list
         key = ".".join([host, "sensors"])
@@ -141,6 +141,27 @@ class Settings(object):
         saved_as_list = self.update_or_create([sensor], key)
 
         return saved_as_list
+
+    def save_plan(self, plan, host, key="sensors", only_db=False):
+        """method save sensor into two keys
+        host.sensors.metric.name as dict
+        and update host.sensors list
+        """
+
+        result = self.dump_to_file(plan, host, key, "plans")
+
+        return result
+
+    def save_system(self, system, host, key="sensors", only_db=False):
+        """method save sensor into two keys
+        host.sensors.metric.name as dict
+        and update host.sensors list
+        """
+
+        result = self.dump_to_file(system, host, key, "plans")
+
+        return result
+
 
     def save_actuator(self, actuator, host):
         key = self.uuid(host, "actuators")
@@ -187,7 +208,7 @@ class Settings(object):
         return True
 
 
-    def dump_device(self, obj, host, key="sensors", attr="devices"):
+    def dump_to_file(self, obj, host, key="sensors", attr="devices"):
         """dump new sensor or actuator to file
         
         attr = plans, systems, devices
