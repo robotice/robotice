@@ -1,8 +1,8 @@
 def get_db_values(config, system_name, plan_name, type='sensors'):
     """return tuple(model_value, real_value)
     """
-    db_key_real = '.'.join([system_name, type, plan_name, 'real'])
-    db_key_model = '.'.join([system_name, type, plan_name, 'model'])
+    db_key_real = '.'.join([str(system_name), type, str(plan_name), 'real'])
+    db_key_model = '.'.join([str(system_name), type, str(plan_name), 'model'])
     model_value = config.database.get(db_key_model)
     if model_value == None:
         return None, None

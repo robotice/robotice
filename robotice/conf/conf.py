@@ -104,9 +104,9 @@ class Settings(object):
             worker = self.worker
 
         if device:
-            key = ".".join([host, device])
+            key = ".".join([str(host), device])
 
-        key = ".".join([host, worker])
+        key = ".".join([str(host), worker])
 
         return key
 
@@ -122,15 +122,20 @@ class Settings(object):
 
         # set host.sensors.metric.name as dict
 
-        if not sensor.get("metric", None) \
-            or not sensor.get("name", None):
+        if not sensor.get("metric") \
+            or not sensor.get("name"):
             raise Exception("missing sensor name or metric %s" % sensor)
 
+        # fix get by string number
+        sensor_name = sensor.get("name")
+        if isinstance(sensor_name, basestring) and sensor_name.isdigit():
+            sensor_name = int(sensor_name)
+
         key = ".".join([
-            name, 
+            str(name), 
             sensor.get("type"),
             sensor.get("metric"),
-            sensor.get("name")
+            str(sensor_name)
         ])
 
         saved_as_dict = self.update_or_create(sensor, key)
@@ -140,7 +145,7 @@ class Settings(object):
             result = self.dump_to_file(name, dict(saved_as_dict), sensor.get("type"))
 
         # update host.sensors list
-        key = ".".join([name, sensor.get("type")])
+        key = ".".join([str(name), sensor.get("type")])
 
         saved_as_list = self.update_or_create([sensor], key)
 
@@ -164,7 +169,7 @@ class Settings(object):
         result = self.dump_to_file(name, system, key, "systems")
         return result
 
-    def save_actuator(self, actuator, host):
+    def save_actuator(self, host, actuator):
         key = self.uuid(host, "actuators")
 
         if not actuator.get("system_plan", None) \
@@ -173,10 +178,10 @@ class Settings(object):
                 "missing actuator device or system_plan %s" % actuator)
 
         key = ".".join(
-            [host,
+            [str(host),
             "actuators",
             actuator.get("system_plan"),
-            actuator.get("device")])
+            str(actuator.get("device"))])
 
         saved_as_dict = self.update_or_create(actuator, key)
 
@@ -382,16 +387,19 @@ class Settings(object):
         """return actuators for all systems, but add `system_name` variable"""
 
         actuators = []
-        for name, system in self.systems.iteritems():
+        for system_name, system in self.systems.iteritems():
             for uuid, actuator in system.get('actuators').iteritems():
                 
                 if not "device" in actuator:
                     actuator['device'] = uuid
                 
-                actuator['system_name'] = system.get('name')
+                if not "name" in actuator:
+                    actuator['name'] = uuid
+
+                actuator['system_name'] = system_name
                 actuator['system_plan'] = system.get('plan')
                 actuators.append(actuator)
-                self.save_actuator(actuator, host=self.hostname)  # save to db
+                self.save_actuator(system_name, actuator)  # save to db
 
         LOG.debug(actuators)
 
@@ -453,9 +461,9 @@ class Settings(object):
 
         sensors = []
 
-        for name, host in self.devices.iteritems():
+        for host, system in self.devices.iteritems():
 
-            for name, sensor in host.get('sensors').iteritems():
+            for name, sensor in system.get('sensors').iteritems():
 
                 if not "name" in sensor:
                     sensor["name"] = name
@@ -464,7 +472,7 @@ class Settings(object):
                 sensor['cpu_arch'] = self.config.get("cpu_arch")
                 sensor['hostname'] = self.hostname
                 sensors.append(sensor)
-                self.save_sensor(sensor, host=self.hostname, only_db=True)  # save to db
+                self.save_sensor(host, sensor, only_db=True)  # save to db
             
         LOG.debug(sensors)
 
