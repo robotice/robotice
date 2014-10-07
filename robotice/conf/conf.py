@@ -465,6 +465,10 @@ class Settings(object):
 
             for name, sensor in system.get('sensors').iteritems():
 
+                # check required fields
+                if not "metric" in sensor:
+                    raise Exception("missing sensor metric field %s" % sensor)
+
                 if not "name" in sensor:
                     sensor["name"] = name
 
