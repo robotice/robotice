@@ -1,4 +1,5 @@
 import os
+import sys
 from time import time
 import decimal
 import subprocess
@@ -12,7 +13,6 @@ from robotice.conf import setup_app
 from utils.functional import import_module
 
 logger = get_task_logger(__name__)
-
 
 @task(name='monitor.get_real_data')
 def get_real_data(config):
@@ -40,7 +40,7 @@ def get_sensor_data(config, sensor):
     result = None
 
     try:
-        name = sensor.get("device", sensor.get("name", None))
+        name = sensor.get("device") # TODO if number find real name in devices.yml
         mod = import_module(name)
     except Exception, e:
         LOG.error("Cannot import sensor %s" % sensor)
