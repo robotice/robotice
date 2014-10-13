@@ -9,7 +9,6 @@ import socket
 from yaml import load, dump, safe_dump
 
 from robotice.utils.celery import init_sentry
-from redis_collections import Dict, List
 
 LOG = logging.getLogger(__name__)
 
@@ -133,9 +132,10 @@ class Settings(object):
 
         key = ".".join([
             str(name), 
-            sensor.get("type"),
+            "sensors",
             sensor.get("metric"),
-            str(sensor_name)
+            str(sensor_name),
+            "device"
         ])
 
         saved_as_dict = self.update_or_create(sensor, key)
@@ -144,12 +144,7 @@ class Settings(object):
         if not only_db:
             result = self.dump_to_file(name, dict(saved_as_dict), sensor.get("type"))
 
-        # update host.sensors list
-        key = ".".join([str(name), sensor.get("type")])
-
-        saved_as_list = self.update_or_create([sensor], key)
-
-        return saved_as_list
+        return saved_as_dict
 
     def save_plan(self, name, plan, key="sensors", only_db=False):
         """dump plan into dile
@@ -181,16 +176,12 @@ class Settings(object):
             [str(host),
             "actuators",
             actuator.get("system_plan"),
-            str(actuator.get("device"))])
+            str(actuator.get("device")),
+            "device"])
 
         saved_as_dict = self.update_or_create(actuator, key)
 
-        # update host.sensors list
-        key = ".".join([host, "actuators"])
-
-        saved_as_list = self.update_or_create([actuator], key)
-
-        return saved_as_list
+        return saved_as_dict
 
     def save_meta(self, name, metadata, attr="systems"):
         """saves metadata
@@ -340,30 +331,59 @@ class Settings(object):
         return True
 
     def get_sensors(self, host=None):
-        key = self.uuid(host, "sensors")
+        """
+            for any host
+        """
+        key = ".".join([
+            host,
+            "sensors",
+            "*",
+            "*",
+            "device",
+            ])
 
-        sensors = List([], key=key, redis=self.database)
+        keys = self.database.keys(key)
+        sensors = []
+        for _key in keys:
+            _sensor = self.database.hgetall(_key)
+            sensors.append(_sensor)
 
         if len(sensors) == 0:
-            sensors = self.load_sensors()
+            # load all sensors
+            # returns sensors for all hosts !!
+            self.load_sensors()
+            sensors = self.sensors # recursive call
+            return sensors
 
         return list(sensors)
 
     @property
-    def sensors(self, host=None):
+    def sensors(self):
         """return list of sensors by key hostname.sensors
         default to self.hostname
         if sensors is empty method call load_sensors from file
         """
 
-        key = self.uuid(self.hostname, "sensors")
+        key = ".".join([
+            self.hostname,
+            "sensors",
+            "*",
+            "*",
+            "device",
+            ])
 
-        sensors = List([], key=key, redis=self.database)
+        keys = self.database.keys(key)
+        sensors = []
+        for _key in keys:
+            _sensor = self.database.hgetall(_key)
+            sensors.append(_sensor)
 
         if len(sensors) == 0:
             # load all sensors
             # returns sensors for all hosts !!
-            sensors = self.load_sensors()
+            self.load_sensors()
+            sensors = self.sensors # recursive call
+            return sensors
 
         return list(sensors)
 
@@ -374,12 +394,23 @@ class Settings(object):
         if sensors is empty method call load_sensors from file
         """
 
-        key = self.uuid(self.hostname, "actuators")
+        key = ".".join([
+            self.hostname,
+            "actuators",
+            "*",
+            "*",
+            "device",
+            ])
 
-        actuators = List([], key=key, redis=self.database)
+        keys = self.database.keys(key)
+        actuators = []
+        for _key in keys:
+            _actuator = self.database.hgetall(_key)
+            actuators.append(_actuator)
 
         if len(actuators) == 0:
-            actuators = self.load_actuators()
+            self.load_actuators()
+            actuators = self.actuators # recursive call
 
         return list(actuators)
 
@@ -405,47 +436,24 @@ class Settings(object):
 
         return actuators
 
-    def update_or_create(self, instance, key):
+    def update_or_create(self, obj, key):
         """method accept list or dict
         both save into redis as Dict or List
         if instance is a list method automaticaly update list in redis
         """
 
-        created = True
-
-        if isinstance(instance, dict):
+        if isinstance(obj, dict):
             # save dictionary
             try:
-                saved = Dict(instance, key=key, redis=self.database)
+                saved = self.database.hmset(key, obj) #Dict(instance, key=key, redis=self.database)
             except Exception, e:
                 raise e
 
             return saved
-
-        # update list especially sensors or actuators collection
-        if isinstance(instance, list):
-            try:
-                devices = List([], key=key, redis=self.database)
-            except Exception, e:
-                raise e
-
-            update = []
-
-            for device in devices:
-                if device.get("id") == instance.get("id"):
-                    update.append(instance)
-                    created = False
-                else:
-                    update.append(device)
-
-            if created:
-                update.append(instance)
-
-            r = List(update, key=key, redis=self.database)
-
-            return list(r)
-
-        return False
+        else:
+            saved = self.database.set(key, obj) #Dict(instance, key=key, redis=self.database)
+            return saved
+        raise Exception("only dict or value is supported")
 
     @property
     def systems(self):
@@ -474,7 +482,7 @@ class Settings(object):
 
                 sensor['os_family'] = self.config.get("os_family")
                 sensor['cpu_arch'] = self.config.get("cpu_arch")
-                sensor['hostname'] = self.hostname
+                sensor['hostname'] = host
                 sensors.append(sensor)
                 self.save_sensor(host, sensor, only_db=True)  # save to db
             
