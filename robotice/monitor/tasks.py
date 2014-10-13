@@ -40,7 +40,8 @@ def get_sensor_data(config, sensor):
     result = None
 
     try:
-        mod = import_module(sensor.get("device"))
+        name = sensor.get("device", sensor.get("name", None))
+        mod = import_module(name)
     except Exception, e:
         LOG.error("Cannot import sensor %s" % sensor)
         raise e
