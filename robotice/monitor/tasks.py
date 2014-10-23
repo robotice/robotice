@@ -35,7 +35,7 @@ def get_real_data(config):
 @task(name='monitor.get_sensor_data', track_started=True)
 def get_sensor_data(config, sensor):
 
-    LOG = get_real_data.get_logger()
+    LOG = get_sensor_data.get_logger()
 
     result = None
 
