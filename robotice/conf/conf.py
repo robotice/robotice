@@ -178,7 +178,6 @@ class Settings(object):
         key = ".".join(
             [str(host),
             "actuators",
-            actuator.get("plan"),
             str(actuator.get("device")),
             "device"])
 
