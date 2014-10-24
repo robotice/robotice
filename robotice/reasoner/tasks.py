@@ -50,8 +50,6 @@ def process_real_data(results, sensor):
                 db_key = '.'.join([
                     system.get('name').replace(".", "_"),
                     plan_name,
-                    result_name,
-                    result_metric,
                     'real'])
                     
                 try:
