@@ -47,7 +47,7 @@ def process_real_data(results, sensor):
                 plan_name))
 
             if system != None:
-                db_key = '.'.join([system.get('name'), 'sensors', plan_name, 'real'])
+                db_key = '.'.join([system.get('name').replace(".", "_"), 'sensors', plan_name, 'real'])
                     
                 try:
                     config.metering.send(db_key, value)
@@ -131,6 +131,8 @@ def compare_data(config):
 
     results = []
 
+    compared, commits, missing_data = 0, 0, 0
+
     for actuator in config.actuators:
         # system, plan_name = get_plan(
         #    config, actuator.get('name'), actuator.get("metric"))
@@ -143,6 +145,7 @@ def compare_data(config):
             ('%s.%s.%s' % (system, 'sensors', plan_name)), model_value, real_value))
         if real_value == None or model_value == None:
             logger.info('NO REAL DATA to COMPARE')
+            missing_data += 1
             continue
         actuator_device = config.get_actuator_device(actuator["name"])
         actuator.pop('device')
