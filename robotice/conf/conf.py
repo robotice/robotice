@@ -179,8 +179,8 @@ class Settings(object):
         key = ".".join(
             [str(host),
             "actuators",
-            actuator["plan"],
-            str(actuator.get("socket", actuator.get("device"))),
+            self.get(actuator["plan"], self.plans)["name"],
+            self.get(actuator["name"], self.devices)["name"]),
             "device"])
 
         saved_as_dict = self.update_or_create(actuator, key)
@@ -334,6 +334,18 @@ class Settings(object):
 
         return True
 
+    def get(self, id, items):
+        """recursive find key in dictionary
+        """
+        if isinstance(items, dict):
+            for uuid, item in items.iteritems():
+                if isinstance(items, dict):
+                    return self.get(id, items) # regursive
+                elif uuid == id:
+                    return item
+        return None
+
+
     def get_sensors(self, host=None):
         """
             for any host
@@ -427,9 +439,7 @@ class Settings(object):
         for system_name, system in self.systems.iteritems():
             for uuid, actuator in system.get('actuators').iteritems():
 
-                if isinstance(actuator['name'], int):
-                    actuator['name'] = str(actuator["name"])
-
+                actuator["id"] = uuid
                 actuator['system_name'] = system_name
                 actuator['system_plan'] = system.get('plan')
                 merged_dict = dict(actuator.items() + self.get_actuator_device(actuator).items())
