@@ -22,7 +22,11 @@ def get_model_data(config):
         time_delta = total_time_delta.seconds - (relative * plan_cycle)
 
         for uuid, device in plan.get('sensors').iteritems():
-            db_key = "{0}.{1}.{2}.{3}".format(system.get('name'), (device.get('name', None) or uuid), device.get("metric") ,'model')
+            db_key = ".".join([
+                system.get('name'),
+                (device.get('name', None) or uuid),
+                device.get("metric"),
+                'model'])
             value, values = 0, (0, 0)
 
             for cycle in device.get('cycles'):
