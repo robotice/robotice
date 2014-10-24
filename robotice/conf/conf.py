@@ -401,6 +401,7 @@ class Settings(object):
             "*",
             "actuators",
             "*",
+            "*",
             "device",
             ])
 
