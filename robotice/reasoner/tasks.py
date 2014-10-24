@@ -47,7 +47,12 @@ def process_real_data(results, sensor):
                 plan_name))
 
             if system != None:
-                db_key = '.'.join([system.get('name').replace(".", "_"), 'sensors', plan_name, 'real'])
+                db_key = '.'.join([
+                    system.get('name').replace(".", "_"),
+                    'sensors',
+                    plan_name,
+                    sensor.get("metric"),
+                    'real'])
                     
                 try:
                     config.metering.send(db_key, value)
