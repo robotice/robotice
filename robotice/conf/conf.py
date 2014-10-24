@@ -65,7 +65,7 @@ class Settings(object):
     @property
     def config(self):
         config_file = open(
-            "".join([self.WORKER_DIR, "/config_%s.yml" % worker]), "r")
+            "".join([self.WORKER_DIR, "/config_%s.yml" % self.worker]), "r")
         self._config = load(config_file)
         return self._config
 
