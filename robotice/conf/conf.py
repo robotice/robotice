@@ -342,7 +342,10 @@ class Settings(object):
                 return items[id]
             else:
                 for key, item in items.iteritems():
-                    if isinstance(item, dict):
+                    if key == id:
+                        item["id"] = key
+                        return item
+                    elif isinstance(item, dict):
                         return self.get(id, item) # regursive
         LOG.error("key: %s not found in %s" %(id,items))
         return None
