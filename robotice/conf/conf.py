@@ -339,8 +339,8 @@ class Settings(object):
         """
         if isinstance(items, dict):
             for uuid, item in items.iteritems():
-                if isinstance(items, dict):
-                    return self.get(id, items) # regursive
+                if isinstance(item, dict):
+                    return self.get(id, item) # regursive
                 elif uuid == id:
                     return item
         return None
