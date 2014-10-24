@@ -171,14 +171,15 @@ class Settings(object):
         key = self.uuid(host, "actuators")
 
         if not actuator.get("system_plan", None) \
-            or not actuator.get("device", None):
+            or (actuator.get("device", None) is None \
+            and actuator.get("name", None) is None):
             raise Exception(
                 "missing actuator device or system_plan %s" % actuator)
 
         key = ".".join(
             [str(host),
             "actuators",
-            str(actuator.get("device")),
+            str(actuator.get("device", actuator.get("name"))),
             "device"])
 
         saved_as_dict = self.update_or_create(actuator, key)
