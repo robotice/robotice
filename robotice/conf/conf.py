@@ -338,11 +338,12 @@ class Settings(object):
         """recursive find key in dictionary
         """
         if isinstance(items, dict):
-            for uuid, item in items.iteritems():
-                if isinstance(item, dict):
-                    return self.get(id, item) # regursive
-                elif uuid == id:
-                    return item
+            if id in items:
+                return items[id]
+            else:
+                for key, item in items.iteritems():
+                    if isinstance(item, dict):
+                        return self.get(id, item) # regursive
         return None
 
 
