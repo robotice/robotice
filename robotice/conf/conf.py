@@ -340,9 +340,9 @@ class Settings(object):
         parsed = key.split(".")
         
         result = None
-        for key in parsed:
-            if key in items:
-                result = items.get(key)
+        for _key in parsed:
+            if _key in items:
+                result = items.get(_key)
                 items = result
         return result
 
