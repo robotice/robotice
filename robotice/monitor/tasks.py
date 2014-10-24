@@ -19,6 +19,7 @@ def get_real_data(config):
 
     tasks = []
     logger = get_real_data.get_logger()
+    config.worker = "monitor"
     logger.info('Sensors {0}'.format(config.sensors))
 
     for sensor in config.sensors:
@@ -36,6 +37,7 @@ def get_real_data(config):
 def get_sensor_data(config, sensor):
 
     LOG = get_sensor_data.get_logger()
+    config.worker = "monitor"
 
     result = None
 
