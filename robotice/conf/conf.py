@@ -334,16 +334,18 @@ class Settings(object):
 
         return True
 
-    def get(self, id, items):
-        """recursive find key in dictionary
-        """
-        if id in items:
-            return items[id]
-        for key, item in items.iteritems():
-            if isinstance(item, dict):
-                item = self.get(id, item)
-                if not item is None:
-                    return item
+    def get(self, key, items):
+        """return parsed key from dict hostname.sensors.id
+            """
+        parsed = key.split(".")
+        
+        result = None
+        for key in parsed:
+            if key in items:
+                result = items.get(key)
+                items = result
+        return result
+
 
     def get_sensors(self, host=None):
         """
