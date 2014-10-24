@@ -431,12 +431,12 @@ class Settings(object):
         for system_name, system in self.systems.iteritems():
             for uuid, actuator in system.get('actuators').iteritems():
                 
-                if not "name" in actuator:
-                    actuator['name'] = uuid
+                if isinstance(actuator['name'], int):
+                    actuator['name'] = str(actuator["name"])
 
                 actuator['system_name'] = system_name
                 actuator['system_plan'] = system.get('plan')
-                merged_dict = dict(actuator.items() + device(self.devices, system_name, actuator.get("actuator")).items())
+                merged_dict = dict(actuator.items() + device(self.devices, system_name, actuator['name']).items())
                 actuators.append(merged_dict)
                 self.save_actuator(system_name.replace(".", "_"), actuator)  # save to db
 
