@@ -348,8 +348,6 @@ class Settings(object):
             if isinstance(item, dict):
                 parsed.pop(0)
                 return self.get(parsed, item)
-        return None
-
 
     def get_sensors(self, host=None):
         """
