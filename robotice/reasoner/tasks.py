@@ -136,7 +136,7 @@ def compare_data(config):
         #    config, actuator.get('name'), actuator.get("metric"))
         # if not system:
         #    continue
-        system = actuator.get('system_name')
+        system = actuator.get('system_name').replace(".", "_")
         plan_name = actuator.get('plan')
         model_value, real_value = get_db_values(config, system, plan_name)
         logger.info("key: {0} model_value: {1} | real_value: {2}".format(

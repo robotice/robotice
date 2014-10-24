@@ -367,7 +367,7 @@ class Settings(object):
         """
 
         key = ".".join([
-            self.hostname,
+            self.hostname.replace(".", "_"),
             "sensors",
             "*",
             "*",
@@ -397,9 +397,8 @@ class Settings(object):
         """
 
         key = ".".join([
-            self.hostname,
-            "actuators",
             "*",
+            "actuators",
             "*",
             "device",
             ])
@@ -432,7 +431,7 @@ class Settings(object):
                 actuator['system_name'] = system_name
                 actuator['system_plan'] = system.get('plan')
                 actuators.append(actuator)
-                self.save_actuator(system_name, actuator)  # save to db
+                self.save_actuator(system_name.replace(".", "_"), actuator)  # save to db
 
         LOG.debug(actuators)
 
@@ -486,7 +485,7 @@ class Settings(object):
                 sensor['cpu_arch'] = self.config.get("cpu_arch")
                 sensor['hostname'] = host
                 sensors.append(sensor)
-                self.save_sensor(host, sensor, only_db=True)  # save to db
+                self.save_sensor(host.replace(".", "_"), sensor, only_db=True)  # save to db
             
         LOG.debug(sensors)
 
