@@ -47,7 +47,7 @@ class Settings(object):
         """
 
         try:
-            full_conf_path = "%s/{0}.yml" % self.conf_dir
+            full_conf_path = "%s/{0}.yml" % self.CONF_DIR
             config_file = open(full_conf_path.format(name), "r")
             yaml_file = load(config_file)
 
@@ -58,10 +58,14 @@ class Settings(object):
 
         return True
 
+
+    WORKER_DIR = os.getenv("R_WORKER_DIR", "/srv/robotice")
+    CONF_DIR = os.getenv("R_CONFIG_DIR", "/srv/robotice/config")
+
     @property
     def config(self):
         config_file = open(
-            "".join([self.worker_dir, "/config_%s.yml" % worker]), "r")
+            "".join([self.WORKER_DIR, "/config_%s.yml" % worker]), "r")
         self._config = load(config_file)
         return self._config
 
@@ -85,17 +89,13 @@ class Settings(object):
 
             self.load_conf("systems")
 
-    def __init__(self, worker=None, conf_dir="/srv/robotice/config",
-                 worker_dir="/srv/robotice"):
+    def __init__(self, worker=None):
 
         if worker:
             self.setup_app(worker)
 
-        self.conf_dir = os.getenv("R_CONFIG_DIR", conf_dir)
-        self.worker_dir = os.getenv("R_WORKER_DIR", worker_dir)
-
-        LOG.debug("Main configuration PATH: %s" % self.conf_dir)
-        LOG.debug("Worker PATH: %s" % self.worker_dir)
+        LOG.debug("Main configuration PATH: %s" % self.CONF_DIR)
+        LOG.debug("Worker PATH: %s" % self.WORKER_DIR)
 
     def uuid(self, host=None, worker=None, device=None):
         """return uuid for host and role
