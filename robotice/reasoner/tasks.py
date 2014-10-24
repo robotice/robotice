@@ -49,9 +49,9 @@ def process_real_data(results, sensor):
             if system != None:
                 db_key = '.'.join([
                     system.get('name').replace(".", "_"),
-                    'sensors',
                     plan_name,
-                    sensor.get("metric"),
+                    result_name,
+                    result_metric,
                     'real'])
                     
                 try:
@@ -145,7 +145,7 @@ def compare_data(config):
         #    continue
         system = actuator.get('system_name').replace(".", "_")
         plan_name = actuator.get('plan')
-        model_value, real_value = get_db_values(config, system, plan_name)
+        model_value, real_value = get_db_values(config, system, plan_name, actuator["metric"])
         logger.info("key: {0} model_value: {1} | real_value: {2}".format(
             ('%s.%s.%s' % (system, 'sensors', plan_name)), model_value, real_value))
         if real_value == None or model_value == None:
