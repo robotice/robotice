@@ -13,8 +13,7 @@ def commit_action(config, actuator, model_data, real_data):
     try:
         mod = import_module(
             actuator.get("device"),
-            "actuator",
-            driver_path="/srv/robotice/actuators")
+            "actuator")
     except ImportError:
         LOG.error("Could not import actuator %s" % actuator.get("device"))
 

@@ -419,7 +419,7 @@ class Settings(object):
     def load_actuators(self):
         """return actuators for all systems, but add `system_name` variable"""
 
-        def device(self, name):
+        def device(devices, name):
 
             for device in self._devices:
                 if name == device.get("name"):
@@ -438,7 +438,7 @@ class Settings(object):
 
                 actuator['system_name'] = system_name
                 actuator['system_plan'] = system.get('plan')
-                merged_dict = dict(actuator.items() + device(uuid).items())
+                merged_dict = dict(actuator.items() + device(self._devices, uuid).items())
                 actuators.append(merged_dict)
                 self.save_actuator(system_name.replace(".", "_"), actuator)  # save to db
 
