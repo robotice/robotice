@@ -535,11 +535,11 @@ class Settings(object):
         """return array of tuples [(system, plan),]"""
 
         results = []
-        for name, system in self.systems.iteritems():
-            system["name"] = name  # hotfix
-            for name, plan in self.plans.iteritems():
-                plan["name"] = name # hotfix
-                if name == system.get("plan"):
+        for hostname, system in self.systems.iteritems():
+            system["name"] = hostname.replace(".", "_")  # hotfix
+            for plan_name, plan in self.plans.iteritems():
+                plan["name"] = plan_name # hotfix
+                if plan_name == system.get("plan"):
                     results.append((system, plan),)
         return results
 
