@@ -561,7 +561,6 @@ class Settings(object):
             system["name"] = name  # hotfix
 
             for uuid, sensor in system.get('sensors').iteritems():
-                sensor["device"] = uuid # hotfix
                 if device_metric \
                     and "metric" in sensor:
                     if (sensor.get('device', None) == device_name
