@@ -179,7 +179,7 @@ class Settings(object):
         key = ".".join(
             [str(host),
             "actuators",
-            str(actuator.get("device", actuator.get("name"))),
+            actuator["plan"],
             "device"])
 
         saved_as_dict = self.update_or_create(actuator, key)
