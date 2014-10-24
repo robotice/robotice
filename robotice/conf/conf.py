@@ -423,7 +423,7 @@ class Settings(object):
     
             for host, system in devices.iteritems():
                 for _name, sensor in system.get('sensors').iteritems():
-                    if _name == name and system_name == host:
+                    if _name == str(name) and system_name == host:
                         return sensor
             raise Exception("Device for actuator %s not found" % name)
 
@@ -436,7 +436,7 @@ class Settings(object):
 
                 actuator['system_name'] = system_name
                 actuator['system_plan'] = system.get('plan')
-                merged_dict = dict(actuator.items() + device(self.devices, system_name, uuid).items())
+                merged_dict = dict(actuator.items() + device(self.devices, system_name, actuator.get("actuator")).items())
                 actuators.append(merged_dict)
                 self.save_actuator(system_name.replace(".", "_"), actuator)  # save to db
 
