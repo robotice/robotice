@@ -344,6 +344,7 @@ class Settings(object):
                 for key, item in items.iteritems():
                     if isinstance(item, dict):
                         return self.get(id, item) # regursive
+        LOG.error("key: %s not found in %s" %(id,items))
         return None
 
 
