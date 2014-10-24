@@ -568,13 +568,14 @@ class Settings(object):
             LOG.error("device_name: %s & device_metric: %s " % (device_name, device_metric))
         return result
 
-    def get_actuator_device(self, device_name):
+    def get_actuator_device(self, actuator):
         """return actuator from host devices"""
 
         for name, host in self.devices.iteritems():
             for uuid, device in host.get('actuators').iteritems():
-                if (device_name == device.get('name') \
-                or device_name == uuid):
+                if ("actuator" in actuator and actuator["actuator"] == uuid) \
+                or ("name" in actuator and (actuator["name"] == uuid \
+                    or actuator["name"] == device.get("name"))):
                     return device
         return None
 

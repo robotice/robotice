@@ -147,7 +147,7 @@ def compare_data(config):
             logger.info('NO REAL DATA to COMPARE')
             missing_data += 1
             continue
-        actuator_device = config.get_actuator_device(actuator["name"])
+        actuator_device = config.get_actuator_device(actuator)
         logger.info(actuator_device)
         actuator.update(actuator_device)
         logger.info(actuator)
