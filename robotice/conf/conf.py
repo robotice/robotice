@@ -563,6 +563,8 @@ class Settings(object):
                 else:
                     if sensor.get('name') == device_name:
                         result = system, sensor.get('plan')
+        if None in result:
+            raise Exception("device_name: %s & device_metric: %s " % (device_name, device_metric))
         return result
 
     def get_actuator_device(self, device_name):
