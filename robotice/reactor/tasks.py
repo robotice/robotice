@@ -15,7 +15,8 @@ def commit_action(settings, actuator, model_data, real_data):
     """
 
     LOG = commit_action.get_logger()
-
+    settings.worker = "reactor"
+    
     try:
         mod = import_module(
             actuator.get("device"),
