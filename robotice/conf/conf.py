@@ -419,11 +419,12 @@ class Settings(object):
     def load_actuators(self):
         """return actuators for all systems, but add `system_name` variable"""
 
-        def device(devices, name):
-
-            for device in self._devices:
-                if name == device.get("name"):
-                    return device
+        def device(devices, system_name, name):
+    
+            for host, system in devices.iteritems():
+                for _name, sensor in system.get('sensors').iteritems():
+                    if _name == name:
+                        return device
             raise Exception("Device for actuator %s not found" % name)
 
         actuators = []
@@ -438,7 +439,7 @@ class Settings(object):
 
                 actuator['system_name'] = system_name
                 actuator['system_plan'] = system.get('plan')
-                merged_dict = dict(actuator.items() + device(self._devices, uuid).items())
+                merged_dict = dict(actuator.items() + device(self._devices, system_name, uuid).items())
                 actuators.append(merged_dict)
                 self.save_actuator(system_name.replace(".", "_"), actuator)  # save to db
 
