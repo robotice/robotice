@@ -422,8 +422,8 @@ class Settings(object):
         def device(devices, system_name, name):
     
             for host, system in devices.iteritems():
-                for _name, sensor in system.get('sensors').iteritems():
-                    if _name == str(name) and system_name == host:
+                for uuid, sensor in system.get('sensors').iteritems():
+                    if (uuid == str(name) or sensor.get("name", None) == str(name)) and system_name == host:
                         return sensor
             raise Exception("Device for actuator %s not found" % name)
 
