@@ -25,8 +25,7 @@ def get_model_data(config):
             db_key = ".".join([
                 system.get('name'),
                 (device.get('name', None) or uuid),
-                device.get("metric"),
-                'model'])
+                'model')
             value, values = 0, (0, 0)
 
             for cycle in device.get('cycles'):
