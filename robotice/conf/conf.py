@@ -380,12 +380,14 @@ class Settings(object):
             _sensor = self.database.hgetall(_key)
             sensors.append(_sensor)
 
+        """
         if len(sensors) == 0:
             # load all sensors
             # returns sensors for all hosts !!
             self.load_sensors()
             sensors = self.sensors # recursive call
             return sensors
+        """
 
         return list(sensors)
 
@@ -409,14 +411,23 @@ class Settings(object):
             _actuator = self.database.hgetall(_key)
             actuators.append(_actuator)
 
+        """
         if len(actuators) == 0:
             self.load_actuators()
             actuators = self.actuators # recursive call
+        """
 
         return list(actuators)
 
     def load_actuators(self):
         """return actuators for all systems, but add `system_name` variable"""
+
+        def device(self, name):
+
+            for device in self._devices:
+                if name == device.get("name"):
+                    return device
+            raise Exception("Device for actuator %s not found" % name)
 
         actuators = []
         for system_name, system in self.systems.iteritems():
@@ -430,7 +441,8 @@ class Settings(object):
 
                 actuator['system_name'] = system_name
                 actuator['system_plan'] = system.get('plan')
-                actuators.append(actuator)
+                merged_dict = dict(actuator.items() + device(uuid).items())
+                actuators.append(merged_dict)
                 self.save_actuator(system_name.replace(".", "_"), actuator)  # save to db
 
         LOG.debug(actuators)
