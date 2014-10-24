@@ -180,6 +180,7 @@ class Settings(object):
             [str(host),
             "actuators",
             actuator["plan"],
+            actuator["metric"],
             "device"])
 
         saved_as_dict = self.update_or_create(actuator, key)
