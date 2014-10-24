@@ -335,16 +335,20 @@ class Settings(object):
         return True
 
     def get(self, key, items):
-        """return parsed key from dict hostname.sensors.id
-            """
-        parsed = key.split(".")
         
-        result = None
-        for _key in parsed:
-            if _key in items:
-                result = items.get(_key)
-                items = result
-        return result
+        if not isinstance(key, list):
+            parsed = key.split(".")
+        else:
+            parsed = key
+        
+        if len(parsed) == 1 and parsed[0] in items:
+            return items.get(parsed[0])
+        elif len(parsed) > 1 and parsed[0] in items:
+            item = items.get(parsed[0])
+            if isinstance(item, dict):
+                parsed.pop(0)
+                return self.get(parsed, item)
+        return None
 
 
     def get_sensors(self, host=None):
