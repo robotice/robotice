@@ -148,7 +148,6 @@ def compare_data(config):
             missing_data += 1
             continue
         actuator_device = config.get_actuator_device(actuator["name"])
-        actuator.pop('device')
         logger.info(actuator_device)
         actuator.update(actuator_device)
         logger.info(actuator)

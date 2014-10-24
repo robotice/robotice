@@ -577,8 +577,8 @@ class Settings(object):
 
         for name, host in self.devices.iteritems():
             for uuid, device in host.get('actuators').iteritems():
-                device["device"] = uuid # hotfix
-                if device_name == device.get('name'):
+                if (device_name == device.get('name') \
+                or device_name == uuid):
                     return device
         return None
 
