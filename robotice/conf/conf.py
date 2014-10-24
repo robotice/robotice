@@ -380,14 +380,12 @@ class Settings(object):
             _sensor = self.database.hgetall(_key)
             sensors.append(_sensor)
 
-        """
         if len(sensors) == 0:
             # load all sensors
             # returns sensors for all hosts !!
-            self.load_sensors()
-            sensors = self.sensors # recursive call
-            return sensors
-        """
+            result = self.load_sensors()
+            if not len(result) == 0:
+                return self.sensors
 
         return list(sensors)
 
@@ -411,12 +409,11 @@ class Settings(object):
             _actuator = self.database.hgetall(_key)
             actuators.append(_actuator)
 
-        """
         if len(actuators) == 0:
-            self.load_actuators()
-            actuators = self.actuators # recursive call
-        """
-
+            result = self.load_actuators()
+            if not len(result) == 0:
+                return self.actuators # recursive call
+                
         return list(actuators)
 
     def load_actuators(self):
