@@ -65,7 +65,7 @@ def process_real_data(results, sensor):
 
             else:
 
-                LOG.error("System for device %s not found" % result_name)
+                LOG.error("System for device %s and metric %s not found" % (result_name, result_metric))
 
         else:
 
