@@ -58,6 +58,13 @@ class Settings(object):
 
         return True
 
+    @property
+    def config(self):
+        config_file = open(
+            "".join([self.worker_dir, "/config_%s.yml" % worker]), "r")
+        self._config = load(config_file)
+        return self._config
+
     def setup_app(self, worker):
         """main method which init all settings for specific role
         """
@@ -66,10 +73,6 @@ class Settings(object):
             raise Exception("Only string is allowed for worker.")
 
         self.worker = worker
-
-        config_file = open(
-            "".join([self.worker_dir, "/config_%s.yml" % worker]), "r")
-        self.config = load(config_file)
 
         if "dsn" in self.config:
             init_sentry(self.config.get("dsn"))
