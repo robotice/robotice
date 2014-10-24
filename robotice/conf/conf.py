@@ -430,7 +430,7 @@ class Settings(object):
 
                 actuator['system_name'] = system_name
                 actuator['system_plan'] = system.get('plan')
-                merged_dict = dict(actuator.items() + self.get_actuator_device(actuator["name"]).items())
+                merged_dict = dict(actuator.items() + self.get_actuator_device(actuator).items())
                 actuators.append(merged_dict)
                 self.save_actuator(system_name.replace(".", "_"), actuator)  # save to db
 
