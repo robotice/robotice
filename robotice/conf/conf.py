@@ -337,19 +337,13 @@ class Settings(object):
     def get(self, id, items):
         """recursive find key in dictionary
         """
-        if isinstance(items, dict):
-            if id in items:
-                return items[id]
-            else:
-                for key, item in items.iteritems():
-                    if key == id:
-                        item["id"] = key
-                        return item
-                    elif isinstance(item, dict):
-                        return self.get(id, item) # regursive
-        LOG.error("key: %s not found in %s" %(id,items))
-        return None
-
+        if id in items:
+            return items[id]
+        for key, item in items.iteritems():
+            if isinstance(item, dict):
+                item = self.get(id, item)
+                if not item is None:
+                    return item
 
     def get_sensors(self, host=None):
         """
