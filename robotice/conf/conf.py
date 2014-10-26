@@ -444,7 +444,7 @@ class Settings(object):
             key = ".".join([
                 actuator["system_name"],
                 "actuators",
-                actuator["device"]])
+                str(actuator["device"])])
 
             device = self.get(key, self.devices)     
             if not device:
