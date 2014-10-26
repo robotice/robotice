@@ -124,9 +124,8 @@ class Settings(object):
 
         # set host.sensors.metric.name as dict
 
-        if not sensor.get("metric") \
-            or not sensor.get("name"):
-            raise Exception("missing sensor name or metric %s" % sensor)
+        if not sensor.get("name"):
+            raise Exception("missing sensor name %s" % sensor)
 
         # fix get by string number
         sensor_name = sensor.get("name")
