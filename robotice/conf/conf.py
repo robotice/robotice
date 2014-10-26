@@ -552,17 +552,8 @@ class Settings(object):
                 sensor['cpu_arch'] = self.config.get("cpu_arch")
                 sensor['hostname'] = host
 
-                merged_dict = sensor
-                system_sensor = get_system_sensor(self, sensor)
-                
-                if system_sensor:
-                    merged_dict = dict(sensor.items(), system_sensor.items())
-
-                plan = get_plan(self, merged_dict)
-                if plan:
-                    merged_dict["plan"] = plan
-                sensors.append(merged_dict)
-                self.save_sensor(host.replace(".", "_"), merged_dict, only_db=True)  # save to db
+                sensors.append(sensor)
+                self.save_sensor(host.replace(".", "_"), sensor, only_db=True)  # save to db
             
         LOG.debug(sensors)
 
@@ -624,22 +615,34 @@ class Settings(object):
         """return tuple (system, plan)
         """
 
+        def get_plan(conf, sensor):
+            key = ".".join([
+                sensor["system_plan"],
+                "sensors",
+                str(sensor["plan"])])
+
+            plan = self.get(key, self.plans)
+            if not plan:
+                LOG.debug("plan for %s not found" % sensor)
+            return plan
+
         result = (None, None)
 
         for name, system in self.systems.iteritems():
 
-            system["name"] = name  # hotfix
-
             for uuid, sensor in system.get('sensors').iteritems():
+
+                sensor["system_plan"] = system["plan"]
+
                 if device_metric \
                     and "metric" in sensor:
                     if (sensor.get('device', None) == device_name
                        or sensor.get('name', None) == device_name) \
                         and sensor.get("metric") == device_metric:
-                        result = system, sensor.get('plan')
+                        result = system, get_plan(self, sensor)
                 else:
                     if sensor.get('name') == device_name:
-                        result = system, sensor.get('plan')
+                        result = system, get_plan(self, sensor)
         if None in result:
             LOG.error("device_name: %s & device_metric: %s " % (device_name, device_metric))
         return result
