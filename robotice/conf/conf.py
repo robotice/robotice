@@ -389,7 +389,6 @@ class Settings(object):
             self.hostname.replace(".", "_"),
             "sensors",
             "*",
-            "*",
             "device",
             ])
 
