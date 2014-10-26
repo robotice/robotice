@@ -136,7 +136,6 @@ class Settings(object):
         key = ".".join([
             str(name).replace(".", "_"), 
             "sensors",
-            sensor.get("metric"),
             str(sensor_name),
             "device"
         ])
@@ -179,7 +178,7 @@ class Settings(object):
         key = ".".join([
             str(host).replace(".", "_"),
             "actuators",
-            actuator["plan"],
+            actuator["plan"]["name"],
             actuator["device"],
             "device"]) 
 
@@ -443,23 +442,42 @@ class Settings(object):
 
         actuators = []
 
+        def get_real_device(conf, actuator):
+            key = ".".join([
+                actuator["system_name"],
+                "actuators",
+                actuator["device"]])
+
+            device = self.get(key, self.devices)     
+            if not device:
+                LOG.debug("real device for %s not found" % actuator)
+            return device  
+
+        def get_plan(conf, actuator):
+            key = ".".join([
+                actuator["system_plan"],
+                "actuators",
+                str(actuator["plan"])])
+
+            plan = self.get(key, self.plans)     
+            if not plan:
+                LOG.debug("plan for %s not found" % actuator)
+            return plan
+
         for system_name, system in self.systems.iteritems():
             for uuid, actuator in system.get('actuators').iteritems():
 
                 actuator["id"] = uuid
                 actuator['system_name'] = system_name
                 actuator['system_plan'] = system.get('plan')
-                key = ".".join([
-                    system_name,
-                    "actuators",
-                    actuator["device"]])
-                # try find real device and merge into actual object
-                device = self.get(key, self.devices)
+
                 merged_dict = actuator
+                device = get_real_device(self, actuator)
                 if device:
                     merged_dict = dict(actuator.items() + device.items())
-                else:
-                    LOG.debug("real device for %s not found" % actuator)
+                plan = get_plan(self, actuator)
+                if plan:
+                    merged_dict["plan"] = plan
                 actuators.append(merged_dict)
                 self.save_actuator(system_name.replace(".", "_"), merged_dict)  # save to db
 
@@ -510,10 +528,6 @@ class Settings(object):
                 sensor['os_family'] = self.config.get("os_family")
                 sensor['cpu_arch'] = self.config.get("cpu_arch")
                 sensor['hostname'] = host
-
-                # check required fields
-                if not "metric" in sensor:
-                    raise Exception("missing sensor metric field %s" % sensor)
 
                 sensors.append(sensor)
                 self.save_sensor(host.replace(".", "_"), sensor, only_db=True)  # save to db
