@@ -177,8 +177,8 @@ class Settings(object):
         key = ".".join([
             str(host).replace(".", "_"),
             "actuators",
-            actuator["plan"]["name"],
-            actuator["device"],
+            str(actuator["plan"]["name"]),
+            str(actuator["device"]),
             "device"]) 
 
         saved_as_dict = self.update_or_create(actuator, key)
@@ -514,6 +514,31 @@ class Settings(object):
         """method load and save sensors from self._devices file
         """
 
+        def get_system_sensor(conf, sensor):
+            system_sensor = None
+
+            for name, system in self.systems.iteritems():
+                if sensor["hostname"] == name:
+                    for uuid, _sensor in system.get('sensors').iteritems():
+                        if sensor["metric"] == _sensor["metric"] \
+                            and sensor["name"] == _sensor["name"]:
+                                system_sensor = _sensor
+                                system_sensor["system_plan"] = system["plan"]
+            if not system_sensor:
+                LOG.error("system_sensor for %s not found" % (sensor))
+            return system_sensor
+
+        def get_plan(conf, sensor):
+            key = ".".join([
+                sensor["system_plan"],
+                "sensors",
+                str(sensor["plan"])])
+
+            plan = self.get(key, self.plans)     
+            if not plan:
+                LOG.debug("plan for %s not found" % sensor)
+            return plan
+
         sensors = []
 
         for host, system in self.devices.iteritems():
@@ -527,8 +552,17 @@ class Settings(object):
                 sensor['cpu_arch'] = self.config.get("cpu_arch")
                 sensor['hostname'] = host
 
-                sensors.append(sensor)
-                self.save_sensor(host.replace(".", "_"), sensor, only_db=True)  # save to db
+                merged_dict = sensor
+                system_sensor = get_system_sensor(self, sensor)
+                
+                if system_sensor:
+                    merged_dict = dict(sensor.items(), system_sensor.items())
+
+                plan = get_plan(self, merged_dict)
+                if plan:
+                    merged_dict["plan"] = plan
+                sensors.append(merged_dict)
+                self.save_sensor(host.replace(".", "_"), merged_dict, only_db=True)  # save to db
             
         LOG.debug(sensors)
 
