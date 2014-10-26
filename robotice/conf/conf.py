@@ -511,18 +511,6 @@ class Settings(object):
                 sensor['cpu_arch'] = self.config.get("cpu_arch")
                 sensor['hostname'] = host
 
-                key = ".".join([
-                    host,
-                    "sensors",
-                    sensor["device"]])
-                # try find real device and merge into actual object
-                device = self.get(key, self.devices)
-                merged_dict = sensor
-                if device:
-                    merged_dict = dict(sensor.items() + sensor.items())
-                else:
-                    LOG.debug("real device for %s not found" % sensor)
-
                 # check required fields
                 if not "metric" in sensor:
                     raise Exception("missing sensor metric field %s" % sensor)
