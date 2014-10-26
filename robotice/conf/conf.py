@@ -455,7 +455,7 @@ class Settings(object):
             key = ".".join([
                 actuator["system_plan"],
                 "actuators",
-                str(actuator["plan"])])
+                "%s" % actuator["plan"]])
 
             plan = self.get(key, self.plans)     
             if not plan:
