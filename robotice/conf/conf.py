@@ -453,9 +453,9 @@ class Settings(object):
 
         def get_plan(conf, actuator):
             key = ".".join([
-                actuator["system_plan"],
+                str(actuator["system_plan"]),
                 "actuators",
-                str(actuator.get("plan"))])
+                str(actuator["plan"])])
 
             plan = self.get(key, self.plans)     
             if not plan:
