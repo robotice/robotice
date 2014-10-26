@@ -615,7 +615,7 @@ class Settings(object):
         """return tuple (system, plan)
         """
 
-        def get_plan(conf, sensor):
+        def _get_plan(conf, sensor):
             key = ".".join([
                 sensor["system_plan"],
                 "sensors",
@@ -641,10 +641,10 @@ class Settings(object):
                     if (sensor.get('device', None) == device_name
                        or sensor.get('name', None) == device_name) \
                         and sensor.get("metric") == device_metric:
-                        result = system, get_plan(self, sensor)
+                        result = system, _get_plan(self, sensor)
                 else:
                     if sensor.get('name') == device_name:
-                        result = system, get_plan(self, sensor)
+                        result = system, _get_plan(self, sensor)
         if None in result:
             LOG.error("device_name: %s & device_metric: %s " % (device_name, device_metric))
         return result
