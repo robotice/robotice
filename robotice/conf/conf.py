@@ -335,15 +335,18 @@ class Settings(object):
         return True
 
     def get(self, key, items):
-        
+        """recursive find in dictionary by dotted notation
+        for example foo.bar
+        """
+
         if not isinstance(key, list):
             parsed = key.split(".")
         else:
             parsed = key
-        
-        if len(parsed) == 1 and parsed[0] in items:
+
+        if len(parsed) == 1 and parsed[0] in items.keys():
             return items.get(parsed[0])
-        elif len(parsed) > 1 and parsed[0] in items:
+        elif len(parsed) > 1 and parsed[0] in items.keys():
             item = items.get(parsed[0])
             if isinstance(item, dict):
                 parsed.pop(0)
@@ -489,7 +492,6 @@ class Settings(object):
         for host, system in self.devices.iteritems():
 
             for name, sensor in system.get('sensors').iteritems():
-
                 # check required fields
                 if not "metric" in sensor:
                     raise Exception("missing sensor metric field %s" % sensor)
