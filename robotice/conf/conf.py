@@ -623,13 +623,15 @@ class Settings(object):
 
             plan = self.get(key, self.plans)
             if not plan:
-                LOG.debug("plan for %s not found" % sensor)
+                LOG.error("plan for %s not found" % sensor)
             return plan
 
         result = (None, None)
 
         for name, system in self.systems.iteritems():
 
+            system["name"] = name
+            
             for uuid, sensor in system.get('sensors').iteritems():
 
                 sensor["system_plan"] = system["plan"]
