@@ -134,7 +134,7 @@ class Settings(object):
             sensor_name = int(sensor_name)
 
         key = ".".join([
-            str(name), 
+            str(name).replace(".", "_"), 
             "sensors",
             sensor.get("metric"),
             str(sensor_name),
@@ -176,12 +176,12 @@ class Settings(object):
             raise Exception(
                 "missing actuator device or system_plan %s" % actuator)
 
-        key = ".".join(
-            [str(host),
+        key = ".".join([
+            str(host).replace(".", "_"),
             "actuators",
-            self.get(actuator["plan"], self.plans)["name"],
-            self.get(actuator["name"], self.devices)["name"],
-            "device"])
+            actuator["plan"],
+            actuator["device"],
+            "device"]) 
 
         saved_as_dict = self.update_or_create(actuator, key)
 
@@ -351,6 +351,7 @@ class Settings(object):
             if isinstance(item, dict):
                 parsed.pop(0)
                 return self.get(parsed, item)
+        LOG.error("%s not found in %s" % (".".join(key), items))
 
     def get_sensors(self, host=None):
         """
@@ -448,9 +449,19 @@ class Settings(object):
                 actuator["id"] = uuid
                 actuator['system_name'] = system_name
                 actuator['system_plan'] = system.get('plan')
-                merged_dict = dict(actuator.items() + self.get_actuator_device(actuator).items())
+                key = ".".join([
+                    system_name,
+                    "actuators",
+                    actuator["device"]])
+                # try find real device and merge into actual object
+                device = self.get(key, self.devices)
+                merged_dict = actuator
+                if device:
+                    merged_dict = dict(actuator.items() + device.items())
+                else:
+                    LOG.debug("real device for %s not found" % actuator)
                 actuators.append(merged_dict)
-                self.save_actuator(system_name.replace(".", "_"), actuator)  # save to db
+                self.save_actuator(system_name.replace(".", "_"), merged_dict)  # save to db
 
         LOG.debug(actuators)
 
