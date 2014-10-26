@@ -515,8 +515,8 @@ class Settings(object):
                 if not "metric" in sensor:
                     raise Exception("missing sensor metric field %s" % sensor)
 
-                sensors.append(merged_dict)
-                self.save_sensor(host.replace(".", "_"), merged_dict, only_db=True)  # save to db
+                sensors.append(sensor)
+                self.save_sensor(host.replace(".", "_"), sensor, only_db=True)  # save to db
             
         LOG.debug(sensors)
 
