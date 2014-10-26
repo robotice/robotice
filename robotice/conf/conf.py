@@ -503,9 +503,6 @@ class Settings(object):
         for host, system in self.devices.iteritems():
 
             for name, sensor in system.get('sensors').iteritems():
-                # check required fields
-                if not "metric" in sensor:
-                    raise Exception("missing sensor metric field %s" % sensor)
 
                 if not "name" in sensor:
                     sensor["name"] = name
@@ -513,8 +510,25 @@ class Settings(object):
                 sensor['os_family'] = self.config.get("os_family")
                 sensor['cpu_arch'] = self.config.get("cpu_arch")
                 sensor['hostname'] = host
-                sensors.append(sensor)
-                self.save_sensor(host.replace(".", "_"), sensor, only_db=True)  # save to db
+
+                key = ".".join([
+                    host,
+                    "sensors",
+                    sensor["device"]])
+                # try find real device and merge into actual object
+                device = self.get(key, self.devices)
+                merged_dict = sensor
+                if device:
+                    merged_dict = dict(sensor.items() + sensor.items())
+                else:
+                    LOG.debug("real device for %s not found" % sensor)
+
+                # check required fields
+                if not "metric" in sensor:
+                    raise Exception("missing sensor metric field %s" % sensor)
+
+                sensors.append(merged_dict)
+                self.save_sensor(host.replace(".", "_"), merged_dict, only_db=True)  # save to db
             
         LOG.debug(sensors)
 
