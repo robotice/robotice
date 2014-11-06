@@ -16,6 +16,17 @@ import pickle
 from redis import StrictRedis
 
 class PickledRedis(StrictRedis):
+
+    def hgetall(self, name):
+        pickled_value = super(PickledRedis, self).hgetall(name)
+
+        for key, value in pickled_value.iteritems():
+            try:
+                pickled_value[key] = pickle.loads(value)
+            except Exception, e:
+                pass
+        return pickled_value
+
     def get(self, name):
         pickled_value = super(PickledRedis, self).get(name)
         if pickled_value is None:
@@ -486,9 +497,10 @@ class Settings(object):
                 if device:
                     merged_dict = dict(actuator.items() + device.items())
                 plan = get_plan(self, actuator)
-                if plan:
-                    merged_dict["plan"] = pickle.dumps(plan)
-                    merged_dict["plan_name"] = plan["name"]
+                if not plan:
+                    LOG.error("missing plan for %s object: %s" % (uuid,actuator))
+                merged_dict["plan"] = pickle.dumps(plan)
+                merged_dict["plan_name"] = plan["name"]
                 actuators.append(merged_dict)
                 self.save_actuator(system_name.replace(".", "_"), merged_dict)  # save to db
 

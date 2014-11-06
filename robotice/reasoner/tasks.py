@@ -161,10 +161,8 @@ def compare_data(config):
             "name"
             ])
         """
-        try:
-            plan_name = pickle.loads(actuator.get('plan')).get("name")
-        except Exception, e:
-            raise Exception(e + actuator["plan"])
+
+        plan_name = actuator["plan_name"]
         model_value, real_value = get_db_values(config, system, plan_name)
         logger.info("key: {0} model_value: {1} | real_value: {2}".format(
             ('%s.%s.%s' % (system, 'sensors', plan_name)), model_value, real_value))
