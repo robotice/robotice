@@ -12,6 +12,18 @@ from robotice.utils.celery import init_sentry
 
 LOG = logging.getLogger(__name__)
 
+import pickle
+from redis import StrictRedis
+
+class PickledRedis(StrictRedis):
+    def get(self, name):
+        pickled_value = super(PickledRedis, self).get(name)
+        if pickled_value is None:
+            return None
+        return pickle.loads(pickled_value)
+
+    def set(self, name, value, ex=None, px=None, nx=False, xx=False):
+        return super(PickledRedis, self).set(name, pickle.dumps(value), ex, px, nx, xx)
 
 class Settings(object):
 
@@ -177,7 +189,7 @@ class Settings(object):
         key = ".".join([
             str(host).replace(".", "_"),
             "actuators",
-            str(actuator["plan"]["name"]),
+            str(actuator["plan_name"]),
             str(actuator["device"]),
             "device"]) 
 
@@ -475,7 +487,8 @@ class Settings(object):
                     merged_dict = dict(actuator.items() + device.items())
                 plan = get_plan(self, actuator)
                 if plan:
-                    merged_dict["plan"] = plan
+                    merged_dict["plan"] = pickle.dumps(plan)
+                    merged_dict["plan_name"] = plan["name"]
                 actuators.append(merged_dict)
                 self.save_actuator(system_name.replace(".", "_"), merged_dict)  # save to db
 
@@ -623,7 +636,15 @@ class Settings(object):
 
             plan = self.get(key, self.plans)
             if not plan:
-                LOG.error("plan for %s not found" % sensor)
+                key = ".".join([
+                    sensor["system_plan"],
+                    "actuators",
+                    str(sensor["plan"])])
+
+                plan = self.get(key, self.plans)
+
+                if not plan:
+                    LOG.error("plan for %s not found" % sensor)
             return plan
 
         result = (None, None)
@@ -631,8 +652,8 @@ class Settings(object):
         for name, system in self.systems.iteritems():
 
             system["name"] = name
-            
-            for uuid, sensor in system.get('sensors').iteritems():
+
+            for uuid, sensor in dict(system.get('sensors').items() + system.get('actuators').items()).iteritems():
 
                 sensor["system_plan"] = system["plan"]
 
@@ -655,6 +676,7 @@ class Settings(object):
         for name, host in self.devices.iteritems():
             for uuid, device in host.get('actuators').iteritems():
                 if ("actuator" in actuator and actuator["actuator"] == uuid) \
+                or ("device" in actuator and actuator["device"] == uuid) \
                 or ("name" in actuator and (actuator["name"] == uuid \
                     or actuator["name"] == device.get("name"))):
                     return device
@@ -677,7 +699,7 @@ class Settings(object):
         now is supported only redis
         """
 
-        _redis = redis.Redis(
+        _redis = PickledRedis(
             host=self.config.get('database').get('host'),
             port=self.config.get('database').get('port'),
             db=self.config.get('database').get('number', 0))

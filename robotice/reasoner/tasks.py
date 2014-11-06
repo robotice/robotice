@@ -2,7 +2,7 @@ import re
 
 from time import time
 import decimal
-
+import pickle
 from datetime import datetime
 from celery.task import task
 from celery import group, chord
@@ -22,6 +22,8 @@ def process_real_data(results, sensor):
 
     config = setup_app('reasoner')
 
+    processed = 0
+
     for result in list(results):
 
         value = result[1]
@@ -38,22 +40,33 @@ def process_real_data(results, sensor):
             result_name = result[0].split('.')[0]
             result_metric = result[0].split('.')[1]
 
-            system, plan_name = config.get_plan(result_name, result_metric)
+            system, plan = config.get_plan(result_name, result_metric)
+            """
+            key = ".".join([
+                "*",
+                "*",
+                result_name,
+                "device"
+                ])
             
-            LOG.info("for result_name: {0} result_metric: {1} system: {2} plan: {3}".format(
-                result_name, 
-                result_metric,
-                system,
-                plan_name))
-
+            keys = config.database.keys(key)
+            for _key in keys:
+                device = config.database.hgetall(_key)
+            
+            device = config.database.hgetall(key)
+            if not device:
+                raise Exception("%s not found in db" % key)
+            """
+            
             if system != None:
                 db_key = '.'.join([
-                    system.get('name').replace(".", "_"),
-                    plan_name,
+                    str(system["name"]).replace(".", "_"),
+                    str(plan["name"]),
                     'real'])
                     
                 try:
                     config.metering.send(db_key, value)
+                    processed += 1
                 except Exception, e:
                     LOG.error("Fail: send to metering %s " % e)
                 
@@ -64,8 +77,6 @@ def process_real_data(results, sensor):
 
                 LOG.debug("%s: %s" % (db_key, value))
 
-                LOG.debug("metric was sent to database and statsd")
-
             else:
 
                 LOG.error("System for device %s and metric %s not found" % (result_name, result_metric))
@@ -74,7 +85,7 @@ def process_real_data(results, sensor):
 
             LOG.error("Result from sensor module must be a instance of int, long, float, decimal.Decimal but found %s %s " % (type(value), value))
 
-    return "results: %s" % results
+    return "total: %s : sended: %s" % (len(results), processed)
 
 
 def get_value_for_relay(config, actuator, model_values, real_value):
@@ -142,13 +153,18 @@ def compare_data(config):
         # if not system:
         #    continue
         system = actuator.get('system_name').replace(".", "_")
+        """
         key = ".".join([
             actuator.get('system_plan'),
             'sensors',
             actuator.get('plan'),
             "name"
             ])
-        plan_name = config.get(key, config.plans)
+        """
+        try:
+            plan_name = pickle.loads(actuator.get('plan')).get("name")
+        except Exception, e:
+            raise Exception(e + actuator["plan"])
         model_value, real_value = get_db_values(config, system, plan_name)
         logger.info("key: {0} model_value: {1} | real_value: {2}".format(
             ('%s.%s.%s' % (system, 'sensors', plan_name)), model_value, real_value))
