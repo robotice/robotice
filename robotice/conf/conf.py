@@ -499,6 +499,7 @@ class Settings(object):
                 plan = get_plan(self, actuator)
                 if not plan:
                     LOG.error("missing plan for %s object: %s" % (uuid,actuator))
+                    continue
                 merged_dict["plan"] = pickle.dumps(plan)
                 merged_dict["plan_name"] = plan["name"]
                 actuators.append(merged_dict)
