@@ -14,6 +14,7 @@ LOG = logging.getLogger(__name__)
 
 import pickle
 from redis import StrictRedis
+from robotice.utils.decorators import norecursion
 
 class PickledRedis(StrictRedis):
 
@@ -402,6 +403,7 @@ class Settings(object):
         return list(sensors)
 
     @property
+    @norecursion(default=[], callcount=2)
     def sensors(self):
         """return list of sensors by key hostname.sensors
         default to self.hostname
@@ -431,6 +433,7 @@ class Settings(object):
         return list(sensors)
 
     @property
+    @norecursion(default=[], callcount=2)
     def actuators(self):
         """return list of sensors by key hostname.sensors
         default to self.hostname
