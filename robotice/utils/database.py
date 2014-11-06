@@ -1,4 +1,31 @@
-def get_db_values(config, system_name, plan_name, type='sensors'):
+
+import pickle
+from redis import StrictRedis
+
+class PickledRedis(StrictRedis):
+    """custom picled redis
+    """
+
+    def hgetall(self, name):
+        pickled_value = super(PickledRedis, self).hgetall(name)
+
+        for key, value in pickled_value.iteritems():
+            try:
+                pickled_value[key] = pickle.loads(value)
+            except Exception, e:
+                pass
+        return pickled_value
+
+    def get(self, name):
+        pickled_value = super(PickledRedis, self).get(name)
+        if pickled_value is None:
+            return None
+        return pickle.loads(pickled_value)
+
+    def set(self, name, value, ex=None, px=None, nx=False, xx=False):
+        return super(PickledRedis, self).set(name, pickle.dumps(value), ex, px, nx, xx)
+
+def get_db_values(config, system_name, plan_name):
     """return tuple(model_value, real_value)
     """
     db_key_real = '.'.join([str(system_name), str(plan_name), 'real'])

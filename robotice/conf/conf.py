@@ -5,37 +5,17 @@ import logging
 import statsd
 import redis
 import socket
+import pickle
 
 from yaml import load, dump, safe_dump
 
-from robotice.utils.celery import init_sentry
 
 LOG = logging.getLogger(__name__)
 
-import pickle
-from redis import StrictRedis
-from robotice.utils.decorators import norecursion
+from robotice.utils import PickledRedis
+from robotice.utils import norecursion
+from robotice.utils.celery import init_sentry
 
-class PickledRedis(StrictRedis):
-
-    def hgetall(self, name):
-        pickled_value = super(PickledRedis, self).hgetall(name)
-
-        for key, value in pickled_value.iteritems():
-            try:
-                pickled_value[key] = pickle.loads(value)
-            except Exception, e:
-                pass
-        return pickled_value
-
-    def get(self, name):
-        pickled_value = super(PickledRedis, self).get(name)
-        if pickled_value is None:
-            return None
-        return pickle.loads(pickled_value)
-
-    def set(self, name, value, ex=None, px=None, nx=False, xx=False):
-        return super(PickledRedis, self).set(name, pickle.dumps(value), ex, px, nx, xx)
 
 class Settings(object):
 
