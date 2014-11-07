@@ -183,8 +183,8 @@ def compare_data(config):
                 logger.info('Registred commit_action for {0}'.format(actuator))
                 send_task('reactor.commit_action', args=(
                           config, actuator, model_value, real_value))
-                results.append('actuator: {0} hostname: {1}, plan: {2}'.format(
-                    actuator.get("name"), actuator.get("name"), plan_name))
+                results.append('actuator: {0} model_value: {1} real_value: {2}'.format(
+                    actuator.get("name"), model_value, real_value))
         else:
 
             logger.info("parsed real values : %s < %s and %s < %s" %
