@@ -213,7 +213,7 @@ class Settings(object):
 
         # write to file
 
-        full_conf_path = "%s/%s.yml" % (self.conf_dir, attr)
+        full_conf_path = "%s/%s.yml" % (self.CONF_DIR, attr)
 
         self.dump_to_file_and_set(
             full_conf_path,
@@ -273,7 +273,7 @@ class Settings(object):
 
         if deleted:
             # write to file
-            full_conf_path = "%s/%s.yml" % (self.conf_dir, attr)
+            full_conf_path = "%s/%s.yml" % (self.CONF_DIR, attr)
 
             self.dump_to_file_and_set(
                 full_conf_path,
@@ -301,7 +301,7 @@ class Settings(object):
         """
         created = True
         items = getattr(self, attr) # copy local devices
-
+        
         for id, system in getattr(self, attr).iteritems():
             if id in name:
                 _dict = system.get(key)
@@ -327,7 +327,7 @@ class Settings(object):
                 )
         else:
             # write to file
-            full_conf_path = "%s/%s.yml" % (self.conf_dir, attr)
+            full_conf_path = "%s/%s.yml" % (self.CONF_DIR, attr)
 
             self.dump_to_file_and_set(
                 full_conf_path,
