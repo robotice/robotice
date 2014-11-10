@@ -19,8 +19,9 @@ def commit_action(settings, actuator, model_data, real_data):
 
     try:
         mod = import_module(
-            actuator.get("device"),
-            "actuator")
+            "%s.%s" % (actuator.get("device"), actuator.get("device")),
+            "actuator",
+            method="run")
     except ImportError, e:
         LOG.error("Could not import actuator %s" % actuator.get("device"))
         raise e

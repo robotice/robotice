@@ -85,7 +85,7 @@ def process_real_data(results, sensor):
 
             LOG.error("Result from sensor module must be a instance of int, long, float, decimal.Decimal but found %s %s " % (type(value), value))
 
-    return "total: %s : sended: %s" % (len(results), processed)
+    return "total: %s : sent: %s" % (len(results), processed)
 
 
 def get_value_for_relay(config, actuator, model_values, real_value):
