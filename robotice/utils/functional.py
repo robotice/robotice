@@ -2,8 +2,7 @@
 import os
 import sys
 
-DEFAULT_SENSORS_DIR = "/srv/robotice/sensors"
-SENSORS_DIR = os.getenv("R_SENSORS_DIR", DEFAULT_SENSORS_DIR)
+SENSORS_DIR = os.getenv("R_DRIVERS_DIR")
 
 sys.path.append(SENSORS_DIR)
 

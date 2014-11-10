@@ -33,6 +33,8 @@ class Settings(object):
     in directory `R_CONFIG_DIR` is expected devices.yml, systems.yml, plans.yml
     in directory `R_worker_dir` is expected worker_monitos.yml etc.
 
+    R_DRIVERS_DIR is drivers directory and default is /srv/robotice/drivers
+
     """
 
     def load_conf(self, name, prefix="_"):
@@ -65,7 +67,8 @@ class Settings(object):
 
     WORKER_DIR = os.getenv("R_WORKER_DIR", "/srv/robotice")
     CONF_DIR = os.getenv("R_CONFIG_DIR", "/srv/robotice/config")
-
+    DRIVERS_DIR = "/srv/robotice/drivers"
+    
     @property
     def config(self):
         config_file = open(
@@ -92,6 +95,21 @@ class Settings(object):
             self.load_conf("plans")
 
             self.load_conf("systems")
+
+        self.setup_sys_vars() # inicialize system variables
+
+    def setup_sys_vars(self):
+
+        def get_or_set(var, value):
+            result = os.getenv(var, None)
+            if result is None:
+                os.environ[var] = value
+                return True
+            return False
+
+        get_or_set("R_WORKER_DIR", self.WORKER_DIR)
+        get_or_set("R_CONFIG_DIR", self.CONF_DIR)
+        get_or_set("R_DRIVERS_DIR", self.DRIVERS_DIR)
 
     def __init__(self, worker=None):
 
