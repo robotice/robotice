@@ -42,7 +42,7 @@ def get_sensor_data(config, sensor):
     result = None
 
     try:
-        name = ".".join([sensor.get("device"), sensor.get("device")]) # TODO if number find real name in devices.yml
+        name = sensor.get("device") #".".join([sensor.get("device"), sensor.get("device")]) # TODO if number find real name in devices.yml
         mod = import_module(name)
     except Exception, e:
         LOG.error("Cannot import sensor %s" % sensor)

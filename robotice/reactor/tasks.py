@@ -18,7 +18,7 @@ def commit_action(settings, actuator, model_data, real_data):
     settings.worker = "reactor"
 
     mod = import_module(
-        "%s.%s" % (actuator.get("device"), actuator.get("device")),
+        actuator.get("device"),
         "actuator",
         method="run")
 

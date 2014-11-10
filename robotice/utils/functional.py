@@ -12,8 +12,9 @@ def import_module(module_dir, module_name="sensor", method="get_data", drivers_p
     return name module
     """
     DRIVERS_DIR = os.getenv("R_DRIVERS_DIR")
-    sys.path.append(DRIVERS_DIR)
-    
+    #sys.path.append(DRIVERS_DIR)
+    sys.path.append("%s/%s"%(DRIVERS_DIR, module_dir))
+
     try:
         mod = __import__("%s.%s" % (module_dir, module_name), globals(), locals(), method)
     except Exception, e:
