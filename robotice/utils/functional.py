@@ -2,9 +2,6 @@
 import os
 import sys
 
-SENSORS_DIR = os.getenv("R_DRIVERS_DIR")
-
-sys.path.append(SENSORS_DIR)
 
 def import_module(module_dir, module_name="sensor", method="get_data", drivers_path=None):
     """wrapper for import module
@@ -14,7 +11,12 @@ def import_module(module_dir, module_name="sensor", method="get_data", drivers_p
     
     return name module
     """
-
-    mod = __import__("%s.%s" % (module_dir, module_name), globals(), locals(), method)
+    DRIVERS_DIR = os.getenv("R_DRIVERS_DIR")
+    sys.path.append(DRIVERS_DIR)
+    
+    try:
+        mod = __import__("%s.%s" % (module_dir, module_name), globals(), locals(), method)
+    except Exception, e:
+        raise Exception("%s R_DRIVERS_DIR:%s" % (e, DRIVERS_DIR))
 
     return mod

@@ -17,14 +17,10 @@ def commit_action(settings, actuator, model_data, real_data):
     LOG = commit_action.get_logger()
     settings.worker = "reactor"
 
-    try:
-        mod = import_module(
-            "%s.%s" % (actuator.get("device"), actuator.get("device")),
-            "actuator",
-            method="run")
-    except ImportError, e:
-        LOG.error("Could not import actuator %s" % actuator.get("device"))
-        raise e
+    mod = import_module(
+        "%s.%s" % (actuator.get("device"), actuator.get("device")),
+        "actuator",
+        method="run")
 
     actuator['architecture'] = settings.config["cpu_arch"]
     actuator['os_family'] = settings.config["os_family"]
