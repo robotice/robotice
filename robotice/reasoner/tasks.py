@@ -2,7 +2,7 @@ import re
 
 from time import time
 import decimal
-
+import pickle
 from datetime import datetime
 from celery.task import task
 from celery import group, chord
@@ -22,6 +22,8 @@ def process_real_data(results, sensor):
 
     config = setup_app('reasoner')
 
+    processed = 0
+
     for result in list(results):
 
         value = result[1]
@@ -38,19 +40,33 @@ def process_real_data(results, sensor):
             result_name = result[0].split('.')[0]
             result_metric = result[0].split('.')[1]
 
-            system, plan_name = config.get_plan(result_name, result_metric)
+            system, plan = config.get_plan(result_name, result_metric)
+            """
+            key = ".".join([
+                "*",
+                "*",
+                result_name,
+                "device"
+                ])
             
-            LOG.info("for result_name: {0} result_metric: {1} system: {2} plan: {3}".format(
-                result_name, 
-                result_metric,
-                system,
-                plan_name))
-
+            keys = config.database.keys(key)
+            for _key in keys:
+                device = config.database.hgetall(_key)
+            
+            device = config.database.hgetall(key)
+            if not device:
+                raise Exception("%s not found in db" % key)
+            """
+            
             if system != None:
-                db_key = '.'.join([system.get('name'), 'sensors', plan_name, 'real'])
+                db_key = '.'.join([
+                    str(system["name"]).replace(".", "_"),
+                    str(plan["name"]),
+                    'real'])
                     
                 try:
                     config.metering.send(db_key, value)
+                    processed += 1
                 except Exception, e:
                     LOG.error("Fail: send to metering %s " % e)
                 
@@ -61,17 +77,15 @@ def process_real_data(results, sensor):
 
                 LOG.debug("%s: %s" % (db_key, value))
 
-                LOG.debug("metric was sent to database and statsd")
-
             else:
 
-                LOG.error("System for device %s not found" % result_name)
+                LOG.error("System for device %s and metric %s not found" % (result_name, result_metric))
 
         else:
 
             LOG.error("Result from sensor module must be a instance of int, long, float, decimal.Decimal but found %s %s " % (type(value), value))
 
-    return "results: %s" % results
+    return "total: %s : sent: %s" % (len(results), processed)
 
 
 def get_value_for_relay(config, actuator, model_values, real_value):
@@ -131,21 +145,32 @@ def compare_data(config):
 
     results = []
 
-    for actuator_name, actuator in config.actuators.iteritems():
+    compared, commits, missing_data = 0, 0, 0
+
+    for actuator in config.actuators:
         # system, plan_name = get_plan(
         #    config, actuator.get('name'), actuator.get("metric"))
         # if not system:
         #    continue
-        system = actuator.get('system_name')
-        plan_name = actuator.get('plan')
+        system = actuator.get('system_name').replace(".", "_")
+        """
+        key = ".".join([
+            actuator.get('system_plan'),
+            'sensors',
+            actuator.get('plan'),
+            "name"
+            ])
+        """
+
+        plan_name = actuator["plan_name"]
         model_value, real_value = get_db_values(config, system, plan_name)
         logger.info("key: {0} model_value: {1} | real_value: {2}".format(
             ('%s.%s.%s' % (system, 'sensors', plan_name)), model_value, real_value))
         if real_value == None or model_value == None:
             logger.info('NO REAL DATA to COMPARE')
+            missing_data += 1
             continue
-        actuator_device = config.get_actuator_device(actuator_name)
-        actuator.pop('device')
+        actuator_device = config.get_actuator_device(actuator)
         logger.info(actuator_device)
         actuator.update(actuator_device)
         logger.info(actuator)
@@ -158,8 +183,8 @@ def compare_data(config):
                 logger.info('Registred commit_action for {0}'.format(actuator))
                 send_task('reactor.commit_action', args=(
                           config, actuator, model_value, real_value))
-                results.append('actuator: {0} hostname: {1}, plan: {2}'.format(
-                    actuator.get("name"), actuator.get("name"), plan_name))
+                results.append('actuator: {0} model_value: {1} real_value: {2}'.format(
+                    actuator.get("name"), model_value, real_value))
         else:
 
             logger.info("parsed real values : %s < %s and %s < %s" %

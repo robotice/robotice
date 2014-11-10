@@ -1,4 +1,5 @@
 import os
+import sys
 from time import time
 import decimal
 import subprocess
@@ -13,12 +14,12 @@ from utils.functional import import_module
 
 logger = get_task_logger(__name__)
 
-
 @task(name='monitor.get_real_data')
 def get_real_data(config):
 
     tasks = []
     logger = get_real_data.get_logger()
+    config.worker = "monitor"
     logger.info('Sensors {0}'.format(config.sensors))
 
     for sensor in config.sensors:
@@ -35,12 +36,14 @@ def get_real_data(config):
 @task(name='monitor.get_sensor_data', track_started=True)
 def get_sensor_data(config, sensor):
 
-    LOG = get_real_data.get_logger()
+    LOG = get_sensor_data.get_logger()
+    config.worker = "monitor"
 
     result = None
 
     try:
-        mod = import_module(sensor.get("device"))
+        name = sensor.get("device") #".".join([sensor.get("device"), sensor.get("device")]) # TODO if number find real name in devices.yml
+        mod = import_module(name)
     except Exception, e:
         LOG.error("Cannot import sensor %s" % sensor)
         raise e
