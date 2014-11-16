@@ -14,6 +14,7 @@ LOG = logging.getLogger(__name__)
 
 from robotice.utils import PickledRedis
 from robotice.utils import norecursion
+from robotice.utils import dict_merge
 from robotice.utils.celery import init_sentry
 
 
@@ -666,8 +667,9 @@ class Settings(object):
         for name, system in self.systems.iteritems():
 
             system["name"] = name
+            devices = dict_merge(system.get('sensors'), system.get('actuators'))
 
-            for uuid, sensor in dict(system.get('sensors').items() + system.get('actuators').items()).iteritems():
+            for uuid, sensor in devices.iteritems():
 
                 sensor["system_plan"] = system["plan"]
 
