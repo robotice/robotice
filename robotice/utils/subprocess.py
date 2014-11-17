@@ -19,6 +19,6 @@ def call_command(cmd, verbosity="ERROR"):
   rc = p.returncode
 
   if not rc == 0:
-    raise Exception("error: {0}, cmd: {1}".format(err, " ".join(cmd)))
+    raise Exception("{0} ==> command: {1}".format(err, " ".join(cmd)))
 
   return output
