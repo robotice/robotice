@@ -749,25 +749,16 @@ class Settings(object):
 
 
 class RoboticeSettings(Settings):
-    """A singleton implementation of Settings such that all dealings
-    with settings get the same instance no matter what. There can be only one.
+    """
     you can use RoboticeSettings('reasoner') or setup_app declared below
     """
-    _instance = None
+    pass
 
-    """
-    def __new__(cls, *args, **kwargs):
-        if not cls._instance:
-            cls._instance = super(Settings, cls).__new__(cls, *args, **kwargs)
-        return cls._instance
-    """
-
-
-settings = RoboticeSettings()  # one true Settings
+settings = RoboticeSettings()
 
 
 def setup_app(worker):
-    """dealing with global singleton and load configs
+    """dealing with global setting and load configs
     easiest way how you get settings instance is RoboticeSettings('reasoner')
     """
     global settings
