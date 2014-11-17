@@ -128,21 +128,6 @@ class Settings(object):
         LOG.debug("Main configuration PATH: %s" % self.CONF_DIR)
         LOG.debug("Worker PATH: %s" % self.WORKER_DIR)
 
-    def uuid(self, host=None, worker=None, device=None):
-        """return uuid for host and role
-        """
-        if not host:
-            host = self.hostname
-        if not worker:
-            worker = self.worker
-
-        if device:
-            key = ".".join([str(host), device])
-
-        key = ".".join([str(host), worker])
-
-        return key
-
     @property
     def devices(self):
         return self._devices
@@ -197,7 +182,6 @@ class Settings(object):
         return result
 
     def save_actuator(self, host, actuator):
-        key = self.uuid(host, "actuators")
 
         if not actuator.get("system_plan", None) \
             or (actuator.get("device", None) is None \
@@ -601,7 +585,7 @@ class Settings(object):
         """set system direcly into database and file backend
         """
 
-        key = self.uuid(host, worker)
+        key = host or self.hostname
 
         if system:
 
@@ -618,7 +602,7 @@ class Settings(object):
     def get_system(self, host=None, worker=None):
         """return plan for host and role from db or file
         """
-        key = self.uuid(host, worker)
+        key = host or self.hostname
         _system = self.database.get(key)
 
         if not _system:
