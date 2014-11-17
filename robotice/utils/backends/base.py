@@ -10,17 +10,6 @@ class BaseBackend(object):
     """Base Backend
     """
 
-    @property
-    def database(self):
-        """return db instance with available two methods get(key) and set(key, value)
-        """
-        raise NotImplementedError
-
-    def update_or_create(self, obj, key):
-        """method save object or iterable into db
-        """
-        raise NotImplementedError
-
     def get(self, key):
         raise NotImplementedError('Must implement the get method.')
 
