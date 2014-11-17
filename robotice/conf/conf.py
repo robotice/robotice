@@ -363,11 +363,12 @@ class Settings(object):
 
         return True
 
-    def get(self, key, items):
+    @norecursion(default={}, callcount=100)
+    def get(self, key, items, orig_items=None, orig_key=None):
         """recursive find in dictionary by dotted notation
-        for example foo.bar
+        for example foo.bar for {foo: {bar: {key: value}}}
+        returns { key: value }
         """
-
         if not isinstance(key, list):
             parsed = key.split(".")
         else:
@@ -379,8 +380,9 @@ class Settings(object):
             item = items.get(parsed[0])
             if isinstance(item, dict):
                 parsed.pop(0)
-                return self.get(parsed, item)
-        LOG.error("%s not found in %s" % (".".join(key), items))
+                return self.get(parsed, item, orig_items or items, orig_key or key)
+        
+        LOG.error("%s not found in %s" % (orig_key, orig_items))
 
     def get_sensors(self, host=None):
         """

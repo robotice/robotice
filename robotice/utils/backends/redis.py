@@ -40,7 +40,7 @@ class PickledRedis(redis.StrictRedis):
         return super(PickledRedis, self).set(name, pickle.dumps(value), ex, px, nx, xx)
 
 
-class RedisBackend(KeyValueStoreBackend, PickledRedis):
+class RedisBackend(PickledRedis, KeyValueStoreBackend):
     """ Robotice Redis backend
     """
 

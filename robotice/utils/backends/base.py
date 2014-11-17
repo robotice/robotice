@@ -28,7 +28,7 @@ class BaseBackend(object):
         raise NotImplementedError('Does not support get_many')
 
     def hmset(self, key, value):
-        raise NotImplementedError('Must implement the set method.')
+        raise NotImplementedError('DB Backend must have implemented hmset method.')
 
     def set(self, key, value):
         raise NotImplementedError('Must implement the set method.')
