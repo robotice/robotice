@@ -9,6 +9,7 @@ import pickle
 
 from yaml import load, dump, safe_dump
 
+from kombu.utils import symbol_by_name
 
 LOG = logging.getLogger(__name__)
 
@@ -17,6 +18,11 @@ from robotice.utils import norecursion
 from robotice.utils import dict_merge
 from robotice.utils.celery import init_sentry
 
+BACKEND_ALIASES = {
+    'cache': 'robotice.utils.backends.cache:CacheBackend',
+    'redis': 'robotice.utils.backends.redis:RedisBackend',
+    'mongodb': 'robotice.utils.backends.mongodb:MongoBackend',
+}
 
 class Settings(object):
 
@@ -69,7 +75,9 @@ class Settings(object):
     WORKER_DIR = os.getenv("R_WORKER_DIR", "/srv/robotice")
     CONF_DIR = os.getenv("R_CONFIG_DIR", "/srv/robotice/config")
     DRIVERS_DIR = "/srv/robotice/drivers"
-    
+
+    db_backend_name = "redis" # TODO propagation from config
+
     @property
     def config(self):
         config_file = open(
@@ -715,14 +723,19 @@ class Settings(object):
         now is supported only redis
         """
 
-        _redis = PickledRedis(
+        try:
+            self.db_backend_cls = symbol_by_name(BACKEND_ALIASES[self.db_backend_name])
+        except Exception, e:
+            raise e
+
+        _client = self.db_backend_cls(
             host=self.config.get('database').get('host'),
             port=self.config.get('database').get('port'),
             db=self.config.get('database').get('number', 0))
 
-        LOG.debug("Inicialized database connection %s " % _redis)
+        LOG.debug("Inicialized database connection %s " % _client)
 
-        return _redis
+        return _client
 
     @property
     def metering(self):
