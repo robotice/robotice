@@ -17,6 +17,20 @@ if sys.argv[-1] == 'publish':
     os.system('python setup.py sdist upload')
     sys.exit()
 
+install_requires = """
+python-statsd==1.6.0
+PyYAML==3.10
+RPi.GPIO>=0.5.3a
+celery==3.1.7
+flower==0.6.0
+pytz==2011k
+redis==2.9.0
+raven>=5.0.0
+celery-with-redis==3.0
+oslo.config==1.4.0
+Adafruit-BBIO>=0.0.9
+""".split()
+
 with open('README.rst') as f:
     readme = f.read()
 with open('HISTORY.rst') as f:
@@ -42,6 +56,7 @@ setup(
     ],
     description='Opensource monitoring, reasoning and acting framework.',
     include_package_data=True,
+    install_requires=install_requires,
     license=license,
     long_description=readme + '\n\n' + history,
     name=PACKAGE_NAME,
