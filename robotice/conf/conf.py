@@ -109,16 +109,9 @@ class Settings(object):
 
     def setup_sys_vars(self):
 
-        def get_or_set(var, value):
-            result = os.getenv(var, None)
-            if result is None:
-                os.environ[var] = value
-                return True
-            return False
-
-        get_or_set("R_WORKER_DIR", self.WORKER_DIR)
-        get_or_set("R_CONFIG_DIR", self.CONF_DIR)
-        get_or_set("R_DRIVERS_DIR", self.DRIVERS_DIR)
+        os.environ.setdefault("R_WORKER_DIR", self.WORKER_DIR)
+        os.environ.setdefault("R_CONFIG_DIR", self.CONF_DIR)
+        os.environ.setdefault("R_DRIVERS_DIR", self.DRIVERS_DIR)
 
     def __init__(self, worker=None):
 
