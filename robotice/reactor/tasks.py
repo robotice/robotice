@@ -31,7 +31,7 @@ def commit_action(deprecated, actuator, model_data, real_data):
     try:
         command, results = mod.run(actuator, model_data, real_data)
     except Exception, ex:
-        raise ex
+        return ex
 
     LOG.info(command)
     LOG.info(results)
