@@ -3,10 +3,10 @@ import subprocess
 from celery.task import task
 
 from robotice.utils.functional import import_module
-
+from robotice.conf import settings
 
 @task(name='reactor.commit_action')
-def commit_action(settings, actuator, model_data, real_data):
+def commit_action(deprecated, actuator, model_data, real_data):
     """
     actuator = dict:{device:sispm}
 
@@ -15,6 +15,7 @@ def commit_action(settings, actuator, model_data, real_data):
     """
 
     LOG = commit_action.get_logger()
+    
     settings.worker = "reactor"
 
     mod = import_module(
