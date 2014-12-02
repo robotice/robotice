@@ -15,6 +15,10 @@ from robotice.reactor.tasks import commit_action
 
 NUMBER = r'(\d+(?:[.,]\d*)?)'
 
+NO_DATA_TO_COMPARE_FMT = """
+    for {system} {actuator} {plan} has not data
+"""
+
 @task(name='reasoner.process_real_data')
 def process_real_data(results, sensor):
 
@@ -164,16 +168,19 @@ def compare_data(config):
 
         plan_name = actuator["plan_name"]
         model_value, real_value = get_db_values(config, system, plan_name)
+        recurence_db_key = '.'.join([str(system), str(plan_name), 'recurrence'])
         logger.info("key: {0} model_value: {1} | real_value: {2}".format(
             ('%s.%s.%s' % (system, 'sensors', plan_name)), model_value, real_value))
         if real_value == None or model_value == None:
             logger.info('NO REAL DATA to COMPARE')
+            config.db.incr(recurence_db_key)
             missing_data += 1
             continue
         actuator_device = config.get_actuator_device(actuator)
         logger.info(actuator_device)
         actuator.update(actuator_device)
         logger.info(actuator)
+
 
         if isinstance(model_value, int):
 
@@ -185,6 +192,10 @@ def compare_data(config):
                           config, actuator, model_value, real_value))
                 results.append('actuator: {0} model_value: {1} real_value: {2}'.format(
                     actuator.get("name"), model_value, real_value))
+                config.db.incr(recurence_db_key)
+                # increment recurrence
+            else:
+                config.db.set(recurence_db_key, 0)
         else:
 
             logger.info("parsed real values : %s < %s and %s < %s" %
