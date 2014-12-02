@@ -14,7 +14,7 @@ from utils.functional import import_module
 
 logger = get_task_logger(__name__)
 
-@task(name='monitor.get_real_data')
+@task(name='monitor.get_real_data', time_limit=60)
 def get_real_data(config):
 
     tasks = []
