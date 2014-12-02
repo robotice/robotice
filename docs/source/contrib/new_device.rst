@@ -93,3 +93,42 @@ Sispm as actuator
 	  output = subprocess.check_output(command);
 
 	  return command, output
+
+Long running tasks
+========
+
+Why ? Sensor: I want average not actual value from one second.
+Why ? Actuator: I want continuously blink with my diod.
+
+Sensor
+--------
+
+Simple example of long running sensor with return average
+
+.. code-block:: python
+
+	from time import sleep
+	import random
+
+	def get_average(sensor):
+	    average = 0
+	    values = []
+
+	    while len(values) <= 60:
+	        values.append(random.randint(0,100))
+	        sleep(1)
+
+	    return reduce(lambda x, y: x + y, values) / len(values)
+
+	def get_data(sensor):
+
+	    output = get_average(sensor)
+
+	    data = []
+
+	    metric_format = "{0}.ave_{1}"
+
+	    data.append(
+	        (metric_format.format(sensor.get('name'), sensor.get("type").lower()), output,))
+
+	    return data
