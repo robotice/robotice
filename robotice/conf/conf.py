@@ -6,13 +6,13 @@ import statsd
 import redis
 import socket
 import pickle
-
 from yaml import load, dump, safe_dump
 
 from kombu.utils import symbol_by_name
 
 LOG = logging.getLogger(__name__)
 
+from robotice.utils import deprecated
 from robotice.utils import PickledRedis
 from robotice.utils import norecursion
 from robotice.utils import dict_merge
@@ -89,6 +89,8 @@ class Settings(object):
         """main method which init all settings for specific role
         """
 
+        self.setup_sys_vars() # inicialize system variables
+
         if not isinstance(worker, basestring):
             raise Exception("Only string is allowed for worker.")
 
@@ -104,8 +106,6 @@ class Settings(object):
             self.load_conf("plans")
 
             self.load_conf("systems")
-
-        self.setup_sys_vars() # inicialize system variables
 
     def setup_sys_vars(self):
 
@@ -225,7 +225,9 @@ class Settings(object):
             attr)
 
         return True
-
+    
+    @deprecated(deprecation=0.2, removal=1.0,
+                alternative='robotice.conf.db')
     def dump_to_file_and_set(self, path, items, name):
         """helper
         TODO: move into utils
@@ -697,11 +699,9 @@ class Settings(object):
         return self.config.get('broker')
 
     @property
-    def database(self):
-        """database connection
-        now is supported only redis
+    def db(self):
+        """only alias for db
         """
-
         try:
             self.db_backend_cls = symbol_by_name(BACKEND_ALIASES[self.db_backend_name])
         except Exception, e:
@@ -715,6 +715,17 @@ class Settings(object):
         LOG.debug("Inicialized database connection %s " % _client)
 
         return _client
+
+    @property
+    def database(self):
+        """database connection
+        now is supported only redis
+
+        TODO: database is too long, mark this as deprecated
+        """
+        
+        return self.db
+
 
     @property
     def metering(self):
