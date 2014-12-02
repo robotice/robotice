@@ -2,10 +2,17 @@
 Add support for new device
 =================
 
+Every device in Robotice must has own python module in $R_DRIVERS_DIR.
+
+* sispm/__init__.py (for python 3 > is not required)
+* sispm/sensosr.py
+* sispm/actuator.py
+* sispm/driver.py (optional standardized CLI for low level access is a suitable for debug or encapsulation the same code for sensor and actuator)
+
 Sensor
 =========
 
-For every sensor which was found in `devices.yml` Robotice looking for python module in `monitor/sensors/<sensor_type>.py`. Each module has method **get_data** with one argument *dict* sensor
+For every sensor which was found in `devices.yml` Robotice looking for python module in the $R_DRIVERS_DIR/<sensor_name> for example `$R_DRIVERS_DIR/sispm/sensor.py`. Sensor module must has method **get_data** with one argument *dict* sensor
 
 .. code-block:: python
 
