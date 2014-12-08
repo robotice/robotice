@@ -6,7 +6,7 @@ from robotice.utils.functional import import_module
 from robotice.conf import settings
 
 @task(name='reactor.commit_action')
-def commit_action(actuator, model_data, real_data, settings=None):
+def commit_action(actuator, model_data, real_data=None, settings=None):
     """
     actuator = dict:{device:sispm}
 
