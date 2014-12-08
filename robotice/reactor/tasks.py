@@ -6,7 +6,7 @@ from robotice.utils.functional import import_module
 from robotice.conf import settings
 
 @task(name='reactor.commit_action')
-def commit_action(deprecated, actuator, model_data, real_data):
+def commit_action(actuator, model_data, real_data, settings=None):
     """
     actuator = dict:{device:sispm}
 
@@ -15,8 +15,8 @@ def commit_action(deprecated, actuator, model_data, real_data):
     """
 
     LOG = commit_action.get_logger()
-    
-    settings.worker = "reactor"
+
+    settings.setup_app("reactor")
 
     mod = import_module(
         actuator.get("device"),
@@ -31,7 +31,7 @@ def commit_action(deprecated, actuator, model_data, real_data):
     try:
         command, results = mod.run(actuator, model_data, real_data)
     except Exception, ex:
-        return ex
+        raise ex
 
     LOG.info(command)
     LOG.info(results)
