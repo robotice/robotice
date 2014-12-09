@@ -15,7 +15,7 @@ sys.path.append("../")
 
 from robotice.conf import RoboticeSettings
 from robotice.utils.output import output
-from robotice import ROBOTICE_BANER
+from robotice import ROBOTICE_BANNER
 from prettytable import PrettyTable
 import json
 
@@ -54,7 +54,7 @@ CONF.register_cli_opts(common_opts)
 
 CONF.__call__(
     project="Robotice",
-    prog=' Ractor',
+    prog=ROBOTICE_BANNER,
     version=__version__)
 
 CONF(sys.argv[1:])
@@ -67,7 +67,7 @@ python robotice-reactor.py -t 'reactor.commit_action' -k '{"os_family":"Arch","s
 
 """
 
-from worker_reactor import celery as reactor
+from robotice.worker_reactor import celery as reactor
 
 # Positional args.
 args = CONF.get('args') or ()

@@ -16,10 +16,10 @@ except ImportError:
 __all__ = [
     "RoboticeSettings",
     "Grains",
+    "ROBOTICE_BANNER",
 ]
 
-#
-ROBOTICE_BANER="""
+ROBOTICE_BANNER="""
  ______       _                _             
 (_____ \     | |           _  (_)            
  _____) )___ | |__   ___ _| |_ _  ____ _____ 
