@@ -1,5 +1,5 @@
 __title__ = 'Robotice'
-__release__ = '0.0.1a'
+__release__ = '54'
 __version__ = '0.1'
 __author__ = 'Ales Komarek & Michael Kuty'
 __license__ = 'Apache 2.0'
@@ -17,3 +17,13 @@ __all__ = [
     "RoboticeSettings",
     "Grains",
 ]
+
+#
+ROBOTICE_BANER="""
+ ______       _                _             
+(_____ \     | |           _  (_)            
+ _____) )___ | |__   ___ _| |_ _  ____ _____ 
+|  __  // _ \|  _ \ / _ (_   _) |/ ___) ___ |
+| |  \ \ |_| | |_) ) |_| || |_| ( (___| ____|
+|_|   |_\___/|____/ \___/  \__)_|\____)_____)    {0}
+""".format(".".join([__version__, __release__]))
