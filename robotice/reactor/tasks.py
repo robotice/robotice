@@ -16,15 +16,19 @@ def commit_action(actuator, model_data, real_data=None, settings=None):
 
     LOG = commit_action.get_logger()
 
-    settings.setup_app("reactor")
 
     mod = import_module(
         actuator.get("device"),
         "actuator",
         method="run")
 
-    actuator['architecture'] = settings.config["cpu_arch"]
-    actuator['os_family'] = settings.config["os_family"]
+    try:
+        settings.setup_app("reactor")
+        actuator['architecture'] = settings.config["cpu_arch"]
+        actuator['os_family'] = settings.config["os_family"]        
+    except Exception, e:
+        # must be prived from actuator["os_family"]
+        pass
 
     LOG.debug([actuator, model_data, real_data])
 
