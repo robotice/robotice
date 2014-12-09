@@ -6,9 +6,16 @@ Simple CLI for easy debuging.
 """
 
 import argparse
+import sys
+
+sys.path.append("../")
 
 from robotice.conf import RoboticeSettings
 from robotice.utils.output import output
+
+from robotice import ROBOTICE_BANER
+
+from prettytable import PrettyTable  
 
 def inspect_config(role, pretty_print=True):
     """print all loaded configuration
@@ -53,40 +60,31 @@ def nodeinfo(node):
 def status():
     """return status for all services
 
-    """
 
-    print """
-        Monitor      ........   :-)
-        Planner      ........   :-)
-        Reasoner     ........   :-)
-        Reactor      ........   :-)
     """
+    x = PrettyTable()
+    x.add_column("Role",["Monitor","Reasoner","Planner","Reactor","Control"])
+    x.add_column("Status",["OK","OK","OK","OK","OK"])
+
+    #x.get_string(fields=["Role", "Status"])
+
+    print x.get_string() 
 
     try:
         conf = RoboticeSettings("reasoner")
+        x = PrettyTable()
+        x.add_column("Stat",["Sensors","Actuators","Systems","Plans"])
+        x.add_column("Count",[len(conf.sensors), len(conf.actuators),
+            len(conf.systems), len(conf.plans)])
         
-        print """
-            Sensors      ........   %s
-            Actuators    ........   %s
-            Systems      ........   %s
-            Plans        ........   %s
-        """ % (len(conf.sensors), len(conf.actuators),
-            len(conf.systems), len(conf.plans)
-            )
+        print x.get_string()
     except Exception, e:
         pass
 
 
 parser = argparse.ArgumentParser(
     formatter_class=argparse.RawDescriptionHelpFormatter,
-    description="""
-     ______       _                _             
-    (_____ \     | |           _  (_)            
-     _____) )___ | |__   ___ _| |_ _  ____ _____ 
-    |  __  // _ \|  _ \ / _ (_   _) |/ ___) ___ |
-    | |  \ \ |_| | |_) ) |_| || |_| ( (___| ____|
-    |_|   |_\___/|____/ \___/  \__)_|\____)_____)   0.0.1
-    """)
+    description=ROBOTICE_BANER)
 parser.add_argument("-c", "--conf",
                     help="default: /srv/robotice/conf", default="/srv/robotice/conf")
 parser.add_argument("-w", "--workerconf",

@@ -17,19 +17,21 @@ config = RoboticeSettings('reasoner')
 
 BROKER_URL = config.broker
 
-if "rabbitmq" in config.broker:
 
+if "amqp" in config.broker:
     CELERY_RESULT_BACKEND = "amqp"
 
     default_exchange = Exchange('default', type='fanout')
     monitor_exchange = Exchange('monitor', type='fanout')
     reactor_exchange = Exchange('reactor', type='fanout')
     planner_exchange = Exchange('planner', type='fanout')
+    control_exchange = Exchange('control', type='fanout')
 
     CELERY_QUEUES = (
         Queue('default', default_exchange, routing_key='default'),
         Queue('monitor', monitor_exchange, routing_key='monitor.#'),
         Queue('planner', planner_exchange, routing_key='planner.#'),
+        Queue('control', control_exchange, routing_key='control.#'),
     )
 
 elif "redis" in config.broker:
@@ -46,7 +48,7 @@ elif "redis" in config.broker:
     }
 
 CELERY_IMPORTS = (
-    "reasoner.tasks", "monitor.tasks", "reactor.tasks", "planner.tasks")
+    "reasoner.tasks", "monitor.tasks", "reactor.tasks", "planner.tasks", "control.tasks")
 
 
 CELERY_ROUTES = {

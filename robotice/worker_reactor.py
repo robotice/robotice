@@ -13,7 +13,7 @@ config = setup_app('reactor')
 
 BROKER_URL = config.broker
 
-if "rabbitmq" in config.broker:
+if "amqp" in config.broker:
 
     default_exchange = Exchange('default', type='fanout')
     monitor_exchange = Exchange('monitor', type='fanout')
