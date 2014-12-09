@@ -189,7 +189,7 @@ def compare_data(config):
             if model_value != real_value:
                 logger.info('Registred commit_action for {0}'.format(actuator))
                 send_task('reactor.commit_action', args=(
-                          actuator, model_value, real_value), config)
+                          actuator, model_value, real_value, config))
                 results.append('actuator: {0} model_value: {1} real_value: {2}'.format(
                     actuator.get("name"), model_value, real_value))
                 config.db.incr(recurence_db_key)
