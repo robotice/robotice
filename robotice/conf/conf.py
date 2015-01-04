@@ -76,6 +76,12 @@ class Settings(object):
     CONF_DIR = os.getenv("R_CONFIG_DIR", "/srv/robotice/config")
     DRIVERS_DIR = "/srv/robotice/drivers"
 
+    # reasoner comparators
+    COMPARATOR_ALIASES = {
+        'simple': 'robotice.reasoner.comparators.base:BaseComparator',
+    #    'fuzzy': 'robotice.utils.extensions.comparators.fuzzy:FuzzyComparator',
+    }
+
     db_backend_name = "redis" # TODO propagation from config
 
     @property

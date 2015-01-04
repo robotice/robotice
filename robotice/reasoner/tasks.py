@@ -3,7 +3,7 @@ import re
 from time import time
 import decimal
 import pickle
-from datetime import datetime
+import datetime
 from celery.task import task
 from celery import group, chord
 from celery.execute import send_task
@@ -12,6 +12,8 @@ from celery.signals import celeryd_after_setup
 from robotice.conf import setup_app
 from robotice.utils.database import get_db_values
 from robotice.reactor.tasks import commit_action
+
+from kombu.utils import symbol_by_name
 
 NUMBER = r'(\d+(?:[.,]\d*)?)'
 
@@ -92,49 +94,6 @@ def process_real_data(results, sensor):
     return "total: %s : sent: %s" % (len(results), processed)
 
 
-def get_value_for_relay(config, actuator, model_values, real_value):
-    if (model_values[0] < real_value) and (real_value < model_values[1]):
-        """je v intervalu vse ok"""
-        return 0
-    if "hum" in actuator.get('plan'):
-        if "air" in actuator.get('plan'):
-            """zde je potreba odlisit pudni / vzduch kde sou hodnoty naopak"""
-            if (real_value < model_values[0]):
-                """je mensi jako dolni hranice neni potreba ochlazovat"""
-                return 0
-            elif (real_value > model_values[1]):
-                """je je vetsi jako horni hranice je potreba ochlazovat"""
-                return 1
-        elif "terra" in actuator.get('plan'):
-            """zde je potreba odlisit pudni / vzduch kde sou hodnoty naopak"""
-            if (real_value < model_values[0]):
-                """je mensi jako dolni hranice je potreba zalevat"""
-                return 1
-            elif (real_value > model_values[1]):
-                """je je vetsi jako horni hranice neni potreba zalevat"""
-                return 0
-    elif "temp" in actuator.get('plan'):
-        if (real_value < model_values[0]):
-            """je mensi jako dolni hranice neni potreba ochlazovat"""
-            return 0
-        elif (real_value > model_values[1]):
-            """je je vetsi jako horni hranice je potreba ochlazovat"""
-            return 1
-    return 0
-
-
-def get_value_for_actuator(config, actuator, model_values, real_value):
-    """v zavislosti na charakteru actuatoru a planu vrati hodnotu, pokud bude rele zapni vypni 0/1
-    pripadne float pro pwm atp
-    """
-    if "relay" in actuator.get("device"):
-        return get_value_for_relay(config, actuator, model_values, real_value)
-    else:
-        """PWM"""
-        return float(0.00)
-    return None
-
-
 @task(name='reasoner.compare_data')
 def compare_data(config):
     """
@@ -149,76 +108,24 @@ def compare_data(config):
 
     results = []
 
-    compared, commits, missing_data = 0, 0, 0
+    for alias, comparator_path in config.COMPARATOR_ALIASES.iteritems():
+        
+        # inicialize comparator
+        try:
+            comparator_cls = symbol_by_name(comparator_path)
+            comparator = comparator_cls(config)
+        except Exception, e:
+            logger.warning('Initialize comparator {0} was failed {1}'.format(comparator_path, e))
 
-    for actuator in config.actuators:
-        # system, plan_name = get_plan(
-        #    config, actuator.get('name'), actuator.get("metric"))
-        # if not system:
-        #    continue
-        system = actuator.get('system_name').replace(".", "_")
-        """
-        key = ".".join([
-            actuator.get('system_plan'),
-            'sensors',
-            actuator.get('plan'),
-            "name"
-            ])
-        """
+        # process compare
+        try:
+            compare_results = comparator.compare()
+            results.append(compare_results)
+            logger.info("Results {0} from {1} comparator".format(compare_results, alias))
+        except Exception, e:
+            logger.error('Process comparator({0}) compare was failed {1}'.format(comparator_path, e))
 
-        plan_name = actuator["plan_name"]
-        model_value, real_value = get_db_values(config, system, plan_name)
-        recurence_db_key = '.'.join([str(system), str(plan_name), 'recurrence'])
-        logger.info("key: {0} model_value: {1} | real_value: {2}".format(
-            ('%s.%s.%s' % (system, 'sensors', plan_name)), model_value, real_value))
-        if real_value == None or model_value == None:
-            logger.info('NO REAL DATA to COMPARE')
-            config.db.incr(recurence_db_key)
-            missing_data += 1
-            continue
-        actuator_device = config.get_actuator_device(actuator)
-        logger.info(actuator_device)
-        actuator.update(actuator_device)
-        logger.info(actuator)
-
-
-        if isinstance(model_value, int):
-
-            logger.info("actuator")
-
-            if model_value != real_value:
-                logger.info('Registred commit_action for {0}'.format(actuator))
-                send_task('reactor.commit_action', args=(
-                          actuator, model_value, real_value, config))
-                results.append('actuator: {0} model_value: {1} real_value: {2}'.format(
-                    actuator.get("name"), model_value, real_value))
-                config.db.incr(recurence_db_key)
-                # increment recurrence
-            else:
-                config.db.set(recurence_db_key, 0)
-        else:
-
-            logger.info("parsed real values : %s < %s and %s < %s" %
-                        (model_value[0], real_value, real_value, model_value[1]))
-            model_value_converted = get_value_for_actuator(
-                config, actuator, model_value, real_value)
-            logger.info(
-                'converted value for actuator {0}'.format(model_value_converted))
-
-            if (model_value[0] < real_value) \
-                and (real_value < model_value[1]):
-
-                model_value_converted = 0
-                results.append('OK - actuator: {0} hostname: {1}, plan: {2}'.format(
-                    actuator.get("name"), actuator.get("name"), plan_name))
-            else:
-
-                logger.info('Registred commit_action for {0}'.format(actuator))
-
-            send_task('reactor.commit_action', args=[
-                      actuator, str(model_value_converted), str(real_value), config])
-            results.append('actuator: {0} hostname: {1}, plan: {2}'.format(
-                actuator.get("name"), actuator.get("name"), plan_name))
+    logger.info('Compared completed in {0}s'.format(time() - now))
 
     return results
 
