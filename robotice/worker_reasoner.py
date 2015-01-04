@@ -48,7 +48,7 @@ elif "redis" in config.broker:
     }
 
 CELERY_IMPORTS = (
-    "reasoner.tasks", )
+    "reasoner.tasks", "monitor.tasks", "reactor.tasks", "planner.tasks")
 
 
 CELERY_ROUTES = {
