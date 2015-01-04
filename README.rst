@@ -3,27 +3,51 @@
 Robotice: Monitoring deamon
 ===========================
 
-Opensource monitoring, reasoning and acting framework.
+Opensource microframework for monitoring, reasoning and acting.
 
-Similar with Cylonjs or Artoo.
+Use cases ?
+-----------
+
+* automation for periodic tasks like a turn on heating every day in 7:00
+* planning through human readable yaml files like a hold temperature between 20° - 30° every day from 7AM to 8AM
+* continuous measuring, monitoring
+* reasoning (simple conditions or fuzzy in FCL format)
+* working well with SBC(single-board computes) like a BeagleBone black or Raspberry Pi
+
+Why ?
+-----
+
+Robotice is small and simple Python daemon based on the Celery project which has support for many result backends(AMQP, Redis, Mongo, ..) with many features for communication in real time.
+It's designed for distributed environments and every component would be installed on the another host or can be started as all-in-one solution without requisite to internet connection. Robotice is modular from core and support for all devices is through driver and configurable 
+
+Where ?
+-------
+
+In the House, garden, garage or anywhere else..
 
 `Documentation`_
-
-`Video Demonstration`_
 
 Usage
 -----
 
-App for distributed monitoring small devices like a BeagleBone black or Raspberry Pi.
+* Read documentation and install Robotice
+* make a plan
+* start robotice daemon
 
 Supported sensors:
------
+------------------
 
 * `DHT11`_ / `DHT2302`_
 * `TMP36`_
 * `Hygro soil`_
 * `relay_board`_
 * `Sispm`_
+
+Supported architectures:
+----------------
+
+* ARMv6, ARMv7
+* x86, x64
 
 Requirements
 -----
@@ -48,7 +72,7 @@ Show me in action
 Read more
 -----
 
-* http://www.celeryproject.org/
+* http://intro.robotice.org/
 
 Contribution
 -----
@@ -60,7 +84,7 @@ Contribution
 * Send a pull request
 
 .. _Website: http://www.robotice.cz
-.. _Documentation: robotice.readthedocs.org
+.. _Documentation: docs.robotice.org
 .. _Video Demonstration: TODO
 .. _Sispm: http://sispmctl.sourceforge.net/
 .. _Hygro soil: /docs/source/_static/imgs/hygro.JPG

@@ -16,7 +16,7 @@ BROKER_URL = config.broker
 
 if "amqp" in config.broker:
 
-    default_exchange = Exchange('default', type='fanout')
+    default_exchange = Exchange('default')
     monitor_exchange = Exchange('monitor', type='fanout')
     reactor_exchange = Exchange('reactor', type='fanout')
     planner_exchange = Exchange('planner', type='fanout')
