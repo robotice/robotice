@@ -115,15 +115,16 @@ def compare_data(config):
             comparator_cls = symbol_by_name(comparator_path)
             comparator = comparator_cls(config)
         except Exception, e:
-            logger.warning('Initialize comparator {0} was failed {1}'.format(comparator_path, e))
+            logger.warning('Initialize comparator {0} was failed {1}, next processing will be skipped.'.format(comparator_path, e))
 
-        # process compare
-        try:
-            compare_results = comparator.compare()
-            results.append(compare_results)
-            logger.info("Results {0} from {1} comparator".format(compare_results, alias))
-        except Exception, e:
-            logger.error('Process comparator({0}) compare was failed {1}'.format(comparator_path, e))
+        if comparator:
+            # process compare
+            try:
+                compare_results = comparator.compare()
+                results.append(compare_results)
+                logger.info("Results {0} from {1} comparator".format(compare_results, alias))
+            except Exception, e:
+                logger.error('Process comparator({0}) compare was failed {1}'.format(comparator_path, e))
 
     logger.info('Compared completed in {0}s'.format(time() - now))
 
