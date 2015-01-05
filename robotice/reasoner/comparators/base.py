@@ -96,7 +96,7 @@ class BaseComparator(object):
                     send_task('reactor.commit_action', args=(
                               actuator, model_value, real_value, self.config))
                     actions += 1
-                    results.append('actuator: {0} model_value: {1} real_value: {2}'.format(
+                    logger.info('actuator: {0} model_value: {1} real_value: {2}'.format(
                         actuator.get("name"), model_value, real_value))
                     self.config.db.incr(recurence_db_key)
                     # increment recurrence
@@ -124,7 +124,7 @@ class BaseComparator(object):
                 send_task('reactor.commit_action', args=[
                           actuator, str(model_value_converted), str(real_value), self.config])
                 actions += 1
-                results.append('actuator: {0} hostname: {1}, plan: {2}'.format(
+                logger.info('actuator: {0} hostname: {1}, plan: {2}'.format(
                     actuator.get("name"), actuator.get("name"), plan_name))
 
         return "Simple comparator emit {0} actions.".format(actions)
