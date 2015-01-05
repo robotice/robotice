@@ -1,6 +1,6 @@
 __title__ = 'Robotice'
 __release__ = '54'
-__version__ = '0.1'
+__version__ = '0.2'
 __author__ = 'Ales Komarek & Michael Kuty'
 __license__ = 'Apache 2.0'
 __copyright__ = ''
