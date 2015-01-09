@@ -1,0 +1,273 @@
+#!/usr/bin/env python
+#
+#    Licensed under the Apache License, Version 2.0 (the "License"); you may
+#    not use this file except in compliance with the License. You may obtain
+#    a copy of the License at
+#
+#         http://www.apache.org/licenses/LICENSE-2.0
+#
+#    Unless required by applicable law or agreed to in writing, software
+#    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+#    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+#    License for the specific language governing permissions and limitations
+#    under the License.
+
+"""
+Robotice CLI
+"""
+
+
+import os
+import six
+import sys
+
+import argparse
+
+# If ../robotice/__init__.py exists, add ../ to Python search path, so that
+# it will override what happens to be installed in /usr/(local/)lib/python...
+possible_topdir = os.path.normpath(os.path.join(os.path.abspath(sys.argv[0]),
+                                   os.pardir,
+                                   os.pardir))
+if os.path.exists(os.path.join(possible_topdir, 'robotice', '__init__.py')):
+    sys.path.insert(0, possible_topdir)
+
+import robotice
+from robotice.conf import config
+
+import logging
+
+LOG = logging.getLogger(__name__)
+
+def env(*args, **kwargs):
+    """Returns the first environment variable set.
+    If all are empty, defaults to '' or keyword arg `default`.
+    """
+    for arg in args:
+        value = os.environ.get(arg)
+        if value:
+            return value
+    return kwargs.get('default', '')
+
+class RoboticeShell(object):
+
+    def _append_global_identity_args(self, parser):
+
+        parser.add_argument('--os-cert',
+                            help=_('Path of certificate file to use in SSL '
+                            'connection. This file can optionally be '
+                            'prepended with the private key.'))
+
+    def get_subcommand_parser(self, version):
+        parser = self.get_base_parser()
+
+        self.subcommands = {}
+        subparsers = parser.add_subparsers(metavar='<subcommand>')
+        
+        #submodule = utils.import_versioned_module(version, 'shell')
+        #self._find_actions(subparsers, submodule)
+        self._find_actions(subparsers, self)
+        self._add_bash_completion_subparser(subparsers)
+
+        return parser
+
+    def get_base_parser(self):
+        parser = argparse.ArgumentParser(
+            prog='robotice',
+            description=__doc__.strip(),
+            epilog=('See "%(arg)s" for help on a specific command.') % {
+                'arg': 'robotice help COMMAND'
+            },
+            add_help=False,
+            formatter_class=HelpFormatter,
+        )
+
+        # Global arguments
+        parser.add_argument('-h', '--help',
+                            action='store_true',
+                            help=argparse.SUPPRESS)
+
+        parser.add_argument('--version',
+                            action='version',
+                            default=robotice.__version__,
+                            help=("Shows the client version and exits."))
+
+        parser.add_argument('-d', '--debug',
+                            default=bool(env('HEATCLIENT_DEBUG')),
+                            action='store_true',
+                            help=('Defaults to %(value)s.') % {
+                                'value': 'env[HEATCLIENT_DEBUG]'
+                            })
+
+        parser.add_argument('-v', '--verbose',
+                            default=False, action="store_true",
+                            help=("Print more verbose output."))
+        return parser
+
+    def main(self, argv):
+        # Parse args once to find version
+        parser = self.get_base_parser()
+        (options, args) = parser.parse_known_args(argv)
+        
+        #self._setup_logging(options.debug)
+        #self._setup_verbose(options.verbose)
+
+        # build available subcommands based on version
+        print options
+        api_version = options.version
+        subcommand_parser = self.get_subcommand_parser(api_version)
+        self.parser = subcommand_parser
+
+        # Handle top-level --help/-h before attempting to parse
+        # a command off the command line
+        if not args and options.help or not argv:
+            self.do_help(options)
+            return 0
+
+        # Parse args again and call whatever callback was selected
+        args = subcommand_parser.parse_args(argv)
+
+        # Short-circuit and deal with help command right away.
+        if args.func == self.do_help:
+            self.do_help(args)
+            return 0
+        elif args.func == self.do_bash_completion:
+            self.do_bash_completion(args)
+            return 0
+
+        if not args.os_username and not args.os_auth_token:
+            raise exc.CommandError(_("You must provide a username via"
+                                   " either --os-username or env[OS_USERNAME]"
+                                   " or a token via --os-auth-token or"
+                                   " env[OS_AUTH_TOKEN]"))
+
+        if not args.os_password and not args.os_auth_token:
+            raise exc.CommandError(_("You must provide a password via"
+                                   " either --os-password or env[OS_PASSWORD]"
+                                   " or a token via --os-auth-token or"
+                                   " env[OS_AUTH_TOKEN]"))
+
+        if args.os_no_client_auth:
+            if not args.heat_url:
+                raise exc.CommandError(_("If you specify --os-no-client-auth"
+                                       " you must also specify a Heat API URL"
+                                       " via either --heat-url or"
+                                       " env[HEAT_URL]"))
+        else:
+            # Tenant/project name or ID is needed to make keystoneclient
+            # retrieve a service catalog, it's not required if
+            # os_no_client_auth is specified, neither is the auth URL
+
+            if not (args.os_tenant_id or args.os_tenant_name or
+                    args.os_project_id or args.os_project_name):
+                raise exc.CommandError(_("You must provide a tenant id via"
+                                       " either --os-tenant-id or"
+                                       " env[OS_TENANT_ID] or a tenant name"
+                                       " via either --os-tenant-name or"
+                                       " env[OS_TENANT_NAME] or a project id"
+                                       " via either --os-project-id or"
+                                       " env[OS_PROJECT_ID] or a project"
+                                       " name via either --os-project-name or"
+                                       " env[OS_PROJECT_NAME]"))
+
+            if not args.os_auth_url:
+                raise exc.CommandError(_("You must provide an auth url via"
+                                       " either --os-auth-url or via"
+                                       " env[OS_AUTH_URL]"))
+
+        kwargs = {
+            'insecure': args.insecure,
+            'cacert': args.os_cacert,
+            'cert': args.os_cert,
+            'key': args.os_key,
+            'timeout': args.api_timeout
+        }
+
+        endpoint = args.heat_url
+        service_type = args.os_service_type or 'orchestration'
+        if args.os_no_client_auth:
+            # Do not use session since no_client_auth means using heat to
+            # to authenticate
+            kwargs = {
+                'username': args.os_username,
+                'password': args.os_password,
+                'auth_url': args.os_auth_url,
+                'token': args.os_auth_token,
+                'include_pass': args.include_password,
+                'insecure': args.insecure,
+                'timeout': args.api_timeout
+            }
+        else:
+            keystone_session = self._get_keystone_session(**kwargs)
+            project_id = args.os_project_id or args.os_tenant_id
+            project_name = args.os_project_name or args.os_tenant_name
+            kwargs = {
+                'username': args.os_username,
+                'user_id': args.os_user_id,
+                'user_domain_id': args.os_user_domain_id,
+                'user_domain_name': args.os_user_domain_name,
+                'password': args.os_password,
+                'auth_token': args.os_auth_token,
+                'project_id': project_id,
+                'project_name': project_name,
+                'project_domain_id': args.os_project_domain_id,
+                'project_domain_name': args.os_project_domain_name,
+            }
+            keystone_auth = self._get_keystone_auth(keystone_session,
+                                                    args.os_auth_url,
+                                                    **kwargs)
+            if not endpoint:
+                svc_type = service_type
+                region_name = args.os_region_name
+                endpoint = keystone_auth.get_endpoint(keystone_session,
+                                                      service_type=svc_type,
+                                                      region_name=region_name)
+
+            endpoint_type = args.os_endpoint_type or 'publicURL'
+            kwargs = {
+                'auth_url': args.os_auth_url,
+                'session': keystone_session,
+                'auth': keystone_auth,
+                'service_type': service_type,
+                'endpoint_type': endpoint_type,
+                'region_name': args.os_region_name,
+                'username': args.os_username,
+                'password': args.os_password,
+                'include_pass': args.include_password
+            }
+
+        client = heat_client.Client(api_version, endpoint, **kwargs)
+
+        profile = osprofiler_profiler and options.profile
+        if profile:
+            osprofiler_profiler.init(options.profile)
+
+        args.func(client, args)
+
+        if profile:
+            trace_id = osprofiler_profiler.get().get_base_id()
+            print(_("Trace ID: %s") % trace_id)
+            print(_("To display trace use next command:\n"
+                  "osprofiler trace show --html %s ") % trace_id)
+
+class HelpFormatter(argparse.HelpFormatter):
+    def start_section(self, heading):
+        # Title-case the headings
+        heading = '%s%s' % (heading[0].upper(), heading[1:])
+        super(HelpFormatter, self).start_section(heading)
+
+def main(args=None):
+    try:
+        if args is None:
+            args = sys.argv[1:]
+
+        RoboticeShell().main(args)
+    except KeyboardInterrupt:
+        print "... terminating heat client"
+        sys.exit(130)
+    except Exception as e:
+        if '--debug' in args or '-d' in args:
+            raise e
+        sys.exit(1)
+
+if __name__ == "__main__":
+    main()

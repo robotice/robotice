@@ -32,7 +32,7 @@ Usage
 
 * Read documentation and install Robotice
 * make a plan
-* start robotice daemon
+* bin/robotice
 
 Supported sensors:
 ------------------
