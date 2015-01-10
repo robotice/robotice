@@ -95,21 +95,18 @@ class RoboticeShell(object):
         parser.add_argument('--version',
                             action='version',
                             version=robotice.__version__,
-                            help=("Shows the client version and exits."))
+                            help=("Shows the Robotice version."))
 
         parser.add_argument('-d', '--debug',
-                            default=bool(utils.env('HEATCLIENT_DEBUG')),
+                            default=bool(utils.env('ROBOTICE_DEBUG')),
                             action='store_true',
                             help=('Defaults to %(value)s.') % {
-                                'value': 'env[HEATCLIENT_DEBUG]'
+                                'value': 'env[ROBOTICE_DEBUG]'
                             })
 
         parser.add_argument('-v', '--verbose',
                             default=False, action="store_true",
                             help=("Print more verbose output."))
-
-        parser.add_argument('--heat_api_version',
-                            help=argparse.SUPPRESS)
 
         return parser
 
@@ -124,7 +121,7 @@ class RoboticeShell(object):
         r_role = options.role or argv[0]
 
         try:
-            if r_role in ["monitor", "reactor", "reasoner", "planner"]:
+            if r_role in ["monitor", "reactor", "reasoner", "planner", "api"]:
                 mod = __import__("robotice.%s.shell" % r_role, globals(), locals(), "main")
             elif r_role == "run":
                 mod = __import__("robotice.shell", globals(), locals(), "main")
@@ -148,7 +145,7 @@ def main(args=None):
 
         RoboticeShell().main(args)
     except KeyboardInterrupt:
-        print "... terminating heat client"
+        print "... bye"
         sys.exit(130)
     except Exception as e:
         if '--debug' in args or '-d' in args:
