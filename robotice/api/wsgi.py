@@ -119,8 +119,7 @@ cfg.CONF.register_group(api_cw_group)
 cfg.CONF.register_opts(api_cw_opts,
                        group=api_cw_group)
 
-
-#cfg.CONF.import_opt('verbose', 'heat.openstack.common.log')
+cfg.CONF.import_opt('verbose', 'robotice.common.log')
 
 json_size_opt = cfg.IntOpt('max_json_body_size',
                            default=1048576,
@@ -761,7 +760,7 @@ class AppFactory(BasePasteFactory):
     dict as its two arguments.
     """
 
-    KEY = 'heat.app_factory'
+    KEY = 'robotice.app_factory'
 
     def __call__(self, global_conf, **local_conf):
         """The actual paste.app_factory protocol method."""

@@ -91,12 +91,12 @@ class RunDaemon(BaseApp):
             **kwargs):
 
         try:
-            w = __import__("robotice.worker_%s" % getattr(CONF, "worker", argv[2]) , globals(), locals(), "celery")
+            w = __import__("robotice.%s.app" % getattr(CONF, "worker", argv[2]) , globals(), locals(), "app")
         except Exception, e:
             LOG.error(e)
             raise e
 
-        app = w.celery
+        app = w.app
 
         maybe_drop_privileges(uid=uid, gid=gid)
         # Pools like eventlet/gevent needs to patch libs as early

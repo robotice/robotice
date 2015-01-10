@@ -75,7 +75,7 @@ class RoboticeShell(object):
     def get_base_parser(self):
         parser = argparse.ArgumentParser(
             prog='robotice',
-            description=__doc__.strip(),
+            description=robotice.ROBOTICE_BANNER,
             epilog=_('See "%(arg)s" for help on a specific command.') % {
                 'arg': 'robotice help COMMAND'
             },
@@ -127,10 +127,11 @@ class RoboticeShell(object):
                 mod = __import__("robotice.shell", globals(), locals(), "main")
             mod.main(argv=sys.argv)
         except Exception, e:
+            if '--debug' in argv or '-d' in argv:
+                raise e
             parser.print_help()
-            raise e
 
-class HelpFormatter(argparse.HelpFormatter):
+class HelpFormatter(argparse.RawDescriptionHelpFormatter):
 
     def start_section(self, heading):
         # Title-case the headings

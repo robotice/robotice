@@ -1,75 +1,30 @@
+from __future__ import absolute_import
 
 import os
-import six
 import sys
 
-import argparse
+from os.path import join, dirname, abspath, normpath
 
-# If ../robotice/__init__.py exists, add ../ to Python search path, so that
+path = normpath(join(abspath(dirname(__file__)), '..'))
+
+sys.path.append(join(path, 'lib', 'python2.7', 'site-packages'))
+
+# If ../../robotice/__init__.py exists, add ../ to Python search path, so that
 # it will override what happens to be installed in /usr/(local/)lib/python...
 possible_topdir = os.path.normpath(os.path.join(os.path.abspath(sys.argv[0]),
                                                 os.pardir,
                                                 os.pardir))
-
 if os.path.exists(os.path.join(possible_topdir, 'robotice', '__init__.py')):
     sys.path.insert(0, possible_topdir)
 
-import logging
-
-from kombu import Queue, Exchange
 from celery import Celery
 
-from robotice.conf import setup_app
-from robotice.conf.celery import *
+app = Celery('reactor')
 
-LOG = logging.getLogger(__name__)
+# Using a string here means the worker will not have to
+# pickle the object when using Windows.
+from robotice import worker_reactor
 
-config = setup_app('reactor')
+app.config_from_object(worker_reactor)
 
-BROKER_URL = config.broker
-
-if "amqp" in config.broker:
-
-    default_exchange = Exchange('default')
-    monitor_exchange = Exchange('monitor', type='fanout')
-    reactor_exchange = Exchange('reactor', type='fanout')
-    planner_exchange = Exchange('planner', type='fanout')
-    CELERY_RESULT_BACKEND = "amqp"
-    CELERY_QUEUES = (
-        Queue('default', default_exchange, routing_key='default'),
-        Queue('monitor', monitor_exchange, routing_key='monitor.#'),
-        Queue('planner', planner_exchange, routing_key='planner.#'),
-    )
-
-elif "redis" in config.broker:
-    CARROT_BACKEND = "redis"
-    CELERY_RESULT_BACKEND = BROKER_URL
-    #BROKER_TRANSPORT_OPTIONS = {
-    #    'visibility_timeout': 3600, 'fanout_prefix': True}
-    CELERY_QUEUES = {
-        "default": {"default": "default"},
-        "monitor": {"monitor": "monitor.#"},
-        "reactor": {"reactor": "reactor.#"},
-        "planner": {"planner": "planner.#"},
-    }
-
-CELERY_IMPORTS = (
-    "reactor.tasks",
-)
-
-CELERY_ROUTES = {
-    'monitor.get_real_data': {
-        'queue': 'monitor',
-    },
-    'planner.get_model_data': {
-        'queue': 'planner',
-    },
-    'reasoner.compare_data': {
-        'queue': 'reasoner',
-    },
-    'reactor.commit_action': {
-        'queue': 'reactor',
-    }
-}
-
-celery = Celery('robotice', broker=BROKER_URL)
+app.autodiscover_tasks('robotice.reactor')

@@ -52,7 +52,7 @@ CONF = cfg.CONF
 
 __version__ = "0.0.1"
 
-cfg.CONF.config_file = "/srv/robotice/conf/api.ini"
+cfg.CONF.config_file = "/srv/robotice/conf/api.conf"
 cfg.CONF.debug = True
 
 class BaseApp(object):
@@ -73,10 +73,10 @@ class BaseApp(object):
 class Serve(BaseApp):
 
     """Start server
-    api serve 0.0.0.0 8004
+    api run 0.0.0.0 8004
     """
 
-    name = 'serve'
+    name = 'run'
 
     @classmethod
     def add_argument_parser(cls, subparsers):

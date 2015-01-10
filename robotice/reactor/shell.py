@@ -43,7 +43,10 @@ from robotice import ROBOTICE_BANNER
 from prettytable import PrettyTable
 import json
 
-from robotice.worker_reactor import celery as reactor
+from robotice.reactor.app import app
+from robotice.utils import tasks
+
+from celery.events import Events
 
 LOG = logging.getLogger(__name__)
 
@@ -61,6 +64,8 @@ class BaseApp(object):
         parser = subparsers.add_parser(cls.name, help=cls.__doc__)
         parser.set_defaults(cmd_class=cls)
 
+        parser.add_argument('-d', default=True, nargs='?',
+                            help=('Debug.'))
         parser.add_argument('-a', '--args', default=(), nargs='?',
                             help=('Arguments for send task.'))
         parser.add_argument('-k', '--kwargs', default={},
@@ -91,12 +96,103 @@ class SendTask(BaseApp):
 
     @staticmethod
     def main():
-        result = reactor.send_task(
+        result = app.send_task(
             CONF.command.task, args=list(CONF.command.args), kwargs=CONF.command.kwargs, queue=CONF.command.queue, exhcange=CONF.command.exchange)
         LOG.error(result)
 
+
+class AppInspect(BaseApp):
+
+    """Inspect workers.
+    Example use:
+    robotice reactor inspect
+
+    ..code-block: bash
+
+        (robotice)root@control-single:/srv/robotice/service# ./bin/robotice reactor inspect
+        +-----------------------------------------------------+--------+
+        |                        Worker                       | Status |
+        +-----------------------------------------------------+--------+
+        | reactor@control-single.robotice.dev.mjk.robotice.cz |   ok   |
+        | planner@control-single.robotice.dev.mjk.robotice.cz |   ok   |
+        | monitor@control-single.robotice.dev.mjk.robotice.cz |   ok   |
+        +-----------------------------------------------------+--------+
+
+    """
+
+    name = 'inspect'
+
+    @classmethod
+    def add_argument_parser(cls, subparsers):
+        parser = super(AppInspect, cls).add_argument_parser(subparsers)
+        parser.add_argument('-destination', '--worker', default=None,
+                            help=('Ping only Scpecific Worker.'))
+        return parser
+
+    @staticmethod
+    def format_workers(workers):
+        x = PrettyTable(["Worker", "Status"])
+
+        for worker in workers:
+            x.add_row([worker.keys()[0], worker.values()[0].keys()[0]])
+
+        print x
+
+    @staticmethod
+    def main():
+
+        if CONF.command.worker:
+            nodes = app.control.ping(list(CONF.command.worker))
+            AppInspect.format_workers(nodes)
+            return
+
+        nodes = app.control.ping()
+        
+        AppInspect.format_workers(nodes)
+
+class TaskList(BaseApp):
+
+    name = 'list'
+
+    @classmethod
+    def add_argument_parser(cls, subparsers):
+        parser = super(TaskList, cls).add_argument_parser(subparsers)
+        parser.add_argument('-w', '--worker', default=None,
+                            help=('Ping only Scpecific Worker.'))
+        return parser
+
+
+    @staticmethod
+    def stdout(tasks):
+        x = PrettyTable(["ID", "Task"])
+
+        for task in tasks:
+            x.add_row([task[0], task[1]])
+
+        print x
+
+    @staticmethod
+    def main():
+
+        result = []
+
+        worker = None
+        state = None
+
+        state = Events(app)
+
+        for task_id, task in app.events.State().tasks_by_timestamp():
+            LOG.error("AHoj")
+            task = task.as_dict()
+            task.pop('worker')
+            result.append((task_id, task))
+
+        TaskList.stdout(result)
+
 CMDS = [
     SendTask,
+    AppInspect,
+    TaskList,
 ]
 
 
@@ -119,5 +215,5 @@ def main(argv=None, config_files=None):
          version=__version__,
          usage='%(prog)s [' + '|'.join([cmd.name for cmd in CMDS]) + ']',
          default_config_files=config_files)
-    LOG.error(CONF.command)
+
     CONF.command.cmd_class.main()
