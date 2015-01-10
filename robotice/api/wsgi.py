@@ -247,6 +247,8 @@ class Server(object):
         
         self.sock = get_socket(self.conf, default_port)
 
+        self.LOG = logging.getLogger('eventlet.wsgi.server')
+
         if self.conf.workers == 0:
             # Useful for profiling, test, debug etc.
             self.pool = eventlet.GreenPool(size=self.threads)
@@ -579,13 +581,6 @@ class Resource(object):
         action_args = self.get_action_args(request.environ)
         action = action_args.pop('action', None)
 
-        # From reading the boto code, and observation of real AWS api responses
-        # it seems that the AWS api ignores the content-type in the html header
-        # Instead it looks at a "ContentType" GET query parameter
-        # This doesn't seem to be documented in the AWS cfn API spec, but it
-        # would appear that the default response serialization is XML, as
-        # described in the API docs, but passing a query parameter of
-        # ContentType=JSON results in a JSON serialized response...
         content_type = request.params.get("ContentType")
 
         try:
