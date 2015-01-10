@@ -182,7 +182,6 @@ class TaskList(BaseApp):
         state = Events(app)
 
         for task_id, task in app.events.State().tasks_by_timestamp():
-            LOG.error("AHoj")
             task = task.as_dict()
             task.pop('worker')
             result.append((task_id, task))
