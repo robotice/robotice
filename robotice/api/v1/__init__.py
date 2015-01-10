@@ -12,10 +12,11 @@
 #    under the License.
 
 import routes
-
-from robotice.api.v1 import tasks
 from robotice.api import wsgi
 from robotice.common.i18n import _
+
+from robotice.api.v1 import tasks
+from robotice.api.v1 import workers
 
 
 class API(wsgi.Router):
@@ -56,6 +57,16 @@ class API(wsgi.Router):
             task_mapper.connect("task",
                                  "/result/{role}/{task_id}",
                                  action="task_result",
+                                 conditions={'method': 'GET'})
+
+        worker_resource = workers.create_resource(conf)
+        with mapper.submapper(controller=worker_resource,
+                              path_prefix="/worker") as worker_mapper:
+
+            # Tasks
+            worker_mapper.connect("worker",
+                                 "/list/{role}",
+                                 action="worker_list",
                                  conditions={'method': 'GET'})
 
         # Plans
