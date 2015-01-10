@@ -124,7 +124,10 @@ class RoboticeShell(object):
         r_role = options.role or argv[0]
 
         try:
-            mod = __import__("robotice.%s.shell" % r_role, globals(), locals(), "main")
+            if r_role in ["monitor", "reactor", "reasoner", "planner"]:
+                mod = __import__("robotice.%s.shell" % r_role, globals(), locals(), "main")
+            elif r_role == "run":
+                mod = __import__("robotice.shell", globals(), locals(), "main")
             mod.main(argv=sys.argv)
         except Exception, e:
             parser.print_help()
