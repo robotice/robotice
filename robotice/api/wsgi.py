@@ -48,6 +48,7 @@ from paste import deploy
 
 from robotice.common.i18n import _
 from robotice.common import exception
+from robotice.utils import serializers
 
 URL_LENGTH_LIMIT = 50000
 
@@ -545,6 +546,13 @@ class JSONRequestDeserializer(object):
         else:
             return {}
 
+class JSONResponseSerializer(serializers.JSONResponseSerializer):
+
+    """Handles serialization of specific controller method responses."""
+
+    def create(self, response, result):
+        response.body = self.to_json(result)
+        return response
 
 class Resource(object):
     """
@@ -563,7 +571,7 @@ class Resource(object):
     may raise a webob.exc exception or return a dict, which will be
     serialized by requested content type.
     """
-    def __init__(self, controller, deserializer, serializer=None):
+    def __init__(self, controller, deserializer=None, serializer=None):
         """
         :param controller: object that implement methods created by routes lib
         :param deserializer: object that supports webob request deserialization
@@ -572,8 +580,8 @@ class Resource(object):
                            through controller-like actions
         """
         self.controller = controller
-        self.deserializer = deserializer
-        self.serializer = serializer
+        self.deserializer = deserializer or JSONRequestDeserializer()
+        self.serializer = serializer or JSONResponseSerializer()
 
     @webob.dec.wsgify(RequestClass=Request)
     def __call__(self, request):

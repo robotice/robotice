@@ -24,6 +24,7 @@ from webob import exc
 from robotice.utils import serializers
 from robotice.utils import tasks
 from robotice.api import wsgi
+from robotice.api.v1.base import BaseController
 
 from robotice.common.i18n import _
 
@@ -35,7 +36,7 @@ from celery.backends.base import DisabledBackend
 LOG = logging.getLogger(__name__)
 
 
-class TaskController(object):
+class TaskController(BaseController):
 
     """
 Execute a task by name (doesn't require task sources)
@@ -74,86 +75,10 @@ Execute a task by name (doesn't require task sources)
 
     def default(self, req, **args):
         raise exc.HTTPNotFound()
-    """
-    def _index(self, req):
-        filter_whitelist = {
-            'status': 'mixed',
-            'name': 'mixed',
-            'action': 'mixed',
-            'tenant': 'mixed',
-            'username': 'mixed',
-            'owner_id': 'mixed',
-        }
-        whitelist = {
-            'limit': 'single',
-            'marker': 'single',
-            'sort_dir': 'single',
-            'sort_keys': 'multi',
-            'show_deleted': 'single',
-            'show_nested': 'single',
-        }
-        params = req.params
-        filter_params = req.params
-
-        show_deleted = False
-        if rpc_api.PARAM_SHOW_DELETED in params:
-            params[rpc_api.PARAM_SHOW_DELETED] = param_utils.extract_bool(
-                params[rpc_api.PARAM_SHOW_DELETED])
-            show_deleted = params[rpc_api.PARAM_SHOW_DELETED]
-        show_nested = False
-        if rpc_api.PARAM_SHOW_NESTED in params:
-            params[rpc_api.PARAM_SHOW_NESTED] = param_utils.extract_bool(
-                params[rpc_api.PARAM_SHOW_NESTED])
-            show_nested = params[rpc_api.PARAM_SHOW_NESTED]
-        # get the with_count value, if invalid, raise ValueError
-        with_count = False
-        if req.params.get('with_count'):
-            with_count = param_utils.extract_bool(
-                req.params.get('with_count'))
-
-        if not filter_params:
-            filter_params = None
-
-        stacks = self.rpc_client.list_stacks(req.context,
-                                             filters=filter_params,
-                                             tenant_safe=tenant_safe,
-                                             **params)
-
-        args, kwargs, options = self.get_task_args()
-        LOG.debug("Invoking task '%s' with '%s' and '%s'",
-                  taskname, args, kwargs)
-        result = app.send_task(
-            taskname, args=args, kwargs=kwargs, **options)
-        response = {'task-id': result.task_id}
-
-        if self.backend_configured(result):
-            response.update(state=result.state)
-
-        return self.response(response)
-    """
-
-    @staticmethod
-    def backend_configured(result):
-        return not isinstance(result.backend, DisabledBackend)
-
-    def worker(self, name):
-        app = Celery(name)
-
-        conf = __import__("robotice.worker_%s" % name)
-
-        from robotice import worker_reactor
-
-        app.config_from_object(worker_reactor)
-
-        app.autodiscover_tasks('robotice.%s' % name)
-
-        LOG.error(app.tasks)
-
-        return app
 
     def task_list(self, req, role, worker=None, type=None, limit=None, state=None):
         """
-        Returns a list of valid resource types that may be used in a template.
+        Returns a list of celery tasks.
         """
 
         limit = limit and int(limit)
@@ -161,7 +86,7 @@ Execute a task by name (doesn't require task sources)
         type = type if type != 'All' else None
         state = state if state != 'All' else None
 
-        app = self.worker(role)
+        app = self.app(role)
 
         events = app.events.State()
 
@@ -174,22 +99,6 @@ Execute a task by name (doesn't require task sources)
             result.append((task_id, task))
 
         return result
-
-    def _get_task_args(self, body):
-        """helper which return task args, kwargs and options
-        """
-
-        try:
-            options = body
-        except Exception, e:
-            raise exc.HTTPBadRequest(str(e))
-        args = options.pop('args', [])
-        kwargs = options.pop('kwargs', {})
-
-        if not isinstance(args, (list, tuple)):
-            raise exc.HTTPBadRequest('args must be an array')
-
-        return args, kwargs, options
 
     def send_task(self, req, role=None, taskname=None, body={}):
         """Execute a task by name (doesn't require task sources)
@@ -222,7 +131,7 @@ Execute a task by name (doesn't require task sources)
         :statuscode 404: unknown task
         """
 
-        app = self.worker(role)
+        app = self.app(role)
 
         args, kwargs, options = self._get_task_args(body)
         LOG.debug("Invoking task '%s' with '%s' and '%s'",
@@ -235,33 +144,30 @@ Execute a task by name (doesn't require task sources)
         if self.backend_configured(result):
             response.update(state=result.state)
 
-        if self.backend_configured(result):
-            response.update(state=result.state)
-
         return response
 
     def task_result(self, req, role, task_id):
         """
-Get a task result
-**Example request**:
-.. sourcecode:: http
-  GET /task/result/rector/c60be250-fe52-48df-befb-ac66174076e6 HTTP/1.1
-  Host: localhost:5555
-**Example response**:
-.. sourcecode:: http
-  HTTP/1.1 200 OK
-  Content-Length: 84
-  Content-Type: application/json; charset=UTF-8
-  {
-      "result": 3,
-      "state": "SUCCESS",
-      "task-id": "c60be250-fe52-48df-befb-ac66174076e6"
-  }
-:reqheader Authorization: optional OAuth token to authenticate
-:statuscode 200: no error
-:statuscode 401: unauthorized request
-:statuscode 503: result backend is not configured
-"""
+        Get a task result
+        **Example request**:
+        .. sourcecode:: http
+          GET /task/result/rector/c60be250-fe52-48df-befb-ac66174076e6 HTTP/1.1
+          Host: localhost:5555
+        **Example response**:
+        .. sourcecode:: http
+          HTTP/1.1 200 OK
+          Content-Length: 84
+          Content-Type: application/json; charset=UTF-8
+          {
+              "result": 3,
+              "state": "SUCCESS",
+              "task-id": "c60be250-fe52-48df-befb-ac66174076e6"
+          }
+        :reqheader Authorization: optional OAuth token to authenticate
+        :statuscode 200: no error
+        :statuscode 401: unauthorized request
+        :statuscode 503: result backend is not configured
+        """
         result = AsyncResult(task_id)
 
         if not self.backend_configured(result):
@@ -270,16 +176,16 @@ Get a task result
         response = {'task-id': task_id, 'state': result.state}
         if result.ready():
             if result.state == states.FAILURE:
-                response.update({'result': self.safe_result(result.result),
+                response.update({'result': result.result,
                                  'traceback': result.traceback})
             else:
-                response.update({'result': self.safe_result(result.result)})
+                response.update({'result': result.result})
 
         return response
 
     def task_types(self, req, role):
 
-        seen_task_types = self.worker(role).events.state.task_types()
+        seen_task_types = self.app(role).events.state.task_types()
 
         response = {}
         response['task-types'] = seen_task_types
@@ -288,52 +194,52 @@ Get a task result
 
     def task_info(self, req, role, task_id):
         """
-Get a task info
-**Example request**:
-.. sourcecode:: http
-  GET /task/info/reactor/91396550-c228-4111-9da4-9d88cfd5ddc6 HTTP/1.1
-  Accept: */*
-  Accept-Encoding: gzip, deflate, compress
-  Host: localhost:5555
-**Example response**:
-.. sourcecode:: http
-  HTTP/1.1 200 OK
-  Content-Length: 575
-  Content-Type: application/json; charset=UTF-8
-  {
-      "args": "[2, 2]",
-      "client": null,
-      "clock": 25,
-      "eta": null,
-      "exception": null,
-      "exchange": null,
-      "expires": null,
-      "failed": null,
-      "kwargs": "{}",
-      "name": "tasks.add",
-      "received": 1400806241.970742,
-      "result": "'4'",
-      "retried": null,
-      "retries": null,
-      "revoked": null,
-      "routing_key": null,
-      "runtime": 2.0037889280356467,
-      "sent": null,
-      "started": 1400806241.972624,
-      "state": "SUCCESS",
-      "succeeded": 1400806243.975336,
-      "task-id": "91396550-c228-4111-9da4-9d88cfd5ddc6",
-      "timestamp": 1400806243.975336,
-      "traceback": null,
-      "worker": "celery@worker1"
-  }
-:reqheader Authorization: optional OAuth token to authenticate
-:statuscode 200: no error
-:statuscode 401: unauthorized request
-:statuscode 404: unknown task
+        Get a task info
+        **Example request**:
+        .. sourcecode:: http
+          GET /task/info/reactor/91396550-c228-4111-9da4-9d88cfd5ddc6 HTTP/1.1
+          Accept: */*
+          Accept-Encoding: gzip, deflate, compress
+          Host: localhost:5555
+        **Example response**:
+        .. sourcecode:: http
+          HTTP/1.1 200 OK
+          Content-Length: 575
+          Content-Type: application/json; charset=UTF-8
+          {
+              "args": "[2, 2]",
+              "client": null,
+              "clock": 25,
+              "eta": null,
+              "exception": null,
+              "exchange": null,
+              "expires": null,
+              "failed": null,
+              "kwargs": "{}",
+              "name": "tasks.add",
+              "received": 1400806241.970742,
+              "result": "'4'",
+              "retried": null,
+              "retries": null,
+              "revoked": null,
+              "routing_key": null,
+              "runtime": 2.0037889280356467,
+              "sent": null,
+              "started": 1400806241.972624,
+              "state": "SUCCESS",
+              "succeeded": 1400806243.975336,
+              "task-id": "91396550-c228-4111-9da4-9d88cfd5ddc6",
+              "timestamp": 1400806243.975336,
+              "traceback": null,
+              "worker": "celery@worker1"
+          }
+        :reqheader Authorization: optional OAuth token to authenticate
+        :statuscode 200: no error
+        :statuscode 401: unauthorized request
+        :statuscode 404: unknown task
         """
 
-        app = self.worker(role)
+        app = self.app(role)
         events = app.events.State()
 
         task = tasks.get_task_by_id(events, task_id)
@@ -347,30 +253,3 @@ Get a task info
         response['worker'] = task.worker.hostname
 
         return response
-
-
-class TaskSerializer(serializers.JSONResponseSerializer):
-
-    """Handles serialization of specific controller method responses."""
-
-    def _populate_response_header(self, response, location, status):
-        response.status = status
-        response.headers['Location'] = location.encode('utf-8')
-        response.headers['Content-Type'] = 'application/json'
-        return response
-
-    def create(self, response, result):
-        self._populate_response_header(response,
-                                       result['stack']['links'][0]['href'],
-                                       201)
-        response.body = self.to_json(result)
-        return response
-
-
-def create_resource(options):
-    """
-    Task resource factory method.
-    """
-    deserializer = wsgi.JSONRequestDeserializer()
-    serializer = TaskSerializer()
-    return wsgi.Resource(TaskController(options), deserializer, serializer)

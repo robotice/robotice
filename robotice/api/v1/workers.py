@@ -24,6 +24,7 @@ from webob import exc
 from robotice.utils import serializers
 from robotice.utils import tasks
 from robotice.api import wsgi
+from robotice.api.v1.base import BaseController
 
 from robotice.common.i18n import _
 
@@ -35,7 +36,7 @@ from celery.backends.base import DisabledBackend
 LOG = logging.getLogger(__name__)
 
 
-class WorkerController(object):
+class WorkerController(BaseController):
 
     """
 Execute a task by name (doesn't require task sources)
@@ -132,25 +133,6 @@ Execute a task by name (doesn't require task sources)
         return self.response(response)
     """
 
-    @staticmethod
-    def backend_configured(result):
-        return not isinstance(result.backend, DisabledBackend)
-
-    def worker(self, name):
-        app = Celery(name)
-
-        conf = __import__("robotice.worker_%s" % name)
-
-        from robotice import worker_reactor
-
-        app.config_from_object(worker_reactor)
-
-        app.autodiscover_tasks('robotice.%s' % name)
-
-        LOG.error(app.tasks)
-
-        return app
-
     def worker_list(self, req, role=None):
         """
 List workers
@@ -186,36 +168,9 @@ List workers
 :statuscode 401: unauthorized request
         """
 
-        app = self.worker(role)
+        app = self.app(role, default=True)
         events = app.events.State()
 
         response = app.control.inspect().stats()
 
         return response
-
-
-class WorkerSerializer(serializers.JSONResponseSerializer):
-
-    """Handles serialization of specific controller method responses."""
-
-    def _populate_response_header(self, response, location, status):
-        response.status = status
-        response.headers['Location'] = location.encode('utf-8')
-        response.headers['Content-Type'] = 'application/json'
-        return response
-
-    def create(self, response, result):
-        self._populate_response_header(response,
-                                       result['stack']['links'][0]['href'],
-                                       201)
-        response.body = self.to_json(result)
-        return response
-
-
-def create_resource(options):
-    """
-    Task resource factory method.
-    """
-    deserializer = wsgi.JSONRequestDeserializer()
-    serializer = WorkerSerializer()
-    return wsgi.Resource(WorkerController(options), deserializer, serializer)
