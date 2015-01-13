@@ -5,7 +5,7 @@ Actions
 
 If you have *actions* dierctory in your plans path actions will be accessable from you API
 
-..code-block:: bash
+.. code-block:: bash
 
     /srv/robotice/config/actions/my_actions.yml
     ...
@@ -15,7 +15,7 @@ If you have *actions* dierctory in your plans path actions will be accessable fr
 
 Now you can define your actions into my_actions.yml
 
-..code-block:: yaml
+.. code-block:: yaml
 
     1:
       name: 'Turn light 4 on in the kitchen'
@@ -48,11 +48,9 @@ Now you can define your actions into my_actions.yml
           value: 0
 
 
-ok i defined my actions but what now ?
+navigate your browser to localhost:8004/action/list and see result
 
-navigate your browser to localhost:8004/action/list and see it result
-
-..code-block:: bash
+.. code-block:: bash
 
     root@samsung:~# http 10.10.10.23:8004/action/list
     HTTP/1.1 200 OK
@@ -86,7 +84,7 @@ Why ?
 
 Now do your actions !
 
-..code-block:: bash
+.. code-block:: bash
 
     root@samsung:~# http POST 10.10.10.23:8004/action/do/1
     HTTP/1.1 200 OK
@@ -111,7 +109,7 @@ Now do your actions !
 
 For more examplanation what you can do, see code below:
 
-..code-block:: python
+.. code-block:: python
 
     options = action.options
     args = options.pop("args")
@@ -122,7 +120,7 @@ For more examplanation what you can do, see code below:
 
 For example:
 
-..code-block:: yaml
+.. code-block:: yaml
 
     command: 'reactor.commit_action'
     options:
@@ -136,8 +134,8 @@ For example:
           port: 0
         value: 0
 
-will be send this task:
+will send this task:
 
-..code-block:: python
+.. code-block:: python
 
     send_task("reactor.commi_action", args=[{"os_family":"Arch", "socket":4, "device":"sispm", "port":0},0], queue="reactor", exhcange="reactor")

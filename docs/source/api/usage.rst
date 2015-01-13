@@ -8,7 +8,7 @@ Run API
 
 In debug mode ans see privided configuration.
 
-..code-block:: bash
+.. code-block:: bash
 
     bin/robotice api run 0.0.0.0 8004 -d
 
@@ -24,11 +24,11 @@ Task Send
 
 POST /task/send/{role}/{task_name}
 
-..code-block:: bash
+.. code-block:: bash
 
     http POST 10.10.10.23:8004/task/send/reactor/reactor.commit_action queue=reactor args:='[{"os_family":"Arch","socket":4,"device":"sispm","port":0},0]'
 
-..code-block:: bash
+.. code-block:: bash
 
     HTTP/1.1 200 OK
     Content-Length: 71
@@ -43,20 +43,20 @@ POST /task/send/{role}/{task_name}
 Task Info
 ---------
 
-..code-block:: bash
+.. code-block:: bash
   
     GET /task/info/{role}/{task_id}
     
-..code-block:: bash
+.. code-block:: bash
     
     http POST 10.10.10.23:8004/task/info/reactor/4a78b96d-96d2-4b42-a468-3c6ebf19d475
 
 Task Result
 ---------
 
-..code-block:: bash
+.. code-block:: bash
     
     GET /task/result/{role}/{task_id}
 
-..code-block: bash
+.. code-block: bash
     http POST 10.10.10.23:8004/task/info/reactor/4a78b96d-96d2-4b42-a468-3c6ebf19d475
