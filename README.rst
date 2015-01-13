@@ -1,6 +1,6 @@
 |Build Status| |Coverage Status| |License badge|
 
-Robotice: Monitoring deamon
+Robotice Agent System
 ===========================
 
 Opensource microframework for monitoring, reasoning and acting.

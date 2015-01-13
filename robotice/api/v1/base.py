@@ -26,12 +26,12 @@ from robotice.utils import tasks
 from robotice.api import wsgi
 
 from robotice.common.i18n import _
+from robotice.common import importutils
 
 from celery import states
 from celery import Celery
 from celery.result import AsyncResult
 from celery.backends.base import DisabledBackend
-from oslo.utils import importutils
 
 LOG = logging.getLogger(__name__)
 
