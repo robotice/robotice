@@ -18,6 +18,8 @@ from robotice.utils import norecursion
 from robotice.utils import dict_merge
 from robotice.utils.celery import init_sentry
 
+from robotice.conf.managers import actions
+
 BACKEND_ALIASES = {
     'cache': 'robotice.utils.backends.cache:CacheBackend',
     'redis': 'robotice.utils.backends.redis:RedisBackend',
@@ -25,6 +27,8 @@ BACKEND_ALIASES = {
 }
 
 class Settings(object):
+
+    actions = actions
 
     """**Main object which contains all infromation about systems**
 

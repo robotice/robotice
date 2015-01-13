@@ -35,94 +35,7 @@ from celery.backends.base import DisabledBackend
 
 LOG = logging.getLogger(__name__)
 
-import glob
-from yaml import load, dump, safe_dump
-
-CONFIG_DIR = "/srv/robotice/config"
-ACTION_DIR = "actions"
-
-
-def load_actions():
-    """load and return all actions from local storage
-    """
-
-    path = "/".join([CONFIG_DIR, ACTION_DIR])
-
-    actions = []
-
-    for path in glob.glob("/".join([path, '*.yml'])):
-        try:
-            f = open(path, 'r')
-            raw_data = load(f)
-            for id, action in raw_data.iteritems():
-                action["id"] = id
-                actions.append(action)
-        except Exception, e:
-            raise e
-
-    return actions
-
-
-def get_action(action_id):
-    """return action if is founded
-    """
-
-    for action in load_actions():
-
-        if str(action["id"]) == str(action_id):
-            return action
-
-    return None
-
-def set_action(id, action):
-    """save action to disk
-
-    TODO: recursive dump with indentation
-
-    """
-
-    path = "/".join([CONFIG_DIR, ACTION_DIR])
-    paths = glob.glob("/".join([path, '*.yml']))
-
-    created = True
-
-    for path in paths:
-        try:
-            f = open(paths[0], 'r')
-            raw_data = load(f)
-            f.close()
-            for _id, _action in raw_data.iteritems():
-                if str(_id) == str(id):
-                    _old = _action
-                    try:
-                        action["options"] = load(action["options"])
-                    except Exception, e:
-                        raise e
-                    _old.update(action)
-                    raw_data[_id] = _old
-                    if not "id" in action:
-                        action["id"] = id
-
-                    with open(path, 'w') as yaml_file:
-                        safe_dump(raw_data, yaml_file, default_flow_style=False, allow_unicode=True)
-                        created = False
-        except Exception, e:
-            raise e
-
-    if created:
-
-        try:
-            f = open(paths[0], 'r')
-            raw_data = load(f)
-            f.close()
-            raw_data[id] = action
-
-            with open(paths[0], 'w') as yaml_file:
-                safe_dump(raw_data, yaml_file, default_flow_style=False)
-        except Exception, e:
-          raise e
-
-    return True
+from robotice.conf.managers import actions
 
 
 class ActionController(BaseController):
@@ -172,7 +85,7 @@ class ActionController(BaseController):
 
         """
 
-        result = load_actions()
+        result = actions.list()
 
         return result
 
@@ -206,7 +119,7 @@ class ActionController(BaseController):
 
         """
 
-        action = get_action(action_id)
+        action = actions.get(action_id)
 
         LOG.error(action)
 
@@ -252,7 +165,7 @@ class ActionController(BaseController):
 
         response = {"status": "ok"}
         try:
-            action = set_action(id, body)
+            action = actions.save(id, body)
         except Exception, e:
             raise e
             response = {"status": "fail", "exception": "error"}
@@ -281,7 +194,7 @@ class ActionController(BaseController):
         action = None
 
         try:
-            action = get_action(id)
+            action = actions.get(id)
         except Exception, e:
             pass
 
