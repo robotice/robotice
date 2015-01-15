@@ -158,9 +158,9 @@ class Settings(object):
             "actuators",
             str(actuator["plan"])])
 
-        plan = self.plans.get(key)     
-        if not plan:
-            LOG.debug("plan for %s not found" % actuator)
+        plan = self.plans.get(key)
+        LOG.debug(key)
+        LOG.debug(plan)
         return plan
 
     @property
@@ -182,7 +182,7 @@ class Settings(object):
                 if not plan:
                     LOG.error("missing plan for %s object: %s" % (uuid,actuator))
                     continue
-                actuator["plan"] = plan
+                actuator["plan_full"] = plan
                 actuator["plan_name"] = plan["name"]
                 actuators.append(actuator)
 
