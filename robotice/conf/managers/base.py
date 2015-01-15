@@ -29,7 +29,7 @@ LOG = logging.getLogger(__name__)
 
 # for supporting hostname in key like box03.prd.pub.robotice.org
 DELIMETER = ":"
-RELOAD = True  # if true config will be reloaded on every read data
+RELOAD = False  # if true config will be reloaded on every read data
 
 
 def p(self):

@@ -15,6 +15,6 @@ LOG = logging.getLogger(__name__)
 
 class SystemManager(BaseConfigManager):
 
-    config_path = "/srv/robotice/config/systems.yml"
+    config_path = "systems/*.yml"
 
 systems = SystemManager()
