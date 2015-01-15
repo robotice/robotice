@@ -66,8 +66,8 @@ def process_real_data(results, sensor):
             """
             
             if system != None:
-                db_key = '.'.join([
-                    str(system["name"]).replace(".", "_"),
+                db_key = ':'.join([
+                    str(system["name"]),
                     str(plan["name"]),
                     'real'])
                     

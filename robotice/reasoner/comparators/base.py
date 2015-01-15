@@ -69,14 +69,15 @@ class BaseComparator(object):
 
         for actuator in self.config.actuators:
 
-            system = actuator.get('system_name').replace(".", "_")
+            system = actuator.get('system_name')
             plan_name = actuator["plan_name"]
 
             model_value, real_value = self.get_values(actuator)
 
-            recurence_db_key = '.'.join([str(system), str(plan_name), 'recurrence'])
+            recurence_db_key = ':'.join([str(system), str(plan_name), 'recurrence'])
+
             logger.info("key: {0} model_value: {1} | real_value: {2}".format(
-                ('%s.%s.%s' % (system, 'sensors', plan_name)), model_value, real_value))
+                ('%s:%s:%s' % (system, 'sensors', plan_name)), model_value, real_value))
             if real_value == None or model_value == None:
                 logger.info('NO REAL DATA to COMPARE')
                 self.config.db.incr(recurence_db_key)
@@ -98,8 +99,8 @@ class BaseComparator(object):
                     actions += 1
                     logger.info('actuator: {0} model_value: {1} real_value: {2}'.format(
                         actuator.get("name"), model_value, real_value))
-                    self.config.db.incr(recurence_db_key)
                     # increment recurrence
+                    self.config.db.incr(recurence_db_key)
                 else:
                     self.config.db.set(recurence_db_key, 0)
             else:
@@ -115,7 +116,7 @@ class BaseComparator(object):
                     and (real_value < model_value[1]):
 
                     model_value_converted = 0
-                    results.append('OK - actuator: {0} hostname: {1}, plan: {2}'.format(
+                    logger.info('OK - actuator: {0} hostname: {1}, plan: {2}'.format(
                         actuator.get("name"), actuator.get("name"), plan_name))
                 else:
 
@@ -131,19 +132,7 @@ class BaseComparator(object):
 
     def get_values(self, actuator):
 
-        # system, plan_name = get_plan(
-        #    config, actuator.get('name'), actuator.get("metric"))
-        # if not system:
-        #    continue
-        system = actuator.get('system_name').replace(".", "_")
-        """
-        key = ".".join([
-            actuator.get('system_plan'),
-            'sensors',
-            actuator.get('plan'),
-            "name"
-            ])
-        """
+        system = actuator.get('system_name')
 
         plan_name = actuator["plan_name"]
         return get_db_values(self.config, system, plan_name)

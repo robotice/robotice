@@ -196,7 +196,7 @@ class Settings(object):
                 actuator["plan_name"] = plan["name"]
                 actuators.append(actuator)
 
-        LOG.info(actuators)
+        LOG.debug(actuators)
 
         return actuators
 
