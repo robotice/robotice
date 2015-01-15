@@ -27,14 +27,17 @@ import glob
 
 LOG = logging.getLogger(__name__)
 
-DELIMETER = ":" # for supporting hostname in key like box03.prd.pub.robotice.org
-RELOAD = True # if true config will be reloaded on every read data
+# for supporting hostname in key like box03.prd.pub.robotice.org
+DELIMETER = ":"
+RELOAD = True  # if true config will be reloaded on every read data
+
 
 def p(self):
     """recall pprint
     """
     data = self.convert_to(self)
     return pyaml.pprint(data)
+
 
 class ManagerInterface(object):
 
@@ -52,13 +55,14 @@ class ManagerInterface(object):
 
 
 class BaseConfigManager(ManagerInterface):
+
     """ base config manager
 
     common operations for config files
 
     :param:config_path or as own property
     """
-    
+
     def __init__(self, path=None, *args, **kwargs):
         self.load(path)
         super(BaseConfigManager, self).__init__(*args, **kwargs)
@@ -119,11 +123,12 @@ class BaseConfigManager(ManagerInterface):
                 pyaml.dump(data.convert_to(data), f)
             else:
                 pyaml.dump(data, f)
-    
+
     def load(self, path=None):
         """return loaded data as MergeableDict
         """
-        self._data = anyconfig.load(path or self._config())
+        self._data = anyconfig.load(
+            path or self._config(), ignore_missing=True)
         return self._data
 
     def _config(self):
@@ -139,7 +144,7 @@ class BaseConfigManager(ManagerInterface):
         """only wrap returned object for common manipulate for example pprint method
         """
         if isinstance(obj, MergeableDict):
-            obj.p = types.MethodType( p, obj )
+            obj.p = types.MethodType(p, obj)
         return obj
 
 
