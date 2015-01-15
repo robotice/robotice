@@ -8,12 +8,15 @@ from celery import Celery
 from celery.execute import send_task
 from celery.schedules import crontab
 
-from conf import RoboticeSettings
+from robotice.conf import RoboticeSettings
 from conf.celery import *
 
 LOG = logging.getLogger(__name__)
 
-config = RoboticeSettings('reasoner')
+try:
+    config = RoboticeSettings('reasoner')
+except ImportError, e:
+    raise e
 
 BROKER_URL = config.broker
 
