@@ -26,5 +26,3 @@ app = Celery('reactor')
 from robotice import worker_reactor
 
 app.config_from_object(worker_reactor)
-
-app.autodiscover_tasks('robotice.reactor')

@@ -13,8 +13,8 @@ from robotice.conf.managers.base import BaseConfigManager
 LOG = logging.getLogger(__name__)
 
 
-class DeviceManager(BaseConfigManager):
+class SystemManager(BaseConfigManager):
 
-    config_path = "/srv/robotice/config/devices.yml"
+    config_path = "/srv/robotice/config/systems.yml"
 
-devices = DeviceManager()
+systems = SystemManager()

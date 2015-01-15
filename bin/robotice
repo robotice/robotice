@@ -85,8 +85,8 @@ class RoboticeShell(object):
 
         # Global arguments
 
-        parser.add_argument('-r', '--role',
-                            help=_("role [reactor,monitor, ..]"))
+        parser.add_argument('-r', '--action',
+                            help=_("action [reactor,monitor, ..]"))
 
         parser.add_argument('-h', '--help',
                             action='store_true',
@@ -118,10 +118,10 @@ class RoboticeShell(object):
         self._setup_verbose(options.verbose)
 
         # build available subcommands based on version
-        r_role = options.role or argv[0]
+        r_role = options.action or argv[0]
 
         try:
-            if r_role in ["monitor", "reactor", "reasoner", "planner", "api"]:
+            if r_role in ["monitor", "reactor", "reasoner", "planner", "api", "conf"]:
                 mod = __import__("robotice.%s.shell" % r_role, globals(), locals(), "main")
             elif r_role == "run":
                 mod = __import__("robotice.shell", globals(), locals(), "main")

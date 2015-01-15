@@ -29,6 +29,7 @@ def process_real_data(results, sensor):
     config = setup_app('reasoner')
 
     processed = 0
+    db_saved = 0
 
     for result in list(results):
 
@@ -78,6 +79,7 @@ def process_real_data(results, sensor):
                 
                 try:                   
                     redis_status = config.database.set(db_key, value)
+                    db_saved += 1
                 except Exception, er:
                     raise er
 
@@ -85,13 +87,13 @@ def process_real_data(results, sensor):
 
             else:
 
-                LOG.error("System for device %s and metric %s not found" % (result_name, result_metric))
+                LOG.error("System for device %s and metric %s not found and was skipped." % (result_name, result_metric))
 
         else:
 
-            LOG.error("Result from sensor module must be a instance of int, long, float, decimal.Decimal but found %s %s " % (type(value), value))
+            LOG.error("Result from sensor module must be a instance of int, long, float, decimal.Decimal but found %s %s and was ignored." % (type(value), value))
 
-    return "total: %s : sent: %s" % (len(results), processed)
+    return "total: %s : sent to graphite: %s saved to db: %s" % (len(results), processed, db_saved)
 
 
 @task(name='reasoner.compare_data')
@@ -137,7 +139,7 @@ def init_reactors(sender, instance, **kwargs):
     """
     config = setup_app('reasoner')
 
-    for name, host in config.devices.iteritems():
+    for name, host in config.devices.list().iteritems():
         for uuid, actuator in host.get('actuators').iteritems():
             if 'default' in actuator:
                 if actuator.get('default') == 'off':

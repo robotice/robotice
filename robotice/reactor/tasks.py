@@ -41,28 +41,3 @@ def commit_action(actuator, model_data, real_data=None, settings=None):
     LOG.info(results)
 
     return results
-
-@task(name='reactor.run')
-def run(time=60):
-    """
-    """
-
-    LOG = run.get_logger()
-
-    import time 
-
-    ticks = 0
-
-    test = "ticks += 1"
-
-    while ticks != time:
-
-
-        if not run.request.called_directly:
-            run.update_state(state='PROGRESS',
-                meta={'current': ticks, 'total': time})
-        
-        ticks += 1
-        time.sleep(1)
-    
-    return "Your toast is baked !"

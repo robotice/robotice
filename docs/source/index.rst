@@ -38,6 +38,7 @@ Robotice Support
 ===========
 
   :doc:`CLI <support/cli>`
+  :doc:`Simple manipulation through CLI <support/config>`
 
 Robotice API
 ===========
