@@ -32,13 +32,6 @@ DELIMETER = ":"
 RELOAD = False  # if true config will be reloaded on every read data
 
 
-def p(self):
-    """recall pprint
-    """
-    data = self.convert_to(self)
-    return pyaml.pprint(data)
-
-
 class ManagerInterface(object):
 
     def list(self, key):
@@ -93,7 +86,7 @@ class BaseConfigManager(ManagerInterface):
         if not obj:
             LOG.debug("key %s not found in %s" % (key, self.data))
             return default
-        return self.wrap(obj)
+        return obj
 
     def _set(self, key, val, dic=None, deliemeter=DELIMETER, dump=False):
         """def set_(dic, path, val, seps=P.PATH_SEPS, strategy=None):"""
@@ -139,14 +132,6 @@ class BaseConfigManager(ManagerInterface):
         if RELOAD:
             return self.load()
         return self._data
-
-    def wrap(self, obj):
-        """only wrap returned object for common manipulate for example pprint method
-        """
-        if isinstance(obj, MergeableDict):
-            obj.p = types.MethodType(p, obj)
-        return obj
-
 
 class BaseManager(object):
 

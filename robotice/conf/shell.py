@@ -42,7 +42,7 @@ from robotice.utils.output import output
 from robotice import ROBOTICE_BANNER
 from prettytable import PrettyTable
 import json
-
+import pyaml
 from robotice.reactor.app import app
 from robotice.utils import tasks
 
@@ -54,6 +54,10 @@ CONF = cfg.CONF
 
 __version__ = "0.0.1"
 
+
+def pp(data):
+
+    return pyaml.pprint(data.convert_to(data))
 
 class BaseApp(object):
 
@@ -90,7 +94,7 @@ class ItemList(BaseApp):
         config = setup_app("reasoner")
 
         manager = getattr(config, CONF.command.config)
-        manager.list().p()
+        pp(manager.list())
 
 
 class ItemGet(BaseApp):
@@ -111,7 +115,7 @@ class ItemGet(BaseApp):
         manager = getattr(config, CONF.command.config)
         data = manager.get(CONF.command.key)
         try:
-            data.p()
+            pp(data)
         except Exception, e:
             print data
 
