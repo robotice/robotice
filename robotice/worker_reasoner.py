@@ -13,10 +13,7 @@ from conf.celery import *
 
 LOG = logging.getLogger(__name__)
 
-try:
-    config = RoboticeSettings('reasoner')
-except ImportError, e:
-    raise e
+config = RoboticeSettings('reasoner')
 
 BROKER_URL = config.broker
 
