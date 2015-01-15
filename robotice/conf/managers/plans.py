@@ -15,6 +15,6 @@ LOG = logging.getLogger(__name__)
 
 class PlanManager(BaseConfigManager):
 
-    config_path = "/srv/robotice/config/plans.yml"
+    config_path = "plans/*.yml"
 
 plans = PlanManager()

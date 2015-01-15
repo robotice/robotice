@@ -1,8 +1,7 @@
 
-from .conf import settings
-from .conf import RoboticeSettings
-from .conf import Settings
-from .conf import setup_app
+from robotice.conf.conf import RoboticeSettings
+from robotice.conf.conf import Settings
+from robotice.conf.conf import setup_app
 
 __all__ = [
     "Settings",

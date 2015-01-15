@@ -118,16 +118,6 @@ class Settings(object):
         if "dsn" in self.config:
             init_sentry(self.config.get("dsn"))
 
-        """OBSOLETE
-        if worker == "reasoner":
-
-            self.load_conf("devices")
-
-            self.load_conf("plans")
-
-            self.load_conf("systems")
-        """
-
     def setup_sys_vars(self):
 
         os.environ.setdefault("R_WORKER_DIR", self.WORKER_DIR)

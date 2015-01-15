@@ -15,6 +15,6 @@ LOG = logging.getLogger(__name__)
 
 class DeviceManager(BaseConfigManager):
 
-    config_path = "/srv/robotice/config/devices.yml"
+    config_path = "devices/*.yml"
 
 devices = DeviceManager()

@@ -23,7 +23,7 @@ LOG = logging.getLogger(__name__)
 class ActionManager(BaseConfigManager):
 
     # move to config
-    config_path = "/srv/robotice/config/actions/main.yml"
+    config_path = "actions/*.yml"
 
     def do(self, action_id):
         """Execute a action by name(uuid) (doesn't require task sources)

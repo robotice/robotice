@@ -6,6 +6,7 @@ base object managers
 
 """
 
+import os
 import sys
 import logging
 
@@ -22,6 +23,7 @@ from anyconfig import api as conf_api
 from anyconfig.mergeabledict import MergeableDict
 import pyaml
 import types
+import glob
 
 LOG = logging.getLogger(__name__)
 
@@ -92,10 +94,20 @@ class BaseConfigManager(ManagerInterface):
     def _set(self, key, val, dic=None, deliemeter=DELIMETER, dump=False):
         """def set_(dic, path, val, seps=P.PATH_SEPS, strategy=None):"""
 
-        conf_api.set_(dic or self.data, key, val, seps=deliemeter)
-        
-        if dump:
-            return self.dump(self.data, self._config)
+        dumped = False
+
+        # find and update file
+        for path in glob.glob(self.config_path):
+            _data = anyconfig.load(path)
+            item = conf_api.get(_data, key, seps=deliemeter)[0]
+            if item:
+                conf_api.set_(_data, key, val, seps=deliemeter)
+                if dump:
+                    dumped = True
+                    return self.dump(_data, path)
+
+        if not dumped:
+            raise Exception("Critical error in dump config to disk !")
 
     def dump(self, data, path):
         """dump data to file
@@ -111,12 +123,11 @@ class BaseConfigManager(ManagerInterface):
     def load(self, path=None):
         """return loaded data as MergeableDict
         """
-        self._data = anyconfig.load(path or self._config)
+        self._data = anyconfig.load(path or self._config())
         return self._data
 
-    @property
     def _config(self):
-        return getattr(self, "config_path", "")
+        return os.path.join(os.environ["R_CONFIG_DIR"], self.config_path)
 
     @property
     def data(self):
@@ -130,11 +141,6 @@ class BaseConfigManager(ManagerInterface):
         if isinstance(obj, MergeableDict):
             obj.p = types.MethodType( p, obj )
         return obj
-
-    def __call__(self, *args, **kwargs):
-        """load config before using
-        """
-        super(BaseConfigManager, self).__call__(*args, **kwargs)
 
 
 class BaseManager(object):
