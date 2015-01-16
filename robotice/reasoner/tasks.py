@@ -64,7 +64,11 @@ def process_real_data(results, sensor):
             if not device:
                 raise Exception("%s not found in db" % key)
             """
-            
+
+            if not plan:
+                LOG.error("Missing plan for result %s and metric %s, value %s will be ignored. See log for more detail." % (result_name, result_metric, value))
+                continue
+
             if system != None:
                 db_key = ':'.join([
                     str(system["name"]),
