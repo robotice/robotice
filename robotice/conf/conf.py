@@ -84,7 +84,6 @@ class Settings(object):
 
         return True
 
-
     WORKER_DIR = os.getenv("R_WORKER_DIR", "/srv/robotice")
     CONF_DIR = os.getenv("R_CONFIG_DIR", "/srv/robotice/config")
     DRIVERS_DIR = "/srv/robotice/drivers"
