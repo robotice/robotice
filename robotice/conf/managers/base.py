@@ -133,7 +133,7 @@ class BaseConfigManager(ManagerInterface):
             return self.load()
         return self._data
 
-class BaseManager(object):
+class CeleryManager(object):
 
     def app(self, role=None, default="reasoner"):
         """robotice app config

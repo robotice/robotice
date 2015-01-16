@@ -7,7 +7,7 @@ base object managers
 import sys
 import logging
 
-from robotice.conf.managers.base import BaseConfigManager
+from robotice.conf.managers import base
 
 from celery import states
 from celery import Celery
@@ -20,7 +20,7 @@ from yaml import load, dump, safe_dump
 LOG = logging.getLogger(__name__)
 
 
-class ActionManager(BaseConfigManager):
+class ActionManager(base.BaseConfigManager, base.CeleryManager):
 
     # move to config
     config_path = "actions/*.yml"
