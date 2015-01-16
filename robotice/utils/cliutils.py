@@ -28,7 +28,7 @@ import prettytable
 import six
 from six import moves
 
-from robotice.utils.i18 import _
+from robotice.common.i18n import _
 
 class MissingArgs(Exception):
     """Supplied arguments are not sufficient for calling a function."""
