@@ -50,13 +50,6 @@ class Settings(object):
 
     """
 
-    # these managers provide list, get, set, delete
-    actions = actions
-    plans = plans
-    systems = systems
-    devices = devices
-
-
     def load_conf(self, name, prefix="_"):
         """encapsulation logic for load yaml
 
@@ -130,6 +123,12 @@ class Settings(object):
 
         LOG.debug("Main configuration PATH: %s" % self.CONF_DIR)
         LOG.debug("Worker PATH: %s" % self.WORKER_DIR)
+
+        # these managers provide list, get, set, delete
+        self.actions = actions
+        self.plans = plans
+        self.systems = systems
+        self.devices = devices
 
     @property
     def sensors(self):
@@ -214,7 +213,7 @@ class Settings(object):
 
             plan = self.plans.get(key)
 
-            if plan == dict():
+            if not plan:
                 LOG.error("plan for %s not found" % sensor)
             return plan
 
