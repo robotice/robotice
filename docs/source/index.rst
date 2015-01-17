@@ -38,6 +38,14 @@ Robotice Support
 ===========
 
   :doc:`CLI <support/cli>`
+  :doc:`Simple manipulation through CLI <support/config>`
+
+Robotice API
+===========
+
+*  :doc:`Installation and setup <api/installation>`
+*  :doc:`Basic usage <api/usage>`
+*  :doc:`Actions <api/actions>`
 
 Supported Hardware
 ===========

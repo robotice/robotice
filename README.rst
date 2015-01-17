@@ -1,6 +1,6 @@
 |Build Status| |Coverage Status| |License badge|
 
-Robotice: Monitoring deamon
+Robotice Agent System
 ===========================
 
 Opensource microframework for monitoring, reasoning and acting.
@@ -32,7 +32,7 @@ Usage
 
 * Read documentation and install Robotice
 * make a plan
-* start robotice daemon
+* bin/robotice
 
 Supported sensors:
 ------------------

@@ -8,7 +8,7 @@ from celery import Celery
 from celery.execute import send_task
 from celery.schedules import crontab
 
-from conf import RoboticeSettings
+from robotice.conf import RoboticeSettings
 from conf.celery import *
 
 LOG = logging.getLogger(__name__)

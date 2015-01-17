@@ -1,6 +1,9 @@
 
+import logging
 import pickle
 from redis import StrictRedis
+
+LOG = logging.getLogger(__name__)
 
 class PickledRedis(StrictRedis):
     """custom picled redis
@@ -28,13 +31,13 @@ class PickledRedis(StrictRedis):
 def get_db_values(config, system_name, plan_name):
     """return tuple(model_value, real_value)
     """
-    db_key_real = '.'.join([str(system_name), str(plan_name), 'real'])
-    db_key_model = '.'.join([str(system_name), str(plan_name), 'model'])
+    db_key_real = ':'.join([str(system_name), str(plan_name), 'real'])
+    db_key_model = ':'.join([str(system_name), str(plan_name), 'model'])
     model_value = config.database.get(db_key_model)
     
     if model_value == None:
         return None, None
-    if not isinstance(model_value, int):
+    if isinstance(model_value, basestring):
         model_value = model_value.replace("(", "").replace(")", "").split(", ")
         if len(model_value) == 1:
             model_value = int(model_value[0])

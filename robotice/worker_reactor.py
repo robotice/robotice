@@ -4,8 +4,8 @@ import logging
 from kombu import Queue, Exchange
 from celery import Celery
 
-from conf import setup_app
-from conf.celery import *
+from robotice.conf import setup_app
+from robotice.conf.celery import *
 
 LOG = logging.getLogger(__name__)
 
@@ -27,7 +27,6 @@ if "amqp" in config.broker:
     )
 
 elif "redis" in config.broker:
-    CARROT_BACKEND = "redis"
     CELERY_RESULT_BACKEND = BROKER_URL
     #BROKER_TRANSPORT_OPTIONS = {
     #    'visibility_timeout': 3600, 'fanout_prefix': True}
@@ -39,7 +38,7 @@ elif "redis" in config.broker:
     }
 
 CELERY_IMPORTS = (
-    "reactor.tasks",
+    "robotice.reactor.tasks",
 )
 
 CELERY_ROUTES = {
@@ -57,4 +56,4 @@ CELERY_ROUTES = {
     }
 }
 
-celery = Celery('robotice', broker=BROKER_URL)
+#celery = Celery('reactor', broker=BROKER_URL, backend=CELERY_RESULT_BACKEND)

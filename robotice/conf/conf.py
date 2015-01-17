@@ -6,6 +6,8 @@ import statsd
 import redis
 import socket
 import pickle
+import anyconfig
+
 from yaml import load, dump, safe_dump
 
 from kombu.utils import symbol_by_name
@@ -18,6 +20,11 @@ from robotice.utils import norecursion
 from robotice.utils import dict_merge
 from robotice.utils.celery import init_sentry
 
+from robotice.conf.managers import actions
+from robotice.conf.managers import plans
+from robotice.conf.managers import systems
+from robotice.conf.managers import devices
+
 BACKEND_ALIASES = {
     'cache': 'robotice.utils.backends.cache:CacheBackend',
     'redis': 'robotice.utils.backends.redis:RedisBackend',
@@ -25,7 +32,6 @@ BACKEND_ALIASES = {
 }
 
 class Settings(object):
-
     """**Main object which contains all infromation about systems**
 
     Args:
@@ -38,7 +44,7 @@ class Settings(object):
     if you set system variable R_CONFIG_DIR and R_worker_dir
 
     in directory `R_CONFIG_DIR` is expected devices.yml, systems.yml, plans.yml
-    in directory `R_worker_dir` is expected worker_monitos.yml etc.
+    in directory `R_WORKER_DIR` is expected worker_monitos.yml etc.
 
     R_DRIVERS_DIR is drivers directory and default is /srv/robotice/drivers
 
@@ -70,7 +76,6 @@ class Settings(object):
             raise e
 
         return True
-
 
     WORKER_DIR = os.getenv("R_WORKER_DIR", "/srv/robotice")
     CONF_DIR = os.getenv("R_CONFIG_DIR", "/srv/robotice/config")
@@ -105,14 +110,6 @@ class Settings(object):
         if "dsn" in self.config:
             init_sentry(self.config.get("dsn"))
 
-        if worker == "reasoner":
-
-            self.load_conf("devices")
-
-            self.load_conf("plans")
-
-            self.load_conf("systems")
-
     def setup_sys_vars(self):
 
         os.environ.setdefault("R_WORKER_DIR", self.WORKER_DIR)
@@ -127,508 +124,78 @@ class Settings(object):
         LOG.debug("Main configuration PATH: %s" % self.CONF_DIR)
         LOG.debug("Worker PATH: %s" % self.WORKER_DIR)
 
-    @property
-    def devices(self):
-        return self._devices
-
-    def save_sensor(self, name, sensor, only_db=False):
-        """method save sensor into two keys
-        host.sensors.metric.name as dict
-        and update host.sensors list
-        """
-
-        # set host.sensors.metric.name as dict
-
-        if not sensor.get("name"):
-            raise Exception("missing sensor name %s" % sensor)
-
-        # fix get by string number
-        sensor_name = sensor.get("name")
-        if isinstance(sensor_name, basestring) and sensor_name.isdigit():
-            sensor_name = int(sensor_name)
-
-        key = ".".join([
-            str(name).replace(".", "_"), 
-            "sensors",
-            str(sensor_name),
-            "device"
-        ])
-
-        saved_as_dict = self.update_or_create(sensor, key)
-
-        # for load from file
-        if not only_db:
-            result = self.dump_to_file(name, dict(saved_as_dict), sensor.get("type"))
-
-        return saved_as_dict
-
-    def save_plan(self, name, plan, key="sensors", only_db=False):
-        """dump plan into dile
-        """
-        result = self.dump_to_file(name, plan, key, "plans")
-        return result
-
-    def save_system(self, name, system, key="sensors", only_db=False):
-        """dump system into file
-        """
-        result = self.dump_to_file(name, system, key, "systems")
-        return result
-
-    def save_host(self, name, system, key="sensors", only_db=False):
-        """method save host into file
-        """
-        result = self.dump_to_file(name, system, key, "systems")
-        return result
-
-    def save_actuator(self, host, actuator):
-
-        if not actuator.get("system_plan", None) \
-            or (actuator.get("device", None) is None \
-            and actuator.get("name", None) is None):
-            raise Exception(
-                "missing actuator device or system_plan %s" % actuator)
-
-        key = ".".join([
-            str(host).replace(".", "_"),
-            "actuators",
-            str(actuator["plan_name"]),
-            str(actuator["device"]),
-            "device"]) 
-
-        saved_as_dict = self.update_or_create(actuator, key)
-
-        return saved_as_dict
-
-    def save_meta(self, name, metadata, attr="systems"):
-        """saves metadata
-        """
-
-        items = getattr(self, attr) # copy local devices
-
-        if name in items:
-            # update
-            obj = items[name]
-            for key, value in metadata.iteritems():
-                if key in obj:
-                    obj[key] = value
-            items[name] = obj
-        else:
-            # create
-            if not "actuators" in metadata \
-            or not "sensors" in metadata:
-                # init
-                metadata["actuators"] = {}
-                metadata["sensors"] = {}
-            items[name] = metadata
-
-        # write to file
-
-        full_conf_path = "%s/%s.yml" % (self.CONF_DIR, attr)
-
-        self.dump_to_file_and_set(
-            full_conf_path,
-            items,
-            attr)
-
-        return True
-    
-    @deprecated(deprecation=0.2, removal=1.0,
-                alternative='robotice.conf.db')
-    def dump_to_file_and_set(self, path, items, name):
-        """helper
-        TODO: move into utils
-        """
-        try:
-            with open(path, 'w') as yaml_file:
-                safe_dump(items, yaml_file, default_flow_style=False)
-
-            # set new items
-            setattr(self, "_%s" % str(name), items)
-        except Exception, e:
-            # cannot write to disk
-            raise e
-
-        return True
-
-    def delete(self, name, data, key="sensors", attr="devices"):
-        """delete object from file
-        
-        attr = plans, systems, devices
-
-        .. code-block:: yaml
-            obj = { id: 10 } or name / device
-        """
-        deleted = False
-        
-        items = getattr(self, attr) # copy local devices
-
-        for id, system in getattr(self, attr).iteritems():
-            if id in name:
-                _dict = system.get(key)
-                
-                _name = data.pop("id", None)
-                
-                if not _name:
-                    _name = data.get("name", data.get("device", None))
-                
-                if not _name:
-                    raise Exception("missing id, name or device %s" % data)
-
-                # actuator or sensor
-                if _name in _dict:
-                    _dict.pop(_name)
-                    deleted = True
-                elif name in items:
-                    # host
-                    items.pop(name)
-                    deleted = True
-
-        if deleted:
-            # write to file
-            full_conf_path = "%s/%s.yml" % (self.CONF_DIR, attr)
-
-            self.dump_to_file_and_set(
-                full_conf_path,
-                items,
-                attr)
-
-        return True
-
-
-    def dump_to_file(self, name, data, key="sensors", attr="devices"):
-        """dump new sensor or actuator to file
-        
-        attr = plans, systems, devices
-
-        .. code-block:: yaml
-            hostname:
-              sensors:
-                id:
-                  type: type
-                  name: name
-                  port: port
-              actuators:
-                id:
-                  port: port
-        """
-        created = True
-        items = getattr(self, attr) # copy local devices
-        
-        for id, system in getattr(self, attr).iteritems():
-            if id in name:
-                _dict = system.get(key)
-                
-                _name = data.pop("id", None)
-                
-                if not _name:
-                    _name = data.get("name", data.get("device", None))
-                
-                if not _name:
-                    raise Exception("missing id, name or device %s" % data)
-
-                _dict[_name] = data
-                items[id][key] = _dict
-
-                created = False # switch to update
-
-        if created:
-            self.save_meta(
-                name,
-                data,
-                attr
-                )
-        else:
-            # write to file
-            full_conf_path = "%s/%s.yml" % (self.CONF_DIR, attr)
-
-            self.dump_to_file_and_set(
-                full_conf_path,
-                items,
-                attr)
-
-        return True
-
-    @norecursion(default={}, callcount=100)
-    def get(self, key, items, orig_items=None, orig_key=None):
-        """recursive find in dictionary by dotted notation
-        for example foo.bar for {foo: {bar: {key: value}}}
-        returns { key: value }
-        """
-        if not isinstance(key, list):
-            parsed = key.split(".")
-        else:
-            parsed = key
-
-        if len(parsed) == 1 and parsed[0] in items.keys():
-            return items.get(parsed[0])
-        elif len(parsed) > 1 and parsed[0] in items.keys():
-            item = items.get(parsed[0])
-            if isinstance(item, dict):
-                parsed.pop(0)
-                return self.get(parsed, item, orig_items or items, orig_key or key)
-        
-        LOG.error("%s not found in %s" % (orig_key, orig_items))
-
-    def get_sensors(self, host=None):
-        """
-            for any host
-        """
-        key = ".".join([
-            host,
-            "sensors",
-            "*",
-            "*",
-            "device",
-            ])
-
-        keys = self.database.keys(key)
-        sensors = []
-        for _key in keys:
-            _sensor = self.database.hgetall(_key)
-            sensors.append(_sensor)
-
-        if len(sensors) == 0:
-            # load all sensors
-            # returns sensors for all hosts !!
-            self.load_sensors()
-            sensors = self.sensors # recursive call
-            return sensors
-
-        return list(sensors)
+        # these managers provide list, get, set, delete
+        self.actions = actions
+        self.plans = plans
+        self.systems = systems
+        self.devices = devices
 
     @property
-    @norecursion(default=[], callcount=2)
     def sensors(self):
         """return list of sensors by key hostname.sensors
         default to self.hostname
         if sensors is empty method call load_sensors from file
         """
-
-        key = ".".join([
-            self.hostname.replace(".", "_"),
-            "sensors",
-            "*",
-            "device",
+        key = ":".join([
+            self.hostname,
+            "sensors"
             ])
 
-        keys = self.database.keys(key)
+        # ugly hack
+        # maybe exist better way to map key as name
         sensors = []
-        for _key in keys:
-            _sensor = self.database.hgetall(_key)
-            sensors.append(_sensor)
+        for key, sensor in self.devices.get(key).iteritems():
+            sensor["name"] = key
+            sensors.append(sensor)
 
-        if len(sensors) == 0:
-            # load all sensors
-            # returns sensors for all hosts !!
-            result = self.load_sensors()
-            if not len(result) == 0:
-                return self.sensors
+        return sensors
 
-        return list(sensors)
+    def __get_plan(self, actuator):
+        key = ":".join([
+            str(actuator["system_plan"]),
+            "actuators",
+            str(actuator["plan"])])
+
+        plan = self.plans.get(key)
+        LOG.debug(key)
+        LOG.debug(plan)
+        return plan
 
     @property
-    @norecursion(default=[], callcount=2)
     def actuators(self):
-        """return list of sensors by key hostname.sensors
-        default to self.hostname
-        if sensors is empty method call load_sensors from file
-        """
-
-        key = ".".join([
-            "*",
-            "actuators",
-            "*",
-            "*",
-            "device",
-            ])
-
-        keys = self.database.keys(key)
-        actuators = []
-        for _key in keys:
-            _actuator = self.database.hgetall(_key)
-            actuators.append(_actuator)
-
-        if len(actuators) == 0:
-            result = self.load_actuators()
-            if not len(result) == 0:
-                return self.actuators # recursive call
-                
-        return list(actuators)
-
-    def load_actuators(self):
-        """return actuators for all systems, but add `system_name` variable"""
-
+        """return actuators for all systems, with added `system_name` variable"""
+        
         actuators = []
 
-        def get_real_device(conf, actuator):
-            key = ".".join([
-                actuator["system_name"],
-                "actuators",
-                str(actuator["device"])])
+        systems = anyconfig.load([self.systems.config_path, self.devices.config_path], merge=anyconfig.MS_DICTS)
 
-            device = self.get(key, self.devices)     
-            if not device:
-                LOG.debug("real device for %s not found" % actuator)
-            return device  
-
-        def get_plan(conf, actuator):
-            key = ".".join([
-                str(actuator["system_plan"]),
-                "actuators",
-                str(actuator["plan"])])
-
-            plan = self.get(key, self.plans)     
-            if not plan:
-                LOG.debug("plan for %s not found" % actuator)
-            return plan
-
-        for system_name, system in self.systems.iteritems():
+        for system_name, system in self.systems.list().iteritems():
             for uuid, actuator in system.get('actuators').iteritems():
 
                 actuator["id"] = uuid
                 actuator['system_name'] = system_name
                 actuator['system_plan'] = system.get('plan')
 
-                merged_dict = actuator
-                device = get_real_device(self, actuator)
-                if device:
-                    merged_dict = dict(actuator.items() + device.items())
-                plan = get_plan(self, actuator)
+                plan = self.__get_plan(actuator)
                 if not plan:
                     LOG.error("missing plan for %s object: %s" % (uuid,actuator))
                     continue
-                merged_dict["plan"] = pickle.dumps(plan)
-                merged_dict["plan_name"] = plan["name"]
-                actuators.append(merged_dict)
-                self.save_actuator(system_name.replace(".", "_"), merged_dict)  # save to db
+                actuator["plan_full"] = plan
+                actuator["plan_name"] = plan["name"]
+                actuators.append(actuator)
 
         LOG.debug(actuators)
 
         return actuators
-
-    def update_or_create(self, obj, key):
-        """method accept list or dict
-        both save into redis as Dict or List
-        if instance is a list method automaticaly update list in redis
-        """
-
-        if isinstance(obj, dict):
-            # save dictionary
-            try:
-                saved = self.database.hmset(key, obj) #Dict(instance, key=key, redis=self.database)
-            except Exception, e:
-                raise e
-
-            return saved
-        else:
-            saved = self.database.set(key, obj) #Dict(instance, key=key, redis=self.database)
-            return saved
-        raise Exception("only dict or value is supported")
-
-    @property
-    def systems(self):
-        return self._systems
-
-    @property
-    def plans(self):
-        return self._plans
-
-    def load_sensors(self, host=None, worker=None):
-        """method load and save sensors from self._devices file
-        """
-
-        def get_system_sensor(conf, sensor):
-            system_sensor = None
-
-            for name, system in self.systems.iteritems():
-                if sensor["hostname"] == name:
-                    for uuid, _sensor in system.get('sensors').iteritems():
-                        if sensor["metric"] == _sensor["metric"] \
-                            and sensor["name"] == _sensor["name"]:
-                                system_sensor = _sensor
-                                system_sensor["system_plan"] = system["plan"]
-            if not system_sensor:
-                LOG.error("system_sensor for %s not found" % (sensor))
-            return system_sensor
-
-        def get_plan(conf, sensor):
-            key = ".".join([
-                sensor["system_plan"],
-                "sensors",
-                str(sensor["plan"])])
-
-            plan = self.get(key, self.plans)     
-            if not plan:
-                LOG.debug("plan for %s not found" % sensor)
-            return plan
-
-        sensors = []
-
-        for host, system in self.devices.iteritems():
-
-            for name, sensor in system.get('sensors').iteritems():
-
-                if not "name" in sensor:
-                    sensor["name"] = name
-
-                sensor['os_family'] = self.config.get("os_family")
-                sensor['cpu_arch'] = self.config.get("cpu_arch")
-                sensor['hostname'] = host
-
-                sensors.append(sensor)
-                self.save_sensor(host.replace(".", "_"), sensor, only_db=True)  # save to db
-            
-        LOG.debug(sensors)
-
-        return sensors
-
-    def set_system(self, system, host=None, worker=None):
-        """set system direcly into database and file backend
-        """
-
-        key = host or self.hostname
-
-        if system:
-
-            try:
-                result = self.database.set(key, system)
-                if not result:
-                    raise Exception(result)
-                system = self.database.get(key)
-            except Exception, e:
-                raise e
-
-        return system
-
-    def get_system(self, host=None, worker=None):
-        """return plan for host and role from db or file
-        """
-        key = host or self.hostname
-        _system = self.database.get(key)
-
-        if not _system:
-            # sync to db
-            try:
-                _system = {}
-                _system["actuators"] = self.actuators
-                _system["sensors"] = self.sensors
-                _system["plans"] = self.get_system_plans
-                result = self.database.set(key, _system)
-                if not result:
-                    raise Exception(result)
-            except Exception, e:
-                raise e
-
-        return _system
 
     @property
     def get_system_plans(self):
         """return array of tuples [(system, plan),]"""
 
         results = []
-        for hostname, system in self.systems.iteritems():
-            system["name"] = hostname.replace(".", "_")  # hotfix
-            for plan_name, plan in self.plans.iteritems():
+        for hostname, system in self.systems.list().iteritems():
+            system["name"] = hostname
+            for plan_name, plan in self.plans.list().iteritems():
                 plan["name"] = plan_name # hotfix
                 if plan_name == system.get("plan"):
                     results.append((system, plan),)
@@ -639,34 +206,28 @@ class Settings(object):
         """
 
         def _get_plan(conf, sensor):
-            key = ".".join([
+            key = ":".join([
                 sensor["system_plan"],
                 "sensors",
                 str(sensor["plan"])])
 
-            plan = self.get(key, self.plans)
+            plan = self.plans.get(key)
+
             if not plan:
-                key = ".".join([
-                    sensor["system_plan"],
-                    "actuators",
-                    str(sensor["plan"])])
-
-                plan = self.get(key, self.plans)
-
-                if not plan:
-                    LOG.error("plan for %s not found" % sensor)
+                LOG.error("plan for %s not found" % sensor)
             return plan
 
         result = (None, None)
 
-        for name, system in self.systems.iteritems():
+        for name, system in self.systems.list().iteritems():
 
             system["name"] = name
-            devices = dict_merge(system.get('sensors'), system.get('actuators'))
+            devices = self.systems.get("%s:sensors" % name)
 
             for uuid, sensor in devices.iteritems():
 
                 sensor["system_plan"] = system["plan"]
+                LOG.debug(sensor)
 
                 if device_metric \
                     and "metric" in sensor:
@@ -684,7 +245,7 @@ class Settings(object):
     def get_actuator_device(self, actuator):
         """return actuator from host devices"""
 
-        for name, host in self.devices.iteritems():
+        for name, host in self.devices.list().iteritems():
             for uuid, device in host.get('actuators').iteritems():
                 if ("actuator" in actuator and actuator["actuator"] == uuid) \
                 or ("device" in actuator and actuator["device"] == uuid) \
