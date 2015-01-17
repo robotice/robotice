@@ -33,7 +33,7 @@ class ActionManager(base.BaseConfigManager, base.CeleryManager):
         action = actions.get(action_id)
 
         if not action:
-            return {"status": 404, "error": "Action %s not founded." % action_id}
+            return {"status": 404, "error": "Action %s not found." % action_id}
         LOG.debug(action)
 
         app = self.capp()
