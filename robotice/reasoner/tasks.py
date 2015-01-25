@@ -99,7 +99,6 @@ def process_real_data(results, sensor):
 
     return "total: %s : sent to graphite: %s saved to db: %s" % (len(results), processed, db_saved)
 
-
 @task(name='reasoner.compare_data')
 def compare_data(config):
     """
@@ -114,7 +113,7 @@ def compare_data(config):
 
     results = []
 
-    for alias, comparator_path in config.COMPARATOR_ALIASES.iteritems():
+    for alias, comparator_path in config.comparators.iteritems():
         
         # inicialize comparator
         try:

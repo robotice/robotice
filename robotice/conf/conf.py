@@ -31,6 +31,11 @@ BACKEND_ALIASES = {
     'mongodb': 'robotice.utils.backends.mongodb:MongoBackend',
 }
 
+DEFAULT_COMPARATOR_ALIASES = {
+    'simple': 'robotice.reasoner.comparators.base:BaseComparator',
+#    'fuzzy': 'robotice.utils.extensions.comparators.fuzzy:FuzzyComparator',
+}
+
 class Settings(object):
     """**Main object which contains all infromation about systems**
 
@@ -81,13 +86,15 @@ class Settings(object):
     CONF_DIR = os.getenv("R_CONFIG_DIR", "/srv/robotice/config")
     DRIVERS_DIR = "/srv/robotice/drivers"
 
-    # reasoner comparators
-    COMPARATOR_ALIASES = {
-        'simple': 'robotice.reasoner.comparators.base:BaseComparator',
-    #    'fuzzy': 'robotice.utils.extensions.comparators.fuzzy:FuzzyComparator',
-    }
-
     db_backend_name = "redis" # TODO propagation from config
+
+    @property
+    def comparators(self):
+        """return configured comparators
+        default is simple comparator
+        """
+        return self.config.get("comparators", None) or DEFAULT_COMPARATOR_ALIASES
+
 
     @property
     def config(self):
