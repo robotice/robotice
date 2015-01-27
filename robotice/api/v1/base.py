@@ -52,8 +52,20 @@ class BaseController(object):
     def backend_configured(self, result):
         return not isinstance(result.backend, DisabledBackend)
 
+    @property
+    def app(self, role=None, default="reasoner"):
+        """robotice app config
+        """
 
-    def app(self, name=None, default=False):
+        # lazy loading
+        conf_mod = importutils.import_module("robotice.conf")
+
+        if not role and default:
+            return conf_mod.setup_app(default)
+
+        return conf_mod.setup_app(role)
+
+    def capp(self, name=None, default=False):
         """celery app
         """
         if default and name is None:
@@ -111,7 +123,6 @@ class BaseController(object):
 
         return None
 
-
     @classmethod
     def create_resource(cls, options):
         """
@@ -119,3 +130,132 @@ class BaseController(object):
         """
 
         return wsgi.Resource(cls(options))
+
+
+class GenericController(BaseController):
+    """
+
+    generic controller
+
+    """
+
+    def __init__(self, options):
+        super(GenericController, self).__init__(options)
+
+
+    def index(self, req):
+        """
+        Returns a list of devices.
+
+        ..code-block:: bash
+
+            majklk@samsung:~ http GET http://10.10.10.23:8004/device/list
+            HTTP/1.1 200 OK
+            Content-Length: 627
+            Content-Type: application/json; charset=UTF-8
+            Date: Mon, 26 Jan 2015 23:59:24 GMT
+
+            {
+                "control-single.robotice.dev.mjk.robotice.cz": {
+                    "actuators": {
+                        "dummy1": {
+                            "device": "dummy", 
+                            "metric": "random", 
+                            "port": "bcm18", 
+                            "type": "dummy"
+                        }
+            ...
+
+            }
+        """
+
+        manager = getattr(self.app, self.REQUEST_SCOPE, None)
+        result = manager.list()
+        return result
+
+    def show(self, req, id):
+        """get single object
+
+        response:
+
+        ..code-block:: json
+            {
+                id: 1
+                name: foo,
+                command: reactor.commit_action,
+                options:
+                  device: foo
+                  value: 1
+            }
+
+        """
+
+        obj = None
+
+        try:
+            obj = getattr(self.app, self.REQUEST_SCOPE, None).get(id)
+        except Exception, e:
+            pass
+
+        if obj is None:
+            return {"id": id, "status": "404 - not found this action"}
+
+        return obj
+
+    def create(self, req, body={}):
+    
+        response = {"status": "ok"}
+        LOG.debug(body)
+
+        self.validate(body)
+
+        try:
+            obj = getattr(self.app, self.REQUEST_SCOPE, None).create(id, body)
+        except Exception, e:
+            response = {"status": "error", "errors": str(e)}
+
+        return response
+
+    def update(self, req, id=None, body={}):
+        """create or update action via API
+
+        {
+            id: 1
+            name: foo,
+            command: reactor.commit_action,
+            options:
+              device: foo
+              value: 1
+        }
+
+        """
+
+        response = {"status": "ok"}
+
+        self.validate(body)
+
+        try:
+            obj = getattr(self.app, self.REQUEST_SCOPE, None).update(id, body)
+        except Exception, e:
+            response = {"status": "error", "errors": str(e)}
+
+        return response
+
+    def delete(self, req, id):
+        response = {"status": "ok"}
+        LOG.error(id)
+        try:
+            obj = getattr(self.app, self.REQUEST_SCOPE, None).delete(id)
+        except Exception, e:
+            response = {"status": "error", "errors": str(e)}
+
+        return response
+    
+    def validate(self, body, params=None):
+        """helper which validate self.PARAMS and raise bad request
+        """
+        for param in params or getattr(self, "PARAMS", list()):
+            if not param in body:
+                LOG.debug(body)
+                LOG.debug(id)
+                raise exc.HTTPBadRequest("Missing required params %s" % param)

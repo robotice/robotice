@@ -18,6 +18,9 @@ from robotice.common.i18n import _
 from robotice.api.v1.tasks import TaskController
 from robotice.api.v1.actions import ActionController
 from robotice.api.v1.workers import WorkerController
+from robotice.api.v1.devices import DeviceController
+from robotice.api.v1.systems import SystemController
+from robotice.api.v1.plans import PlanController
 from robotice.api.v1 import workers
 
 
@@ -26,18 +29,53 @@ class API(wsgi.Router):
     """
     WSGI router for Heat v1 ReST API requests.
 
+    Every stable endpoint has GET, POST, PUT, DELETE
+
     ..code-block: bash
         
-        /task/list/reactor
-        /task/send/reactor/commit.action
-        /task/info/reactor/asdad-asdad-asdad
-        /task/result/reactor/asdad-asdad-asdad
+        GET /plan
+        GET /plan/{id}
+        DELETE /plan/{id}
+        POST /plan
+        /system...
+        /device...
+        /action
+        POST /action/do/{id}
 
     """
 
     def __init__(self, conf, **local_conf):
         self.conf = conf
         mapper = routes.Mapper()
+
+        # Actions
+        action_resource = ActionController.create_resource(conf)
+        with mapper.collection(collection_name="actions", resource_name="action",
+                          path_prefix="/action", controller=action_resource) as action_mapper:
+
+            action_mapper.connect("action",
+                                 "/do/{id}",
+                                 action="do",
+                                 conditions={'method': 'POST'})
+
+        # Devices, Plans, Systems
+
+        plan_resource = PlanController.create_resource(conf)
+
+        mapper.collection(collection_name="plans", resource_name="plan",
+                          path_prefix="/plan", controller=plan_resource)
+
+        device_resource = DeviceController.create_resource(conf)
+
+        mapper.collection(collection_name="devices", resource_name="device",
+                          path_prefix="/device", controller=device_resource)
+
+        system_resource = SystemController.create_resource(conf)
+        mapper.collection(collection_name="systems", resource_name="system",
+                          path_prefix="/system", controller=system_resource)
+
+        # Celery tasks
+        # unstable endpoints !
 
         task_resource = TaskController.create_resource(conf)
         with mapper.submapper(controller=task_resource,
@@ -61,46 +99,14 @@ class API(wsgi.Router):
                                  action="task_result",
                                  conditions={'method': 'GET'})
 
+        # Workers
         worker_resource = WorkerController.create_resource(conf)
         with mapper.submapper(controller=worker_resource,
                               path_prefix="/worker") as worker_mapper:
 
-            # Tasks
             worker_mapper.connect("worker",
                                  "/list",
                                  action="worker_list",
                                  conditions={'method': 'GET'})
-
-        action_resource = ActionController.create_resource(conf)
-        with mapper.submapper(controller=action_resource,
-                              path_prefix="/action") as action_mapper:
-
-            # Actions
-            action_mapper.connect("action",
-                                 "/list",
-                                 action="action_list",
-                                 conditions={'method': 'GET'})
-            action_mapper.connect("action",
-                                 "/{id}",
-                                 action="action_get",
-                                 conditions={'method': 'GET'})
-            action_mapper.connect("action",
-                                 "/{id}",
-                                 action="action_set",
-                                 conditions={'method': 'POST'})
-            action_mapper.connect("action",
-                                 "/do/{action_id}",
-                                 action="do_action",
-                                 conditions={'method': 'POST'})
-
-        # Plans
-        
-        # Devices
-
-        # Systems
-
-        # Events
-
-        # Actions
 
         super(API, self).__init__(mapper)

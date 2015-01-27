@@ -70,13 +70,26 @@ class BaseConfigManager(ManagerInterface):
         """
         return self._get(key)
 
+    def create(self, key, value):
+        self._set(key, value, dump=True)
+
+    def update(self, key, value):
+        self._set(key, value, dump=True, create=False)
+
+    def delete(self, key):
+        self._del(key, dump=True)
+
     def set(self, key, value):
         """update conf
         """
         old_value = self._get(key)
         self._set(key, value, dump=True)
+        self.load()
         new_value = self._get(key)
-        return "key %s was changed \n %s --> %s" % (key, old_value, new_value)
+        LOG.debug("key %s was changed \n %s --> %s" % (key, old_value, new_value))
+        if new_value != old_value:
+            return True
+        return False
 
     def _get(self, key, default={}, deliemeter=DELIMETER):
         """
@@ -88,13 +101,13 @@ class BaseConfigManager(ManagerInterface):
             return default
         return obj
 
-    def _set(self, key, val, dic=None, deliemeter=DELIMETER, dump=False):
+    def _set(self, key, val, dic=None, deliemeter=DELIMETER, dump=False, create=True):
         """def set_(dic, path, val, seps=P.PATH_SEPS, strategy=None):"""
 
         dumped = False
 
         # find and update file
-        for path in glob.glob(self.config_path):
+        for path in glob.glob(self._config()):
             _data = anyconfig.load(path)
             item = conf_api.get(_data, key, seps=deliemeter)[0]
             if item:
@@ -104,7 +117,33 @@ class BaseConfigManager(ManagerInterface):
                     return self.dump(_data, path)
 
         if not dumped:
-            raise Exception("Critical error in dump config to disk !")
+            if create:
+                conf_api.set_(_data, key, val, seps=deliemeter)
+                return self.dump(_data, glob.glob(self._config())[0])
+            else:
+                raise Exception("Key %s not found !" % (key))
+
+    def _del(self, key, dic=None, deliemeter=DELIMETER, dump=False):
+        """not ready yet !
+        """
+
+        removed = False
+
+        name = key.split(deliemeter)[-1]
+        key = ("%s" % deliemeter).join(key.split(deliemeter)[:-1])
+
+        # find and delete
+        for path in glob.glob(self._config()):
+            _data = anyconfig.load(path)
+            item = conf_api.get(_data, key, seps=deliemeter)[0]
+            if name in item: 
+                del item[name]
+                result = self.set(key, item)
+                return result
+
+        if not removed:
+            raise Exception("Key %s not found !" % (key))
+        return True
 
     def dump(self, data, path):
         """dump data to file
