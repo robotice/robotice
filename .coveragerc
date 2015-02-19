@@ -1,0 +1,6 @@
+[run]
+source=
+    robotice
+omit=
+    robotice/bin/robotice.py
+    tests.py

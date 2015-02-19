@@ -1,12 +1,13 @@
 |Build Status| |Coverage Status| |License badge|
 
 Robotice Agent System
-===========================
+=====================
 
 Opensource microframework for monitoring, reasoning and acting.
 
-Use cases ?
------------
+
+Use cases
+---------
 
 * automation for periodic tasks like a turn on heating every day in 7:00
 * planning through human readable yaml files like a hold temperature between 20° - 30° every day from 7AM to 8AM
@@ -37,20 +38,16 @@ Usage
 Supported sensors:
 ------------------
 
-* `DHT11`_ / `DHT2302`_
-* `TMP36`_
-* `Hygro soil`_
-* `relay_board`_
-* `Sispm`_
+* `DEVICES`_ and see doc its too much for this place
 
 Supported architectures:
-----------------
+------------------------
 
 * ARMv6, ARMv7
 * x86, x64
 
 Requirements
------
+------------
 
 * Python 2.6 / 2.7
 * Celery
@@ -65,17 +62,17 @@ Installation
 
 
 Show me in action
------
+-----------------
 
 .. image:: /docs/source/_static/imgs/show_me.gif
 
 Read more
------
+---------
 
 * http://intro.robotice.org/
 
 Contribution
------
+------------
 
 * Check for open issues or open a fresh issue to start a discussion around a feature idea or a bug.
 * Fork https://github.com/robotice/robotice on GitHub to start making your changes to the **develop** branch.
@@ -86,12 +83,7 @@ Contribution
 .. _Website: http://www.robotice.cz
 .. _Documentation: docs.robotice.org
 .. _Video Demonstration: TODO
-.. _Sispm: http://sispmctl.sourceforge.net/
-.. _Hygro soil: /docs/source/_static/imgs/hygro.JPG
-.. _DHT11: /docs/source/_static/imgs/dht11.jpg
-.. _DHT2302: /docs/source/_static/imgs/dht2302.jpg
-.. _TMP36: /docs/source/_static/imgs/tmp36.jpg
-.. _relay_board: /docs/source/_static/imgs/relay_board.jpg
+.. _DEVICES: https://github.com/robotice-devices
 .. _contributors: https://github.com/robotice/robotice/blob/develop/docs/source/contrib/contributors.rst
 
 .. |Build Status| image:: https://travis-ci.org/robotice/robotice.svg?branch=master
