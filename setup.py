@@ -25,17 +25,30 @@ if sys.argv[-1] == 'publish':
     os.system('python setup.py sdist upload')
     sys.exit()
 
-
-install_reqs = parse_requirements(path.join(here, "requirements/default.txt"))
-
-install_requires = [str(ir.req) for ir in install_reqs]
-
 with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
     readme = f.read()
+"""
 with open(path.join(here, 'HISTORY.rst'), encoding='utf-8') as f:
     history = f.read()
 with open(path.join(here, 'LICENSE'), encoding='utf-8') as f:
     license = f.read()
+"""
+
+install_requires = """
+python-statsd==1.6.0
+PyYAML>=3.10
+celery>=3.1.7
+flower==0.6.0
+pytz==2011k
+redis>=2.10.3
+python-dateutil==2.2
+raven>=5.0.0
+celery-with-redis==3.0
+prettytable==0.7.2
+oslo.config==1.4.0
+anyconfig==0.0.5
+""".split()
+
 
 setup(
     author='Ales Komarek & Michael Kuty',
@@ -54,11 +67,14 @@ setup(
         'Operating System :: OS Independent',
     ],
     description='Opensource monitoring, reasoning and acting framework.',
-    include_package_data=False,
+    include_package_data=True,
     install_requires=install_requires,
     packages=find_packages(exclude=['docs', 'tests*']),
-    license=license,
-    long_description=readme + '\n\n' + history,
+    package_dir={
+        PACKAGE_NAME: PACKAGE_NAME,
+    },
+    license=robotice.__license__,
+    long_description=readme,
     name=PACKAGE_NAME,
     platforms=['any'],
     url='https://github.com/robotice/robotice',
@@ -69,5 +85,4 @@ setup(
             'robotice=robotice.bin.robotice:main',
         ],
     },
-    scripts=['robotice/bin/robotice.py'],
     **extra)

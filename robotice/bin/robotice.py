@@ -1,21 +1,6 @@
 #!/usr/bin/env python
-#
-#    Licensed under the Apache License, Version 2.0 (the "License"); you may
-#    not use this file except in compliance with the License. You may obtain
-#    a copy of the License at
-#
-#         http://www.apache.org/licenses/LICENSE-2.0
-#
-#    Unless required by applicable law or agreed to in writing, software
-#    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-#    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-#    License for the specific language governing permissions and limitations
-#    under the License.
 
-"""
-Robotice CLI
-"""
-
+from __future__ import absolute_import
 
 import os
 import six
@@ -27,6 +12,7 @@ import argparse
 # it will override what happens to be installed in /usr/(local/)lib/python...
 possible_topdir = os.path.normpath(os.path.join(os.path.abspath(sys.argv[0]),
                                                 os.pardir,
+                                                os.pardir,
                                                 os.pardir))
 if os.path.exists(os.path.join(possible_topdir, 'robotice', '__init__.py')):
     sys.path.insert(0, possible_topdir)
@@ -35,10 +21,9 @@ import robotice
 from robotice.conf import config
 
 from robotice.utils import cliutils as utils
-from robotice.utils.functional import import_named_module
 
 from robotice.common.i18n import _
-
+from robotice.common.importutils import import_module
 
 import logging
 
@@ -64,7 +49,7 @@ class RoboticeShell(object):
 
         self.subcommands = {}
         subparsers = parser.add_subparsers(metavar='<subcommand>')
-        submodule = import_named_module(name, 'shell')
+        submodule = import_module(name, 'shell')
 
         self._find_actions(subparsers, submodule)
         self._find_actions(subparsers, self)
@@ -85,8 +70,8 @@ class RoboticeShell(object):
 
         # Global arguments
 
-        parser.add_argument('-r', '--action',
-                            help=_("action [reactor,monitor, ..]"))
+        parser.add_argument('-r', '--role',
+                            help=_("action [reactor, monitor, planner, reasoner, conf]"))
 
         parser.add_argument('-h', '--help',
                             action='store_true',
@@ -118,13 +103,13 @@ class RoboticeShell(object):
         self._setup_verbose(options.verbose)
 
         # build available subcommands based on version
-        r_role = options.action or argv[0]
+        r_role = options.role or argv[0]
 
         try:
             if r_role in ["monitor", "reactor", "reasoner", "planner", "api", "conf"]:
-                mod = __import__("robotice.%s.shell" % r_role, globals(), locals(), "main")
+                mod = import_module("robotice.%s.shell" % r_role)
             elif r_role == "run":
-                mod = __import__("robotice.shell", globals(), locals(), "main")
+                mod = import_module("robotice.shell")
             mod.main(argv=sys.argv)
         except Exception, e:
             if '--debug' in argv or '-d' in argv:

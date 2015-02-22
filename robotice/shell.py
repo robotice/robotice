@@ -39,6 +39,7 @@ if os.path.exists(os.path.join(possible_topdir, 'robotice', '__init__.py')):
     sys.path.insert(0, possible_topdir)
 
 from robotice.utils.output import output
+from robotice.common.importutils import import_module
 from robotice import ROBOTICE_BANNER
 
 from celery import concurrency
@@ -91,7 +92,7 @@ class RunDaemon(BaseApp):
             **kwargs):
 
         try:
-            w = __import__("robotice.%s.app" % getattr(CONF, "worker", argv[2]) , globals(), locals(), "app")
+            w = import_module("robotice.%s.app" % getattr(CONF, "worker", argv[2]))
         except Exception, e:
             LOG.error(e)
             raise e

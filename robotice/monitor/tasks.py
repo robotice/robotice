@@ -10,7 +10,7 @@ from celery.execute import send_task
 from celery.utils.log import get_task_logger
 
 from robotice.conf import setup_app
-from utils.functional import import_module
+from robotice.utils.functional import import_module
 
 logger = get_task_logger(__name__)
 
