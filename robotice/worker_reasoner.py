@@ -1,15 +1,13 @@
 
+from __future__ import absolute_import
 import logging
 
 from datetime import timedelta
 
-from kombu import Queue, Exchange
-from celery import Celery
-from celery.execute import send_task
-from celery.schedules import crontab
 
 from robotice.conf import RoboticeSettings
-from conf.celery import *
+
+from robotice.conf.celery import *
 
 LOG = logging.getLogger(__name__)
 
@@ -19,19 +17,15 @@ BROKER_URL = config.broker
 
 
 if "amqp" in config.broker:
+    from kombu import Queue, Exchange
     CELERY_RESULT_BACKEND = "amqp"
 
     default_exchange = Exchange('default')
-    monitor_exchange = Exchange('monitor', type='fanout')
-    reactor_exchange = Exchange('reactor', type='fanout')
-    planner_exchange = Exchange('planner', type='fanout')
-    control_exchange = Exchange('control', type='fanout')
+    monitor_exchange = Exchange('reasoner', type='fanout')
 
     CELERY_QUEUES = (
         Queue('default', default_exchange, routing_key='default'),
-        Queue('monitor', monitor_exchange, routing_key='monitor.#'),
-        Queue('planner', planner_exchange, routing_key='planner.#'),
-        Queue('control', control_exchange, routing_key='control.#'),
+        Queue('reasoner', control_exchange, routing_key='reasoner.#'),
     )
 
 elif "redis" in config.broker:
@@ -42,13 +36,10 @@ elif "redis" in config.broker:
     #    'visibility_timeout': 3600, 'fanout_prefix': True}
     CELERY_QUEUES = {
         "default": {"default": "default"},
-        "monitor": {"monitor": "monitor.#"},
-        "reactor": {"reactor": "reactor.#"},
-        "planner": {"planner": "planner.#"},
+        "reasoner": {"reasoner": "reasoner.#"},
     }
 
-CELERY_IMPORTS = (
-    "reasoner.tasks", "monitor.tasks", "reactor.tasks", "planner.tasks")
+CELERY_IMPORTS = ("robotice.reasoner.tasks",)
 
 
 CELERY_ROUTES = {
@@ -69,7 +60,6 @@ CELERY_ROUTES = {
     }
 }
 
-
 CELERYBEAT_SCHEDULE = {
     'compare-data': {
         'task': 'reasoner.compare_data',
@@ -88,4 +78,3 @@ CELERYBEAT_SCHEDULE = {
     },
 }
 
-celery = Celery('robotice', broker=BROKER_URL)

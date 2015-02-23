@@ -5,3 +5,7 @@ celerybeat.pid
 robotice.egg-info
 
 docs/output/*
+
+celerybeat-schedule
+
+*.tar.gz

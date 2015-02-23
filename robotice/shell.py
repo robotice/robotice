@@ -44,6 +44,7 @@ from robotice import ROBOTICE_BANNER
 
 from celery import concurrency
 from celery.platforms import maybe_drop_privileges
+from celery.utils.log import LOG_LEVELS, mlevel
 
 LOG = logging.getLogger(__name__)
 
@@ -62,7 +63,11 @@ class BaseApp(object):
         parser.set_defaults(cmd_class=cls)
         parser.add_argument('-d', '--debug', default=True, nargs='?',
                             help=('Debug.'))
-
+        parser.add_argument('-l', '--loglevel', default="WARNING", help=('LOG Level.'))
+        parser.add_argument('-B', '--beat', default=False, action='store_true',
+                            help=('start with Beat.'))
+        parser.add_argument('-E', '--events', default=True, action='store_true',
+                            help=('Events.'))
         return parser
 
 class RunDaemon(BaseApp):
@@ -91,8 +96,9 @@ class RunDaemon(BaseApp):
             loglevel=None, logfile=None, pidfile=None, state_db=None,
             **kwargs):
 
+        _worker_role = getattr(CONF, "worker", argv[2])
         try:
-            w = import_module("robotice.%s.app" % getattr(CONF, "worker", argv[2]))
+            w = import_module("robotice.%s.app" % _worker_role)
         except Exception, e:
             LOG.error(e)
             raise e
@@ -105,7 +111,10 @@ class RunDaemon(BaseApp):
         pool_cls = (concurrency.get_implementation(pool_cls) or
                     app.conf.CELERYD_POOL)
 
-        hostname = hostname or socket.getfqdn()
+        if _worker_role == "reasoner":
+            kwargs["beat"] = True
+
+        hostname = hostname or _worker_role + "@" + socket.getfqdn()
         if loglevel:
             try:
                 loglevel = mlevel(loglevel)
@@ -116,18 +125,15 @@ class RunDaemon(BaseApp):
 
         worker = app.Worker(
             hostname=hostname, pool_cls=pool_cls, loglevel=loglevel,
-            logfile=logfile  # node format handled by celery.app.log.setup
+            logfile=logfile,  # node format handled by celery.app.log.setup
+            **kwargs
         )
         worker.start()
         return worker.exitcode
 
-    @staticmethod
-    def main(argv):
-        
-        RunDaemon.run(argv)
-
+    def main(self, argv):
+        RunDaemon.run(argv, loglevel=CONF.command.loglevel)
         LOG.error(worker)
-
 
 CMDS = [
     RunDaemon,
@@ -153,4 +159,24 @@ def main(argv=None, config_files=None):
          version=__version__,
          usage='%(prog)s [' + '|'.join([cmd.name for cmd in CMDS]) + ']',
          default_config_files=config_files)
-    CONF.command.cmd_class.main(argv)
+    CONF.command.cmd_class().main(argv)
+"""
+
+def main(argv=None):
+    try:
+        args = argv[2:]
+
+        RunDaemon().main(args)
+    except KeyboardInterrupt:
+        print "... bye"
+        sys.exit(130)
+    except Exception as e:
+        if '--debug' in args or '-d' in args:
+            raise e
+        
+        sys.exit(1)
+
+if __name__ == "__main__":
+    main()
+
+"""
