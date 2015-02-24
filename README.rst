@@ -38,7 +38,13 @@ Usage
 Supported sensors:
 ------------------
 
-* `DEVICES`_ and see doc its too much for this place
+* DHT family
+* TMP36
+* Hygro soil
+* Relay Board
+* Sispm
+
+visit `devices`_
 
 Supported architectures:
 ------------------------
@@ -58,7 +64,13 @@ Requirements
 Installation
 ------------
 
-`Documentation`_
+.. code-block:: python
+    
+    pip install robotice
+
+    robotice.py run reasoner -B -d --loglevel=info
+
+    robotice.py run reactor
 
 
 Show me in action
@@ -82,13 +94,13 @@ Contribution
 
 .. _Website: http://www.robotice.cz
 .. _Documentation: docs.robotice.org
+.. _devices: https://github.com/robotice-devices
 .. _Video Demonstration: TODO
-.. _DEVICES: https://github.com/robotice-devices
 .. _contributors: https://github.com/robotice/robotice/blob/develop/docs/source/contrib/contributors.rst
 
 .. |Build Status| image:: https://travis-ci.org/robotice/robotice.svg?branch=master
     :target: https://travis-ci.org/robotice/robotice
 .. |License badge| image:: http://img.shields.io/badge/license-Apache%202.0-green.svg?style=flat
 .. |Coverage Status| image:: https://coveralls.io/repos/robotice/robotice/badge.png
-  	:target: https://coveralls.io/r/robotice/robotice
+      :target: https://coveralls.io/r/robotice/robotice
 
