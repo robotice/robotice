@@ -9,7 +9,7 @@ ROBOTICE_BANNER="""
 |  __  // _ \|  _ \ / _ (_   _) |/ ___) ___ |
 | |  \ \ |_| | |_) ) |_| || |_| ( (___| ____|
 |_|   |_\___/|____/ \___/  \__)_|\____)_____)    {0}
-""".format(".".join([__version__, __release__]))
+""".format(__version__)
 
 import os
 import sys
