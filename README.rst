@@ -52,10 +52,11 @@ Supported architectures:
 * ARMv6, ARMv7
 * x86, x64
 
+
 Requirements
 ------------
 
-* Python 2.6 / 2.7
+* Python 2.7
 * Celery
 * database - Redis
 * Graphite - Statsd (for Gauge)
@@ -64,14 +65,28 @@ Requirements
 Installation
 ------------
 
-.. code-block:: python
-    
+.. code-block:: bash
+
     pip install robotice
 
-    robotice.py run reasoner -B -d --loglevel=info
+or install latest version
 
-    robotice.py run reactor
+.. code-block:: bash
 
+    pip install git+https://github.com/robotice/robotice.git@develop
+
+Use our `SaltStack Formula`_ !
+
+Usage
+-----
+
+Start with Celery heartbeat in debug mode
+
+.. code-block:: bash
+
+    robotice run reasoner -B -d
+
+    robotice run reactor --loglevel=info
 
 Show me in action
 -----------------
@@ -81,7 +96,9 @@ Show me in action
 Read more
 ---------
 
+* http://docs.robotice.org/
 * http://intro.robotice.org/
+* https://github.com/robotice-devices
 
 Contribution
 ------------
@@ -93,10 +110,11 @@ Contribution
 * Send a pull request
 
 .. _Website: http://www.robotice.cz
-.. _Documentation: docs.robotice.org
+.. _Documentation: http://docs.robotice.org/
 .. _devices: https://github.com/robotice-devices
 .. _Video Demonstration: TODO
 .. _contributors: https://github.com/robotice/robotice/blob/develop/docs/source/contrib/contributors.rst
+.. _SaltStack Formula: https://github.com/robotice/salt-robotice-formula.git
 
 .. |Build Status| image:: https://travis-ci.org/robotice/robotice.svg?branch=master
     :target: https://travis-ci.org/robotice/robotice
