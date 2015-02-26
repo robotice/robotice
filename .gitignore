@@ -9,3 +9,6 @@ docs/output/*
 celerybeat-schedule
 
 *.tar.gz
+
+ChangeLog
+AUTHORS
