@@ -1,0 +1,668 @@
+CHANGES
+=======
+
+0.0.1
+-----
+
+* update readme
+* added role apps and clean worker configs
+* fixes
+* cleanups
+* full api implementation
+* comparators from config
+* fuzzy fixes
+* fix
+* celery manager
+* fix inicialization
+* fix inicialization of managers
+* fix message from process data
+* fix cli
+* remove wrapend instance object
+* fix getting plan
+* disable auto conf reloading and fix systems path
+* ignore missing and pep8 cleanup
+* cleanup
+* handle missing deps and failing load
+* fix init
+* support for multiple config files
+* switch to colon delimeter in db which support fqdn in key
+* added plans, systems, devices managers and cleanup unless stuff
+* provide celery app to managers
+* managers for models and cleanup actions api
+* remove deps to oslo.utils and rename project
+* cleanup api documentation
+* huge refactoring and cleanup API base actions implementations
+* cleanup
+* worker listing over API
+* cleanup
+* properly load worker with config base task api fix wsgi logging and add global logging options
+* small cleanup
+* initial of robotice run worker action
+* Robotice API + global CLI
+* bumped version
+* update history
+* switched result to logger
+* fix wrong import and properly handle missing comparator
+* fix conflict with default exchange type and small readme update
+* support for extendable reasoning
+* added tasks
+* cleanup reasoner tasks
+* cleanup
+* baner
+* reactor cli
+* fix
+* handle error without settings
+* fix commit action method args
+* mark real_data as optional
+* depricated as non required
+* properly return exception object
+* make commit_action independent on the settings argument now can be called from any celery app
+* long running sensors tasks
+* time limit for get_real_data task
+* recurence for handling errors
+* fix new device repo format
+* deprecated decorator
+* cleanup enviornment variables
+* requirements
+* change exception message
+* sensors removed
+* raise error with cmd
+* subprocess util
+* adds
+* cleanup
+* method uuid removed
+* fix model inheritence correct log from get
+* db backends reimplemeted
+* cleanup
+* noqa
+* platform utils initial
+* name error fix
+* fix merge actuators and sensors
+* cleanup
+* cleanup
+* properly load nad set system variables
+* drivers cleanup
+* fix after refactoring
+* change result
+* dht on Rpi and BB
+* small refactoring
+* prevent recursive call if not actuator or sensors found
+* continue
+* serialize hgeall
+* fixes
+* jaj
+* fix
+* typo fix
+* name fix
+* typo fix
+* error
+* fixes
+* changes
+* new key
+* fix
+* hotfixes
+* fix
+* cleanup
+* extend sensor dict
+* fixes save key
+* fix get by key
+* fixes
+* fix
+* fix
+* fix
+* fix
+* cleanup
+* fix get
+* fix
+* handle error
+* changes
+* syntax fix
+* name fix
+* universal get by id
+* typo fix
+* fixes
+* syntax fix
+* plan fix
+* fix
+* fixes
+* fix db key
+* key fixes
+* keyfix
+* fix
+* key changed
+* fixes
+* more logging
+* not raise exception
+* fi
+* fix
+* actuators
+* typo fix
+* actuator fixes
+* cleanup
+* key fix
+* fixes
+* fix
+* fix
+* raise import error
+* fix
+* fix
+* fix
+* fix
+* find fix
+* fixes
+* fix fqdn graphite key
+* load devices
+* fix recursive
+* fix
+* full support for fqdn
+* fix key
+* changes
+* fix
+* fix
+* fixes
+* config as property
+* fixes
+* support custom path for sensors modules
+* remove redis collection and use plain redis
+* support name or device as key
+* fix missing metric directly in load sensors
+* compatibility for numbers and strings as uuid
+* delete from file
+* formality
+* cleanup
+* save meta
+* similar software
+* link fixes
+* cleanup
+* save plans,systems
+* pop id from main sensor dict
+* dev
+* doc adds
+* save host method and fixes
+* safe dump, update devices complete
+* hotfix for new conf style + doc update
+* new config style, pep8 cleanup
+* implementation save sensor and actuator change file notation initial save to file
+* fixes + cleanup
+* simplify import sensors and actuators cleanup
+* wrong line
+* fix sudo
+* fixes + pep8 testing
+* cleanup TODO run api throught cli
+* robotice api graines moved to the worker config
+* updates
+* fixes
+* added coverage
+* added link to complete project
+* styling fixes
+* added current sensor
+* fix routing with two monitors
+* fix
+* set system and get system
+* architecture initial
+* urls
+* cds update
+* liquid flow
+* hygro description
+* contribution section
+* license
+* section renamed
+* get version and release for doc from robotice project
+* fixes
+* contrib part
+* tls sensor
+* hw added
+* hardware
+* refs
+* sample pillars
+* cli
+* path fix
+* some status about confs
+* nodeinfo
+* doc reorder
+* documentation fixes
+* pretty print inspired from reclass
+* simple cli
+* fix sentry handlers
+* cleanups
+* fix
+* fixes
+* new stuff
+* fix depricated param
+* properly get os env
+* fix missing grains if not loaded
+* import fixes
+* logging
+* fix import os
+* path fixes
+* fix globals
+* set env properly
+* python path
+* override settings path
+* normalize variables
+* path fixes
+* separate configuration into two files
+* develop back
+* remove build from main repo change skin
+* main config
+* build only master branch
+* update
+* autogenerate from docstrings
+* added base configuration
+* remove generated doc
+* supervisor service conf
+* reference fix
+* some new images
+* fixes
+* documentation initial
+* fix indentation
+* fix missing os_family
+* make instance
+* name error fix
+* less params
+* argument fix
+* fix args
+* use join
+* small changes
+* try convert numbers
+* cleanup
+* fix clean value
+* process real data on reasoner
+* Revert "support only one monitor"
+* support only one monitor
+* handling exception with send real data
+* rewritten get plan for device
+* logging
+* clean value
+* change exchange type
+* fix multi monitor hygro wrapper added
+* debug as default
+* fix routing
+* cleanups + some logging
+* move helper methos on to settings object
+* utils/config renamed
+* logging
+* grains as new object
+* grains back
+* configs for tests
+* encapsulation loadinf of config configurable path to configs conf moved into own file test sensors property + fix caching test database tests for drivers not now grains not used now
+* name error fix
+* prepare for testing
+* more readable for human
+* grains fixes
+* some tests for config fix bug with metering
+* not now
+* fix export
+* rewrites to nose
+* cleanups small change logic
+* travis testing
+* fix new syntax and small update
+* small change
+* change readme format
+* cleanups
+* fix missing import
+* indendation fixes
+* simplify conf and set worker type as property
+* grains duplicity removed
+* redis connection is now cached + sensors property do finds process only once
+* separate grains into own conf module and import module moved into utils
+* statsd instance will be cached on the settings
+* workers configs cleaned
+* rename module util to utils
+* raven logging helper and auto register implementation
+* default celery conf for all roles
+* conf is now module
+* move init actuators into reasoner tasks
+* remove reasoner tasks from monitor
+* utils.py -> conf.py
+* only reasoner can read conf
+* simplify
+* fanout prefix
+* change redis BROKER_TRANSPORT_OPTIONS
+* fix gitignore path
+* huge refactoring + added requirements + setup.py and much more
+* fix missing import
+* added utils for decorators from middleware and useful tool for writting code in python 2 and 3, original source is django code
+* moves init reactors into reactor module
+* reasoner cleanup
+* tests initial
+* exchange refactor
+* small refactoring
+* remove unused
+* fully support redis as backend
+* fix + cleanup
+* fix return get_system_plans
+* plan => plans
+* initial for sensors with default value set
+* device > port
+* imports fixes
+* : fix
+* Init actuators at system start
+* docfix
+* get relay data
+* status path
+* move sensor state to driver
+* sismpctl
+* exeutable
+* get actuator value changes
+* get actuator value
+* convert value for actuator
+* remove sensors
+* float cast
+* return fix
+* run both commands
+* fix
+* fix
+* fix sleep
+* open for read
+* fix revrse
+* reading values right
+* fixes
+* fix reverse logic
+* fix
+* use same driver as simple relay
+* interpreter fix
+* fix
+* tasks
+* logic fix
+* relay fix
+* fix
+* fix
+* fix
+* port spec
+* fix state
+* fix
+* logging
+* except
+* model data node as well
+* fix
+* fix reason
+* logger
+* argument fix
+* again fix
+* fix none
+* fix pop
+* sysntax fix
+* logging
+* system -> extra
+* fix
+* system param
+* fix
+* reasone fix
+* final fix
+* fix
+* fix
+* fixes
+* param fix
+* fixes
+* cast
+* import
+* fix arguent
+* fix actuator
+* fix
+* log changes
+* send commit action
+* fix
+* last fixes
+* fix
+* fix parameters
+* compare fixes
+* logging fix
+* pep8 convenience
+* fix
+* fixes relays as
+* fix missing body
+* actuator taks
+* changes
+* actuators
+* added results
+* sensors
+* log fixes
+* changes
+* remove obsolete
+* get model data
+* metering key fix
+* prefix changes
+* fix
+* fixes
+* fixes
+* changes
+* compare data fixes
+* return fix
+* sispm
+* fixes
+* fix return type
+* metering
+* fix
+* compare data impl
+* send metering
+* assigne fix
+* compare data schedule
+* merge
+* back methods
+* metrics
+* refactor
+* fixes
+* fixes
+* fix
+* planer fixes
+* fix db key
+* fixes
+* fix
+* fixes
+* fix import
+* time changes
+* changes
+* fixes
+* remove blitzdb
+* changes
+* name fix
+* changes
+* key fix
+* indentation fixes
+* get plan implementation
+* syntax fix
+* filter method
+* save model to both backends with transaction
+* rename method
+* sync db with file
+* mongodb backend + filedb backend
+* initial blizdb model
+* fixes netrics name
+* cds fix
+* fix dht
+* cleanups
+* lower rate
+* fix monitor
+* . > _
+* grains.hostname
+* fixes
+* fixes
+* return data
+* reasoner route
+* auto import sensors
+* fix key name
+* reasoner changes
+* one function on sensor get data
+* fix control time
+* change route
+* log level INFO
+* fixes
+* tasks sending
+* new processing
+* fix ,,
+* fix ,,
+* fix 'application/x-python-serialize'
+* get sensors fix
+* celery accept options
+* fix
+* celery init
+* utils fix
+* config update
+* some docfixes
+* docfix
+* pinouts
+* new configs
+* better view on monitor task
+* sensors
+* dummy rework
+* setting CELERY_TASK_RESULT_EXPIRES is uptode
+* add soft limit
+* planner fix
+* return plans
+* return real data
+* some fixes
+* indentation fixes
+* plans
+* change for new property rpi mode
+* )
+* is instance
+* conditional data save
+* join results
+* system name
+* metering last time
+* tasks tweak
+* real data
+* config env fix
+* cds driver call fix
+* cds driver
+* cleanup
+* cds fixes
+* cds changes
+* fix passed sensors
+* sispm sensor fix
+* monitor tasks custom exchanges
+* removed explicitly declared queues
+* result expires lowered to 300s
+* worker monitor's own exchange/queue
+* sispm
+* fake sensor
+* cds
+* fixes sensors
+* fix get
+* ==
+* even more verbose
+* more verbose returns
+* graphite path fix
+* results not stacking, rest
+* results not stacking
+* beats reorder
+* sispm sensor for ubuntu fix
+* :
+* fixes
+* timedelta missed
+* typo fix
+* setup app
+* reasoner tasks
+* fix routing key
+* exchanges everywhere
+* celery routing
+* fixup :)
+* tasks reordered, state not working!
+* typo fix
+* monitor cycle
+* reasoner
+* fixes
+* sensors fixes
+* working monitoring
+* sensoring
+* simple monitoring
+* monitor data
+* celery beat
+* log data
+* reasoner core process
+* flower gone
+* celery config and flower
+* service scripts
+* new script files
+* celery integration
+* test sispm
+* adatofruits flow meter (AFM)
+* sispm 1 second actuator
+* sleep correctly
+* simple sispm actuator
+* sispm
+* sispm moved
+* sensors fixes
+* robotice one time
+* removed old daemon
+* param fix
+* some systax fixes
+* add scan device method
+* sispm executable
+* refactoring tests
+* some changes
+* Gauge back :)
+* fixes
+* gauge
+* refactoring
+* daemons fixes
+* get dummy data
+* add statsd connection
+* new robotice
+* daemonize
+* undead daemon
+* undead
+* new name for port
+* fixes
+* fixes ports
+* fixes
+* add fsr sensor
+* add light sensor
+* fixes
+* add import yaml
+* fix
+* pwm test
+* simple gpio test
+* sensor dht number
+* dht sensor fix
+* exption fix
+* fix Exception
+* : fix :D
+* fix parse
+* fix space
+* fixes
+* print
+* fix
+* fix
+* fix
+* fixes
+* parse output
+* fix line
+* add diod output
+* add new method and fix old
+* change get_sispm_data
+* config gpio
+* fixes
+* fix
+* blink diod test
+* remove arg
+* : shit
+* sispm
+* fix print null
+* :
+* fixes
+* fix boolean
+* debug + fixes
+* comments print
+* sis_pm initial
+* fix null data
+* next dummy sensor
+* timestamp
+* fix print on python 3.2
+* forever cycle
+* fixes
+* fix
+* gaugefix
+* python2 back
+* test is python3 now
+* test sending data
+* sensors, actors, ouputs
+* read me
+* Robotice as daemon
+* separate getData
+* refactor
+* statsd
+* refactor
+* statsd
+* initial commit

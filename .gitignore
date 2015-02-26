@@ -3,7 +3,7 @@ config.yml
 celerybeat-schedule
 celerybeat.pid
 robotice.egg-info
-
+build*
 docs/output/*
 
 celerybeat-schedule

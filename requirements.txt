@@ -1,0 +1,12 @@
+python-statsd==1.6.0
+PyYAML>=3.10
+celery>=3.1.7
+flower==0.6.0
+pytz==2011k
+redis>=2.10.3
+python-dateutil==2.2
+raven>=5.0.0
+celery-with-redis==3.0
+prettytable==0.7.2
+oslo.config==1.4.0
+anyconfig==0.0.5
